@@ -2,8 +2,6 @@
 
 Este documento reúne la bibliografía oficial, los materiales de estudio y las herramientas digitales esenciales para su proceso de aprendizaje en **Estructuras de Datos y Persistencia**.
 
-Hemos organizado los recursos por categoría para facilitar su consulta según la etapa del proyecto en la que se encuentre.
-
 ---
 
 ## Fundamentación Teórica
@@ -19,6 +17,8 @@ Hemos organizado los recursos por categoría para facilitar su consulta según l
     * **Enfoque:** Referencia avanzada para el análisis matemático de algoritmos.
 5.  **Folk, M. J., Zoellick, B., & Riccardi, G. (1998).** *File Structures: An Object-Oriented Approach with C++*. Addison-Wesley.
     * **Enfoque:** Fundamental para entender cómo gestionar archivos byte a byte en el disco.
+6. **Ramakrishnan, R., & Gehrke, J. (2003).** *Database Management Systems* (3rd Edition). McGraw-Hill.
+    * **Enfoque:** Conocido como el "Cow Book", es una referencia estándar por su claridad al explicar la implementación de índices (B+ Trees, Hashing) y el optimizador de consultas.
 
 ---
 
