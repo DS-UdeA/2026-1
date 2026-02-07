@@ -20,6 +20,9 @@ Este documento reúne la bibliografía oficial, los materiales de estudio y las 
 6. **Ramakrishnan, R., & Gehrke, J. (2003).** *Database Management Systems* (3rd Edition). McGraw-Hill.
     * **Enfoque:** Conocido como el "Cow Book", es una referencia estándar por su claridad al explicar la implementación de índices (B+ Trees, Hashing) y el optimizador de consultas.
 
+
+https://courses.cs.washington.edu/courses/cse444/
+
 ---
 
 ## Guías de Implementación (Por Lenguaje)
@@ -56,14 +59,28 @@ Seleccione los recursos correspondientes al lenguaje de programación.
 *Material audiovisual de universidades internacionales para reforzar lo visto en clase.*
 
 ### CMU 15-445/645: Database Systems (Carnegie Mellon)
-Considerado el mejor curso actual sobre ingeniería de bases de datos.
 * [🌐 Sitio Web del Curso](https://15445.courses.cs.cmu.edu/)
 * [▶️ Canal de YouTube](https://www.youtube.com/playlist?list=PLSE8ODhjZXjbohkNBWQs_otTrBTrjyohi)
 
+### Intro to Database Systems (Carnegie Mellon)
+* [🌐 Sitio Web del Curso](https://15445.courses.cs.cmu.edu/spring2025/)
+
+### CSE444: Database Systems Internals
+* [🌐 Sitio Web del Curso](https://courses.cs.washington.edu/courses/cse444/)
+
 ### CS186: Introduction to Database Systems (UC Berkeley)
-Un enfoque muy didáctico y visual, con excelentes explicaciones sobre Árboles B+.
 * [🌐 Sitio Web del Curso](https://cs186berkeley.net/)
 * [▶️ Canal de YouTube](https://www.youtube.com/@cs186berkeley)
+
+### Data Management and Data Systems
+* [🌐 Sitio Web del Curso](https://cs145-fa20.github.io/)
+
+### Intro to Big Data Systems
+* [🌐 Sitio Web del Curso](https://cs145-bigdata.web.app/)
+
+### Readings in Database Systems
+* [🌐 Sitio Web del Curso](http://www.redbook.io/)
+
 
 ---
 
