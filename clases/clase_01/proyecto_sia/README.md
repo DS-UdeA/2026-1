@@ -1,3 +1,4 @@
+![Built with AI](https://img.shields.io/badge/Built%20with-AI-blue.svg)
 
 # Caso de uso: Sistema de Información Académica (Mini-SIA)
 
@@ -190,3 +191,6 @@ A continuación, se describen posibles mejoras que el sistema puede tener:
 1. **Nivel Básico:** Implementar la función de **"Actualizar Nota"**. Requiere buscar el registro en la lista, modificarlo y reescribir *todo* el archivo CSV.
 2. **Nivel Intermedio:** Optimizar la búsqueda usando **Diccionarios (Hash Maps)** en memoria para no recorrer la lista de estudiantes cada vez ( vs ).
 3. **Nivel Avanzado:** Implementar un mecanismo de **Lock (Bloqueo)** creando un archivo temporal `.lock` antes de escribir, para simular control de concurrencia.
+
+> [!important]
+> Este material fue desarrollado con apoyo de herramientas de IA como asistente de redacción y estructuración. El contenido ha sido supervisado, validado y refinado por intervención humana para garantizar su precisión técnica y coherencia pedagógica. No obstante, pueden haber errores.
