@@ -1,85 +1,192 @@
-Aquí tienes el enunciado del proyecto reescrito y adaptado para el uso de archivos CSV, listo para copiar y pegar en tu archivo README.md o en la guía del laboratorio.
 
-Markdown
-# Laboratorio: Implementación de Persistencia de Datos (Mini-SIA)
+# Caso de uso: Sistema de Información Académica (Mini-SIA)
 
 ## 1. Contexto del Problema
 
-En el desarrollo de software, la gestión de datos es fundamental. Antes de la existencia de los Sistemas Gestores de Bases de Datos (DBMS) modernos como PostgreSQL o MySQL, los sistemas almacenaban información en "archivos planos" (flat files).
+Antes de la masificación de los Sistemas Gestores de Bases de Datos (DBMS) modernos como PostgreSQL, Oracle o MySQL, el software empresarial gestionaba la información utilizando **"Archivos Planos" (Flat Files)**.
 
-Este proyecto busca simular un **Sistema de Información Académica (SIA)** básico utilizando archivos **CSV** y **Python**. El objetivo es comprender los desafíos de la persistencia manual: integridad referencial, consistencia de datos y complejidad algorítmica al relacionar información.
+En este modelo "a la antigua", el programador es responsable absoluto de todo:
+* Definir el formato de almacenamiento (CSV).
+* Asegurar que los datos no se corrompan al escribir.
+* Optimizar la velocidad de búsqueda (que suele ser lineal $O(n)$).
+* Validar manualmente que las relaciones entre datos sean coherentes (Integridad Referencial).
+
+Este proyecto implementa una versión muy simple de un **Sistema de Información Académica (SIA)**. Este **Mini-SIA** basado enteramente en archivos **CSV** y **Python**. Sirve como caso de estudio para entender la complejidad algorítmica y estructural que los Motores de Base de Datos resuelven automáticamente.
 
 ## 2. Objetivos de Aprendizaje
-* Manipulación de archivos de texto (Lectura/Escritura) en Python.
-* **Parsing manual:** Conversión de tipos de datos (String a Int/Float) desde CSV.
-* Implementación lógica de operaciones **CRUD** (Create, Read, Update, Delete).
-* Simulación algorítmica de **JOINs** (relacionar datos de dos archivos distintos).
-* Validación manual de integridad referencial (Foreign Keys).
 
-## 3. Estructura de Datos (Archivos CSV)
-El sistema se basará en tres archivos CSV ubicados en la carpeta `/data`.
+Al finalizar el análisis y ejecución de este código, el estudiante deberá ser capaz de:
 
-### A. `estudiantes.csv` (Entidad Maestra)
-Almacena la información de los alumnos.
-* **Columnas:** `id, nombre, email, carrera, semestre`
-* **Llave Primaria:** `id`
-* **Tipos de datos esperados:** `id` (int), `semestre` (int), resto (string).
+1.  **Implementar Persistencia:** Leer y escribir datos estructurados en disco utilizando la librería estándar de Python (`csv`).
+2.  **Gestionar Tipos de Datos (Parsing):** Comprender el problema de convertir texto plano a enteros, flotantes o nulos (`None`) manualmente.
+3.  **Simular Integridad Referencial:** Escribir lógica de código para validar relaciones (Foreign Keys) antes de guardar datos.
+4.  **Analizar Complejidad:** Identificar por qué buscar datos en archivos secuenciales es ineficiente comparado con el indexado de bases de datos.
+5.  **Testing Automatizado:** Ejecutar pruebas de integración para validar la lógica sin intervención humana.
 
-### B. `cursos.csv` (Entidad Maestra)
-Almacena la oferta académica disponible.
-* **Columnas:** `codigo, nombre, creditos, profesor`
-* **Llave Primaria:** `codigo`
-* **Tipos de datos esperados:** `creditos` (int), resto (string).
+## 3. Arquitectura del Proyecto
 
-### C. `matriculas.csv` (Entidad Relacional)
-Vincula estudiantes con cursos (Relación Muchos a Muchos).
-* **Columnas:** `id_matricula, estudiante_id, curso_codigo, semestre, nota_final`
-* **Llave Primaria:** `id_matricula`
-* **Llaves Foráneas:**
-    * `estudiante_id` -> debe existir en `estudiantes.csv`
-    * `curso_codigo` -> debe existir en `cursos.csv`
-* **Nota:** `nota_final` puede estar vacía (null) si el curso no ha terminado.
-
-## 4. Requerimientos Funcionales
-
-### Módulo 1: Gestión de Archivos (`db_manager.py`)
-Desarrollar una clase que permita:
-1.  Leer un archivo CSV y retornarlo como una lista de diccionarios.
-2.  **Conversión de Tipos:** Detectar y convertir números (que el CSV lee como strings `"100"`) a sus tipos reales (`100` o `4.5`).
-3.  Escribir una lista de diccionarios de vuelta al archivo CSV (guardar cambios).
-
-### Módulo 2: Lógica de Negocio (`main.py`)
-Implementar las siguientes funcionalidades en la consola:
-
-1.  **Matricular Estudiante:**
-    * Solicitar ID de estudiante y Código de curso.
-    * **Validación (Integridad):** Verificar que ambos existan en sus respectivos archivos maestros *antes* de guardar.
-    * Generar un nuevo registro en `matriculas.csv`.
-
-2.  **Reporte de Notas (Simulación de JOIN):**
-    * Dado un ID de estudiante, listar sus materias matriculadas.
-    * El sistema debe mostrar el *Nombre de la Materia* (obtenido de `cursos.csv`), no solo el código.
-    * Calcular el promedio acumulado del estudiante (ignorando materias sin nota).
-
-## 5. Estructura del Proyecto Sugerida
+El código sigue una estructura modular estándar para separar la **Lógica de Negocio**, el **Acceso a Datos** y las **Pruebas**.
 
 ```text
-proyecto_sia/
+proyecto_sia/              <-- RAÍZ DEL PROYECTO (Ejecutar comandos desde aquí)
 │
-├── data/
-│   ├── estudiantes.csv
-│   ├── cursos.csv
-│   └── matriculas.csv
+├── data/                  # Capa de Datos (Base de Datos Física)
+│   ├── estudiantes.csv    # Maestro de Estudiantes
+│   ├── cursos.csv         # Maestro de Cursos
+│   └── matriculas.csv     # Tabla Transaccional (Relación Muchos a Muchos)
 │
-├── src/
-│   ├── db_manager.py   # Lógica de lectura/escritura CSV
-│   └── main.py         # Menú e interacción con usuario
+├── src/                   # Código Fuente
+│   ├── db_manager.py      # Capa de Persistencia (DAO / Driver CSV)
+│   └── main.py            # Lógica de Negocio y Menú de Usuario
 │
-└── README.md
+├── tests/                 # Aseguramiento de Calidad (QA)
+│   └── test_backend.py    # Pruebas de integración automatizadas
+│
+└── README.md              # Documentación
+
 ```
 
-### 6. Preguntas de Reflexión (Para el informe)
+### 3.1 Modelo de Datos (Esquema CSV)
 
-* ¿Qué sucede si borro un estudiante de estudiantes.csv pero dejo sus registros en matriculas.csv?
-* ¿Cuál es la complejidad computacional ($O(?)$) de buscar el nombre de un curso para cada matrícula de un estudiante?
-* ¿Cómo se maneja el problema de que nota_final sea un string vacío `""` al calcular el promedio?
+**A. `estudiantes.csv`**
+
+* **PK (Primary Key):** `id` (int)
+* **Datos:** `nombre`, `email`, `carrera`, `semestre` (int).
+
+**B. `cursos.csv`**
+
+* **PK:** `codigo` (string)
+* **Datos:** `nombre`, `creditos` (int), `profesor`.
+
+**C. `matriculas.csv`**
+
+* **PK:** `id_matricula` (Auto-incremental).
+* **FK (Foreign Keys):**
+* `estudiante_id`: Valida contra `estudiantes.csv`.
+* `curso_codigo`: Valida contra `cursos.csv`.
+
+
+* **Datos:** `semestre` (String, ej: "2024-1"), `nota_final` (Float, permite vacíos).
+
+---
+
+## 4. Especificación Técnica (Ingeniería de Software)
+
+### 4.1 Requerimientos Funcionales
+
+El sistema cumple con los siguientes requisitos mínimos de funcionamiento:
+
+| ID | Requerimiento | Descripción Técnica | Criterio de Aceptación |
+| --- | --- | --- | --- |
+| **RF-01** | **Motor de Persistencia** | Capacidad de transformar texto plano (CSV) a tipos de datos Python (`int`, `float`, `None`) y viceversa. | `db.read_all` retorna enteros y flotantes reales, no strings. |
+| **RF-02** | **Integridad Referencial** | Validar que `estudiante_id` y `curso_codigo` existan en sus respectivos archivos maestros antes de escribir en `matriculas.csv`. | El sistema rechaza matrículas con IDs inexistentes. |
+| **RF-03** | **Consulta con JOIN** | Algoritmo de búsqueda cruzada para relacionar `matriculas` con `cursos` y obtener el nombre de la materia. | El reporte muestra "Cálculo Integral", no solo el código "MAT200". |
+| **RF-04** | **Transaccionalidad** | Escritura de nuevos registros utilizando modo *append* (`a`) para no corromper datos previos. | El archivo crece, no se sobrescribe ni se borra. |
+
+> [!note]
+> El tema de levantamiento de **requisitos** se ve en el curso de **Análisis y Diseño de Sistemas I**. 
+
+### 4.2 Diagramas de Diseño
+
+#### Diagrama de Clases (Estructura del Código)
+
+```mermaid
+classDiagram
+    class FileManager {
+        +String data_dir
+        -_parse_record(row)
+        +read_all(filename)
+        +append_record(filename, data)
+    }
+    class MainModule {
+        <<Lógica de Negocio>>
+        +enroll_student()
+        +generate_report_card()
+        +get_student_name()
+    }
+    
+    MainModule ..> FileManager : "Usa (Instancia)"
+    note for FileManager "Maneja I/O y Conversión de Tipos"
+
+```
+
+> [!note]
+> El diagrama UML se ve en el curso de **Análisis y Diseño de Sistemas I**.
+
+#### Diagrama Entidad-Relación (Modelo de Datos)
+
+```mermaid
+erDiagram
+    ESTUDIANTES ||--o{ MATRICULAS : "realiza"
+    CURSOS ||--o{ MATRICULAS : "contiene"
+    
+    ESTUDIANTES {
+        int id PK
+        string nombre
+        string carrera
+    }
+    CURSOS {
+        string codigo PK
+        string nombre
+        int creditos
+    }
+    MATRICULAS {
+        int id_matricula PK
+        int estudiante_id FK
+        string curso_codigo FK
+        string semestre
+        float nota_final
+    }
+
+```
+> [!note]
+> El uso de diagramas de entidad relación se aborda en el curso de **Bases de datos** (proximo semestre).
+
+## 5. Instrucciones de Ejecución
+
+> [!important]
+> Todos los comandos deben ejecutarse desde la carpeta raíz `proyecto_sia/` para que el sistema encuentre la carpeta `data/`.
+
+### Opción A: Modo Usuario (Interactivo)
+
+Use este modo para probar el menú, ver estudiantes, matricular y generar reportes manualmente.
+
+```bash
+# Windows
+python src\main.py
+
+# Mac/Linux
+python3 src/main.py
+
+```
+
+### Opción B: Modo Desarrollador (Tests Automáticos)
+
+Use este modo para verificar la integridad del sistema. Este script prueba la lectura, validación de integridad referencial y persistencia (lectura tras escritura) sin intervención humana.
+
+```bash
+# Windows
+python tests\test_backend.py
+
+# Mac/Linux
+python3 tests/test_backend.py
+
+```
+
+## 6. Análisis Crítico: Archivos vs. Bases de Datos
+
+Este ejemplo evidencia las limitaciones críticas de usar archivos planos frente a un motor SQL real:
+
+| Característica | En este Sistema de Archivos (Python) | En una Base de Datos (SQL) |
+| --- | --- | --- |
+| **Búsqueda** | **Lenta ():** Para validar un estudiante, recorremos toda la lista fila por fila. Inviable con millones de datos. | **Rápida ():** Usan Índices B-Tree para encontrar datos instantáneamente. |
+| **Relaciones** | **Manual:** Debemos programar `if` y bucles anidados para cruzar datos ("Joins" a mano). | **Nativa:** Se usa `JOIN` y el motor optimiza el algoritmo de cruce (Hash Join, Merge Join). |
+| **Integridad** | **Frágil:** Si borramos un estudiante del archivo `estudiantes.csv` manualmente (Excel), las matrículas quedan "huérfanas". | **Robusta:** Las restricciones `FOREIGN KEY` impiden borrar un estudiante si tiene notas asociadas. |
+| **Concurrencia** | **Nula:** Si dos usuarios guardan una matrícula al mismo tiempo, el archivo se corrompe. | **ACID:** Soportan transacciones seguras multi-usuario y bloqueos de fila. |
+
+## 7. Trabajo Futuro
+
+A continuación, se describen posibles mejoras que el sistema puede tener:
+1. **Nivel Básico:** Implementar la función de **"Actualizar Nota"**. Requiere buscar el registro en la lista, modificarlo y reescribir *todo* el archivo CSV.
+2. **Nivel Intermedio:** Optimizar la búsqueda usando **Diccionarios (Hash Maps)** en memoria para no recorrer la lista de estudiantes cada vez ( vs ).
+3. **Nivel Avanzado:** Implementar un mecanismo de **Lock (Bloqueo)** creando un archivo temporal `.lock` antes de escribir, para simular control de concurrencia.
