@@ -81,6 +81,12 @@ Seleccione los recursos correspondientes al lenguaje de programación.
 ### Readings in Database Systems
 * [🌐 Sitio Web del Curso](http://www.redbook.io/)
 
+### Introduction to Databases - Columbia University
+* [🌐 Sitio Web del Curso](https://w4111.github.io/)
+
+### CS50's Introduction to Databases with SQL
+* [🌐 Sitio Web del Curso](https://cs50.harvard.edu/sql/)
+
 
 ---
 

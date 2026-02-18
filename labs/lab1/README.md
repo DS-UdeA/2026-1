@@ -232,6 +232,10 @@ Ahora, empleando nuestro editor o IDE favorito podemos abrir el directorio asoci
 
 ![fig1_9](images/exercises/fig1_9.png) 
 
+Para la parte de las branches: 
+1. https://epiverse-trace.github.io/blueprints/git-branching-merging.html
+2. Para lo de los remotes: https://smartprogramming.in/tutorials/git-and-github/git-remote
+
 
 ## Referencias
 
@@ -243,3 +247,5 @@ Ahora, empleando nuestro editor o IDE favorito podemos abrir el directorio asoci
 6. https://smartprogramming.in/tutorials/git-and-github/git-add-files-to-staging
 7. https://pages.cs.wisc.edu/~lcai64/
 8. https://kevinsguides.com/guides/code/devops/file-mgmt/git-github-workflow-branch-merge/
+9. https://blog.ltgt.net/teaching-git/
+10. https://ocw.mit.edu/courses/6-170-software-studio-spring-2013/9395cd5506f95fee592ddadfa920b0ee_MIT6_170S13_rec1-Git.pdf
