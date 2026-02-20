@@ -1,3 +1,5 @@
+![Built with AI](https://img.shields.io/badge/Built%20with-AI-blue.svg)
+
 # Guía de Instalación de PostgreSQL en Windows
 
 **Laboratorio de Estructura de Datos - Universidad de Antioquia**
@@ -15,7 +17,7 @@ Esta guía detalla el proceso para instalar PostgreSQL, el sistema de gestión d
 > [!TIP]
 > **Nota:** Asegúrate de descargar la versión de 64 bits a menos que tu equipo sea muy antiguo.
 
-![image3](image3.png)
+![image3](images/image3.png)
 
 ---
 
@@ -24,13 +26,13 @@ Esta guía detalla el proceso para instalar PostgreSQL, el sistema de gestión d
 1. Una vez descargado el archivo `.exe`, ejecútalo como **Administrador**.
 2. Se abrirá el asistente de instalación. Haz clic en **Next**.
 
-![image5](image5.png)
+![image5](images/image5.png)
 
 ### 2.1 Selección del Directorio
 
 * El instalador sugerirá una ruta por defecto (generalmente `C:\Program Files\PostgreSQL\XX`). Puedes dejarla así. Haz clic en **Next**.
 
-![image6](image6.png)
+![image6](images/image6.png)
 
 ---
 
@@ -43,7 +45,7 @@ Asegúrate de que los siguientes componentes estén seleccionados:
 * **Stack Builder:** Para instalar drivers o herramientas adicionales (opcional).
 * **Command Line Tools:** Para usar la terminal (`psql`).
 
-![image7](image7.png)
+![image7](images/image7.png)
 
 ---
 
@@ -51,7 +53,7 @@ Asegúrate de que los siguientes componentes estén seleccionados:
 
 El instalador te preguntará dónde guardar los datos físicos de la base de datos. Se recomienda dejar la carpeta `data` dentro de la ruta de instalación por defecto. Haz clic en **Next**.
 
-![image8](image8.png)
+![image8](images/image8.png)
 
 ---
 
@@ -62,7 +64,7 @@ Este es el paso donde la mayoría de los estudiantes fallan. Debes definir una c
 > [!CAUTION]
 > **¡IMPORTANTE!** No olvides esta contraseña. Sin ella, no podrás acceder a tus bases de datos más adelante. Te sugiero algo simple como `admin123` para fines de laboratorio.
 
-![image9](image9.png)
+![image9](images/image9.png)
 
 ---
 
@@ -71,12 +73,12 @@ Este es el paso donde la mayoría de los estudiantes fallan. Debes definir una c
 1. **Puerto:** Por defecto es el **5432**. No lo cambies a menos que otra aplicación lo esté usando.
 2. **Localización (Locale):** Selecciona **"[Default locale]"** o tu región (Spanish, Colombia) para que el manejo de caracteres (ñ, tildes) sea correcto.
 
-![image10](image10.png)
+![image10](images/image10.png)
 
 > [!CAUTION]
 > **¡IMPORTANTE!** En la imagen anterior apareció el puerto (**5433**) debido a que la máquina en la que se realizo la instalación tenia una version previa instalada.
 
-![image11](image11.png)
+![image11](images/image11.png)
 
 ---
 
@@ -85,13 +87,13 @@ Este es el paso donde la mayoría de los estudiantes fallan. Debes definir una c
 * El asistente te mostrará un resumen de la configuración. Haz clic en **Next** hasta que comience la barra de progreso.
 * Al finalizar, desmarca la casilla de **Stack Builder** si no planeas instalar complementos extra por ahora.
 
-![image12](image12.png)
+![image12](images/image12.png)
 
-![image13](image13.png)
+![image13](images/image13.png)
 
-![image14](image14.png)
+![image14](images/image14.png)
 
-![image15](image15.png)
+![image15](images/image15.png)
 
 ---
 
@@ -99,7 +101,7 @@ Este es el paso donde la mayoría de los estudiantes fallan. Debes definir una c
 
 Al finalizar la instalación, se te preguntará si deseas abrir el **Stack Builder**. Selecciónalo y elige tu servidor en la lista desplegable.
 
-![image17](image17.png)
+![image17](images/image17.png)
 
 **Recomendaciones del Laboratorio:**
 
@@ -112,11 +114,11 @@ Solo instala lo estrictamente necesario para evitar saturar el sistema:
 | **Spatial Extensions** | **PostGIS** | Opcional (solo si trabajarán con datos geográficos). |
 | **Web Development** | **Nada** | **No es útil** para el enfoque de Estructura de Datos. |
 
-![image18](image18.png)
+![image18](images/image18.png)
 
-![image19](image19.png)
+![image19](images/image19.png)
 
-![image20](image20.png)
+![image20](images/image20.png)
 
 ---
 
@@ -128,7 +130,7 @@ Para confirmar que todo funciona:
 2. Te pedirá una contraseña maestra (para la app) y luego la contraseña del servidor (la que pusiste en el paso 5).
 3. Si puedes ver el árbol de "Servers" y la base de datos "postgres", **¡lo lograste!**
 
-![image29](image29.png)
+![image29](images/image29.png)
 
 ---
 
@@ -138,14 +140,15 @@ Si deseas usar PostgreSQL desde la terminal de Windows (`CMD` o `PowerShell`), d
 
 1. Busca "Editar las variables de entorno del sistema".
    
-   ![image30](image30.png)
+   ![image30](images/image30.png)
 
 2. En **Variables de entorno**, busca `Path` en "Variables del sistema" y haz clic en Editar.
    
-   ![image31](image31.png)
+   ![image31](images/image31.png)
 
 3. Agrega la ruta: `C:\Program Files\PostgreSQL\XX\bin`.
    
-   ![image32](image32.png)
+   ![image32](images/image32.png)
 
-
+> [!important]
+> Este material fue desarrollado con apoyo de herramientas de IA como asistente de redacción y estructuración. El contenido ha sido supervisado, validado y refinado por intervención humana para garantizar su precisión técnica y coherencia pedagógica. No obstante, pueden haber errores.
