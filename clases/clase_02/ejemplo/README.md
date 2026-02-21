@@ -4,6 +4,9 @@
 
 Esta guía técnica detalla el proceso de creación, estructuración y carga de datos para una base de datos de gestión musical mostrada en la clase.
 
+> [!important]
+> Antes de empezar, se recomienda que tener instalado PostgreSQL y algunos de sus complementos. Si aun no lo ha instalado, puede consultar el proceso de instalación siguiendo el siguiente [link](../../../labs/tools/postgresql/)
+
 ---
 
 ## 1. Fundamentos Teóricos

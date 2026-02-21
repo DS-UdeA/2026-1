@@ -19,7 +19,7 @@ Como ejemplo de apoyo se introduce un caso de uso simple de sistemas basados en 
 
 A contiación se listan los recursos de esta clase:
 - Diapositivas rayadas [[link]](clase1_annotated.pdf)
-- Apuntes de la clase [[link]](DS_clase01_18-02-2026.pdf.pdf)
+- Apuntes de la clase [[link]](DS_clase01_18-02-2026.pdf)
 
 ### Caso de aplicación: Mini SIA
 
