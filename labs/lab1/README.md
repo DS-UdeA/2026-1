@@ -1,13 +1,13 @@
 # Laboratorio 1: Control de Versiones con Git y GitHub
 
-## Objetivos
+## 1. Objetivos
 
 * Familiarizarse con el control de versiones de código fuente mediante el uso de Git.
 * Crear su primer repositorio de Git.
 * Aprender comandos de Git de gran utilidad que se emplearán a lo largo de todo el curso.
 * Crear un repositorio en GitHub y aprender a cargar (push) y descargar (pull) código desde dicho repositorio.
 
-## Requisitos
+## 2. Requisitos
 
 * Cuenta de GitHub.
 * Git instalado (Opcionalmente puede instalar clientes graficos como GitHub Desktop o GitKraken).
@@ -20,7 +20,7 @@ To Do!
 * https://learngitbranching.js.org/?locale=es_ES
 * https://docs.github.com/es/get-started/using-git/about-git
 
-## Introducción
+## 3. Introducción
 
 GitHub es mucho más que un simple lugar para guardar código. Es una plataforma de colaboración que permite a equipos de todos los tamaños trabajar juntos, llevar un control de versiones y construir proyectos de manera ordenada.
 
@@ -30,7 +30,9 @@ Durante la práctica, se aprenderá a crear un repositorio, gestionar ramas, rea
 
 Al finalizar este laboratorio, los participantes habrán consolidado una base sólida para el trabajo en equipo y la gestión de evidencias de sus avances, competencias que son pilares fundamentales para el desempeño en cualquier entorno de desarrollo profesional.
 
-## Manejo de repositorios usando git
+## 4. Conceptos Teoricos
+
+### Manejo de repositorios usando git
 
 [Git](https://en.wikipedia.org/wiki/Git) es un sistema de control de versiones (VCS) diseñado para realizar el seguimiento de los cambios en los diversos archivos de un repositorio determinado. En particular, esta herramienta resulta de gran utilidad para:
 * Mantener un registro detallado de las versiones de sus archivos.
@@ -41,7 +43,7 @@ La siguiente figura resume el flujo de trabajo empleando repositorios:
 
 ![git-overview](git-overview.png)
 
-### Flujo de Trabajo con Git (VCS Workflow)
+#### Flujo de Trabajo con Git (VCS Workflow)
 
 Para utilizar Git de manera efectiva, es fundamental comprender que el código no se envía directamente al servidor. 
 
@@ -49,7 +51,7 @@ En su lugar, el trabajo transita por un ciclo de estados que permite gestionar v
 
 ![workflow](workflow.png)
 
-### Áreas de Git
+#### Áreas de Git
 
 A continuación, se describen las áreas clave representadas en el diagrama anterior:
 * **Working Directory (Directorio de Trabajo)**: Es el entorno donde usted interactúa directamente con los archivos del proyecto. Aquí es donde crea, edita o elimina líneas de código en su editor de preferencia.
@@ -57,7 +59,7 @@ A continuación, se describen las áreas clave representadas en el diagrama ante
 * **Local Repository (Repositorio Local)**: Es la base de datos interna en su equipo donde Git almacena el historial completo de todas las versiones confirmadas. Una vez que un cambio llega aquí, queda registrado permanentemente en su historial personal.
 * **Remote Repository (Repositorio Remoto)**: Es la instancia del proyecto alojada en un servidor externo  (como GitHub o GitLab). Su función principal es servir como punto central de colaboración, permitiendo que otros integrantes del equipo accedan a su código y viceversa.
 
-### Comandos esenciales de Git
+#### Comandos esenciales de Git
 
 Estos son los comandos fundamentales de Git que usted utilizará regularmente para gestionar su código y colaborar con otros.
 * **`git add`**: Mueve los cambios desde el directorio de trabajo hacia el área de preparación. Puede añadir archivos específicos o todos los cambios.
@@ -138,11 +140,123 @@ A continuación, se comparten algunos resúmenes que le pueden servir, el cachar
 > 3. **Git Cheat Sheet** (GitLab) [[link]](https://about.gitlab.com/images/press/git-cheat-sheet.pdf)
 > 4. **Git Cheat Sheet** (github) [[español]](https://training.github.com/downloads/es_ES/github-git-cheat-sheet.pdf) [[ingles]](https://education.github.com/git-cheat-sheet-education.pdf)
 
-### Resumen grafico de Git
+#### Resumen grafico de Git
 
 La mejor tener una visión amplia de `git` es a traves del **git cheat sheet** de [Julia Evans](https://x.com/b0rk)
 
 ![git](git_julia_evans.png)
+
+### Entornos virtuales en Python
+
+#### Introducción
+
+En el desarrollo de software, es frecuente que distintos proyectos **requieran versiones específicas** o **contradictorias de una misma librería**. Instalar dependencias de forma global en el sistema puede generar conflictos, romper aplicaciones existentes y dificultar la replicación del proyecto en otras máquinas.
+
+Un **entorno virtual** es un directorio aislado que contiene su propia instalación de Python y sus propias librerías. Esto garantiza que el proyecto sea autónomo y funcional, independientemente de la configuración del sistema operativo.
+
+Los entornos virtuales son claves ya que permiten los siguientes beneficios:
+* **Aislamiento**: Las librerías de un proyecto no afectan a los demás.
+* **Reproducibilidad**: Permite que cualquier colaborador recree exactamente el mismo entorno.
+* **Colaboración limpia**: Evita el "en mi máquina funciona" al estandarizar versiones.
+* **Seguridad**: Permite probar librerías sin alterar la instalación principal del sistema.
+
+#### Flujo de trabajo
+
+El siguiente diagrama detalla el ciclo de vida estándar al trabajar con entornos virtuales:
+
+```mermaid
+graph TD
+    A[Inicio: Carpeta del Proyecto] --> B[Crear Entorno Virtual<br/>'python -m venv venv']
+    B --> C[Activar Entorno<br/>'source venv/bin/activate' o '.\venv\Scripts\activate']
+    C --> D{¿Primera vez?}
+    D -- Sí --> E[Instalar Dependencias<br/>'pip install -r requirements.txt']
+    D -- No / Nuevo Paquete --> F[Instalar/Desarrollar<br/>'pip install nombre-libreria']
+    E --> G[Programar en Python<br/>'python app.py']
+    F --> G
+    G --> H[Congelar Dependencias<br/>'pip freeze > requirements.txt']
+    H --> I[Desactivar Entorno<br/>'deactivate']
+    I --> J[Fin: Entorno Aislado]
+
+    style C fill:#f9f,stroke:#333,stroke-width:2px
+    style H fill:#bbf,stroke:#333,stroke-width:2px
+    style B fill:#dfd,stroke:#333,stroke-width:2px
+```
+
+En la siguiente tabla se muestran los principales comandos empleados:
+
+<table>
+<thead>
+  <tr>
+    <th colspan="2"> Comandos básicos — Entornos virtuales en Python (venv)
+  </th>
+  </tr>
+</thead>
+<tbody>
+  <tr>
+    <td colspan="2"><b> Creación del entorno virtual </b></td>
+  </tr>
+  <tr>
+    <td><code>python -m venv .venv</code></td>
+    <td>Crea un entorno virtual llamado <code>.venv</code> en la carpeta del proyecto</td>
+  </tr>
+
+  <tr>
+    <td colspan="2"><b> Activación del entorno virtual </b></td>
+  </tr>
+  <tr>
+    <td><code>.venv\Scripts\Activate.ps1</code></td>
+    <td>Activa el entorno virtual en Windows usando PowerShell</td>
+  </tr>
+  <tr>
+    <td><code>.venv\Scripts\activate.bat</code></td>
+    <td>Activa el entorno virtual en Windows usando CMD</td>
+  </tr>
+  <tr>
+    <td><code>source .venv/bin/activate</code></td>
+    <td>Activa el entorno virtual en Linux o macOS</td>
+  </tr>
+
+  <tr>
+    <td colspan="2"><b> Gestión de dependencias </b></td>
+  </tr>
+  <tr>
+    <td><code>pip install [dependencia]</code></td>
+    <td>Instala una dependencia dentro del entorno virtual activo</td>
+  </tr>
+  <tr>
+    <td><code>pip freeze &gt; requirements.txt</code></td>
+    <td>Guarda las dependencias del proyecto en un archivo <code>requirements.txt</code></td>
+  </tr>
+  <tr>
+    <td><code>pip install -r requirements.txt</code></td>
+    <td>Instala todas las dependencias listadas en <code>requirements.txt</code></td>
+  </tr>
+
+  <tr>
+    <td colspan="2"><b> Salir del entorno virtual </b></td>
+  </tr>
+  <tr>
+    <td><code>deactivate</code></td>
+    <td>Desactiva el entorno virtual y regresa al Python del sistema</td>
+  </tr>
+</tbody>
+</table>
+
+#### Buenas practicas
+
+* **No versionar el entorno**: Nunca suba la carpeta `.venv/` a GitHub. Es pesada y depende de tu sistema operativo local.
+* **Uso de `.gitignore`**: Asegúrese de incluir `.venv/` en tu archivo `.gitignore` desde el inicio.
+* **Actualizar `requirements.txt`**: Cada vez que instale una nueva librería necesaria para el proyecto, actualice el archivo de requisitos.
+* **Activación obligatoria**: Acostúmbrese a verificar que el nombre del entorno aparezca en tu terminal (ej. `(.venv) >`) antes de ejecutar cualquier script.
+
+>[!tip]
+> Para mas información:
+> * https://gto76.github.io/python-cheatsheet/
+> * https://realpython.com/python-virtual-environments-a-primer/
+> * https://www.datacamp.com/tutorial/virtual-environment-in-python
+> * https://www.codecademy.com/resources/docs/python/virtual-environment
+> * https://www.codecademy.com/article/environments
+
 
 ## Ejercicio 1 - flujo completo con PR + verificación
 
@@ -181,6 +295,9 @@ Al terminar, debe tener:
 Para clonar en el entorno local, lo primero que se debe realizar es abrir la terminal del git:
 
 ![fig1_4](images/exercises/fig1_4.png) 
+
+> [!note]
+> En nuestro caso, tal y como se muestra en la figura anterior, abrimos la terminal **Git bash**, sin embargo, usted puede hacerlo con la terminal con la que se sienta trabajando mas comodamente. Lo realmente importante es que los comandos funcionen.
 
 Una vez que esta se encuentra abierta, estará lista para recibir comandos:
 
@@ -228,13 +345,155 @@ ls -ahl
 ![fig1_8](images/exercises/fig1_8.png) 
 
 
-Ahora, empleando nuestro editor o IDE favorito podemos abrir el directorio asociado al repositorio (recuerde la ruta)
+> ✅ **Checkpoint 2 (resultado esperado)** <br>
+> Empleando nuestro IDE favorito abrir el directorio asociado al repositorio (recuerde la ruta). La siguiente figura muestra el resultado esperado: 
+> 
+> ![fig1_9](images/exercises/fig1_9.png) 
 
-![fig1_9](images/exercises/fig1_9.png) 
+### 3. Crear y configurar el entorno virtual 
 
-Para la parte de las branches: 
-1. https://epiverse-trace.github.io/blueprints/git-branching-merging.html
-2. Para lo de los remotes: https://smartprogramming.in/tutorials/git-and-github/git-remote
+Para continuar emplee su IDE preferido. En nuestro caso, vamos a emplear el VS Code y vamos a realizar la creación del entorno a traves de la linea de comandos. Para esto empleamos el siguiente comando:
+
+```
+python -m venv .venv
+```
+
+![fig1_10](images/exercises/fig1_10.png) 
+
+> [!tip]
+> Consulte en internet este procedimiento en el entorno de su preferencia sin necesidad de linea de comandos.
+
+>[!note]
+>Observe que el resultado, creo una nuevo directorio llamado **.env** dentro del directorio raiz del proyecto.
+
+![fig1_11](images/exercises/fig1_11.png) 
+
+Ahora procedemos a activar el entorno. En el caso de VS Code, la terminal por defecto en nuestro caso es **powershell** (**ps**) de modo que para activar el entorno empleamos el comando:
+
+```
+.venv\Scripts\Activate
+```
+
+![fig1_12](images/exercises/fig1_12.png) 
+
+>[!note]
+>Si el resultado esta bien, aparecera como promt un indicador del entorno virtual `.(venv)`
+
+Como vamos a hacer uso de [`pytest`](https://docs.pytest.org/en/stable/), el siguiente paso consiste en instalar las librerias, usando `pip`, en el entorno virtual para usarlas:
+
+```
+pip install pytest
+```
+
+![fig1_13](images/exercises/fig1_13.png) 
+
+
+Despues la instalación, es util comprobar que el `pytest` haya quedado correctamente instalado empleando el siguiente comando:
+
+```
+pip list
+```
+
+![fig1_14](images/exercises/fig1_14.png) 
+
+Finalmente, la recomendación es almacenar las librerias necesarias en un archivo `requirements.txt` para no tener que configurar desde cero el entorno mediante la instalación paso a paso de librerias necesarias mediante `pip`.
+
+![fig1_15](images/exercises/fig1_15.png) 
+
+> ✅ **Checkpoint 3 (resultado esperado)**
+> 
+> Se debe visualizar el archivo `requirements.txt` generado con un contenido similar al siguiente:
+> 
+> ![fig1_16](images/exercises/fig1_16.png) 
+
+> [!tip]
+> Si tiene el archivo `requirements.txt` no tiene que usar el comando `pip install [libreria]` para instalar cada dependencia sino que basta con correr el siguiente comando para instalar todas las dependencias que alli se encuentren:
+>
+> ```
+> pip install -r requirements.txt
+> ```
+> 
+
+### 4. Estructura base del proyecto
+
+Codifique el proyecto de tal manera que tenga la siguiente estructura:
+
+```
+lab-github-<tu_usuario>/
+  src/
+    __init__.py
+    greeter.py
+  tests/
+    __init__.py
+    test_greeter.py
+  pyproject.toml
+```
+
+El archivo `greeter.py` será el siguiente:
+
+```py
+def greet(name: str) -> str:
+    return f"Hola, {name}!"
+
+if __name__ == "__main__":
+    nom = input("¿Cómo te llamas? ")
+    print(greet(nom))
+```
+
+El archivo `test_greeter.py` será el siguiente:
+
+```py
+from src.greeter import greet
+
+def test_greet():
+    assert greet("don Ramon") == "Hola, don Ramon!"
+```
+
+El archivo `pyproject.toml` tendra el siguiente contenido:
+
+```toml
+[tool.pytest.ini_options]
+pythonpath = ["."]
+testpaths = ["tests"]
+```
+
+Finalmente, los archivos `__init__.py` serán archivos vacios.
+
+> ✅ **Checkpoint 4 (resultado esperado)**
+>
+> Si todo esta bien, se espera una salida similar a la obtenida a continuación:
+>
+> ![fig1_17](images/exercises/fig1_17.png) 
+>
+> Notese que además de los archivos anteriormente codificados, se encuentran los archivos que previamente existian.
+
+### 5. Ejecución y test de los archivos
+
+Pruebe que todo funciona bien:
+
+```bash
+pytest -q
+```
+
+![fig1_18](images/exercises/fig1_18.png) 
+
+```bash
+python .\src\greeter.py
+```
+
+![fig1_19](images/exercises/fig1_19.png) 
+
+Finalmente desactive del entorno virtual.
+
+> ✅ **Checkpoint 5 (resultado esperado)**
+>
+> Si todo esta bien, la salida de la ejecución de las pruebas y los scripts tendran una salida similar a las de las imagenes anteriormente mostradas.
+
+```bash
+deactivate
+```
+
+![fig1_20](images/exercises/fig1_20.png) 
 
 
 ## Referencias
