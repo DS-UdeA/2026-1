@@ -409,6 +409,10 @@ pip list
 
 Finalmente, la recomendación es almacenar las librerias necesarias en un archivo `requirements.txt` para no tener que configurar desde cero el entorno mediante la instalación paso a paso de librerias necesarias mediante `pip`.
 
+```
+pip freeze > requirements.txt
+```
+
 ![fig1_15](images/exercises/fig1_15.png) 
 
 > ✅ **Checkpoint 3 (resultado esperado)**
@@ -764,6 +768,61 @@ En un entorno colaborativo, cada actualización representa un avance incremental
    > 
    > ![fig1_38](images/exercises/fig1_38.png)
  
+
+## Entrega de la práctica (obligatoria)
+
+### ¿Qué se debe entregar?
+
+Como evidencia de que el laboratorio guiado se realizo correctamente, debe entregar:
+
+- **Link público de tu repositorio en GitHub**
+  - El repositorio debe contener:
+    - `src/greeter.py` actualizado
+    - `tests/test_greeter.py` actualizado
+    - `src/main.py` creado
+    - Historial de commits correspondiente al flujo realizado
+
+### Formato de entrega
+
+En el Moodle (o plataforma indicada por el docente), el estudiante debe enviar la siguiente información:
+* Nombre completo:
+* Usuario GitHub:
+* Link del repositorio:
+
+Por ejemplo:
+
+```
+Nombre completo: Juan Pérez Gómez
+Usuario GitHub: juanperez
+Link del repositorio: https://github.com/juanperez/lab-github-juanperez
+```
+
+### Criterios de verificación
+
+El docente verificará:
+- Que el repositorio existe y es accesible.
+- Que los archivos solicitados están presentes.
+- Que el historial (`git log`) muestra el commit del ejercicio.
+- Que el código implementa correctamente el saludo por hora.
+- Que las pruebas unitarias están actualizadas.
+
+
+### Importante
+
+- No se aceptan archivos enviados por correo o comprimidos (.zip).
+- La única evidencia válida es el **repositorio en GitHub**.
+- El enlace debe funcionar correctamente al momento de la revisión.
+
+### Checklist final antes de enviar
+
+- [ ] Ejecuté `pytest -q` y todas las pruebas pasan.
+- [ ] Hice `git commit` con mensaje claro.
+- [ ] Hice `git push origin main`.
+- [ ] Verifiqué en GitHub que los cambios están visibles.
+- [ ] Copié correctamente el enlace del repositorio.
+
+>[!important]
+>**Recuerde**: en este laboratorio no solo evaluamos el código, sino también el uso correcto de Git y GitHub como herramienta profesional.
 
 ## Referencias
 
