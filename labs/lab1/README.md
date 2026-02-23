@@ -1,4 +1,18 @@
-# Laboratorio 1: Control de Versiones con Git y GitHub
+![Built with AI](https://img.shields.io/badge/Built%20with-AI-blue.svg)
+
+# Laboratorio 1 — Control de Versiones con GitHub + Entornos Virtuales en Python
+
+> **Modalidad:** Individual (autoguiado) + Colaborativo (parejas o tríos)  
+> **Duración sugerida:** 2–3 horas  
+> **Entregables:** repositorio en GitHub, PR mergeado, evidencias de pruebas y colaboración.
+
+**Propósito:** introducir el flujo de trabajo con Git/GitHub y buenas prácticas de entorno en Python, aplicadas a un mini-proyecto con pruebas automáticas.
+
+> [!tip]
+> Si quiere ir mas alla, le recomendamos que consulte:
+> * **Introducción a GitHub - Microsoft Learn** [[link]](https://learn.microsoft.com/es-es/training/github/)
+> * **GitHub and Git Tutorial for Beginners** [[link]](https://www.datacamp.com/tutorial/github-and-git-tutorial-for-beginners)
+> * **Learn Git Branching** [[link]](https://learngitbranching.js.org/?locale=es_ES)
 
 ## 1. Objetivos
 
@@ -7,18 +21,16 @@
 * Aprender comandos de Git de gran utilidad que se emplearán a lo largo de todo el curso.
 * Crear un repositorio en GitHub y aprender a cargar (push) y descargar (pull) código desde dicho repositorio.
 
-## 2. Requisitos
+## 2. Requisitos y pre-flight checklist
 
-* Cuenta de GitHub.
-* Git instalado (Opcionalmente puede instalar clientes graficos como GitHub Desktop o GitKraken).
-* Python 3.10+.
-* Editor de código (VS Code recomendado).
+- Cuenta de GitHub  
+- Git instalado (`git --version`)  
+- Python 3.10+ (`python --version`)  
+- pip disponible (`pip --version`)  
+- Editor de código (VS Code recomendado)
 
-## Recomendación antes de empezar
-
-To Do!
-* https://learngitbranching.js.org/?locale=es_ES
-* https://docs.github.com/es/get-started/using-git/about-git
+> [!warning]
+> Ejecute todos los comandos **desde la raíz del proyecto**.
 
 ## 3. Introducción
 
@@ -265,7 +277,6 @@ En la siguiente tabla se muestran los principales comandos empleados:
 Al terminar, debe tener:
 - [ ] Repositorio creado con estructura base.
 - [ ] Pruebas corriendo localmente (pytest).
-- [ ] Un PR creado desde una rama `feature/...` y mergeado a `main`.
 - [ ] Evidencia: enlaces al repo y al PR.
 
 ### 1. Crear el repositorio en GitHub
@@ -495,16 +506,282 @@ deactivate
 
 ![fig1_20](images/exercises/fig1_20.png) 
 
+### 6. Primer commit a main
+
+>[!note]
+>Estos comandos `git` en este caso se van a ejecutar desde la terminal integrada de VS Code y no desde la terminal en la que se ejecutaron los primeros comandos cuando se realizó la clonación del repositorio.
+
+Estando ubicado en el directorio raiz del proyecto (`lab_github_<tu_usuario>`) ejecute los siguientes comandos.
+
+Inicialmente, es importante observar como el repositorio ha cambiado teniendo en cuenta los nuevos archivos que se han agregado. Para ello se ejecuta el comando `git status`:
+
+```bash
+git status
+```
+
+![fig1_21](images/exercises/fig1_21.png)
+
+Luego, se procede a agregar los archivos agregados en del directorio raiz del proyecto al **Staging Area** (area de preparación) mediate el comando `git add` pasando la ruta o archivo especifico como argumento. 
+
+>[!tip]
+Despues de ejecutar el comando `git add` ejecute el comando `git status` para verificar que los archivos hayan pasado al area de preparación
+
+```bash
+git add .
+git status
+```
+
+![fig1_22](images/exercises/fig1_22.png)
+ 
+
+Guarde los cambios, realizados previamente, de manera permanentemente en el repositorio local empleando el comando `git commit -m "Explicación de lo realizado"`. En este caso.
+
+```bash
+git commit -m "Estructura base + greet + prueba inicial"
+```
+
+![fig1_23](images/exercises/fig1_23.png)
+
+Si nuevamente se hace el `git status`, se notara que los cambios en el repositorio local ya se encuentran al dia, y lo unico que resta es sincronizarlos con el repositorio en la nube (github).
+
+```bash
+git status
+```
+
+Finalmente, mediante el comando `git push` se sube lo que se hizo localmente a la nube
+
+>[!tip]
+> Antes de ejecutar un `git push`, es importante verificar la configuración con:
+> 1. `git remote -v`: Para aseguranos de que el **destino** (URL) sea el correcto.
+>
+>    ![fig1_25](images/exercises/fig1_25.png)
+> 
+> 2. `git config user.email`: Para confirmar que se esta firmando con el **correo** adecuado.
+>
+>    ![fig1_26](images/exercises/fig1_26.png)
+> 
+> **¿Por qué importa?** Evita que el código termine en el repositorio equivocado o que las contribuciones aparezcan como "anónimas" o de otro usuario en GitHub. 
+
+```bash
+git push origin main
+```
+
+![fig1_27](images/exercises/fig1_27.png)
+
+Finalmente, si revisamos la salida del comando `git status`, el resultado despues de que la sincronización se ha realizado sera similar al siguiente:
+
+```bash
+git status
+```
+
+![fig1_28](images/exercises/fig1_28.png)
+
+Finalmente, conforma vaya avanzando en el proyecto, es bueno verifique el historial cambios realizados a lo largo del repositorio, para ello use el comando `git log`
+
+```bash
+git log
+```
+
+![fig1_32](images/exercises/fig1_32.png)
+
+Como paso final, verifique que en el repositorio remoto se encuentre el mismo contenido que el repositorio local.
+
+![fig1_33](images/exercises/fig1_33.png)
+
+Si observamos el historial de commits en github, podemos ver que este coincide con los logs del repositorio local:
+
+![fig1_34](images/exercises/fig1_34.png)
+
+La siguiente tabla resume el flujo completo de lo anteriormente anteriormente mostrado:
+
+```bash
+git status
+git add .
+git commit -m "feat: descripción clara del cambio"
+git log --oneline
+git push -u origin feature/mi-cambio
+```
+
+> ✅ **Checkpoint 6 (resultado esperado)**
+>
+> Verificar que el historial de cambios en el repositorio local y en github sean similares.
+>
+> **Historial local**:
+>
+> ![fig1_31](images/exercises/fig1_31.png)
+> 
+> **Historial remoro**:
+>
+> ![fig1_34](images/exercises/fig1_34.png)
+
+## Ejercicio 2 - Actualización del proyecto
+
+La actualización de software consiste en el proceso de evolucionar una aplicación mediante la incorporación de nuevas funcionalidades, la corrección de errores detectados o la optimización de su rendimiento. Su objetivo primordial es aportar valor directo al usuario final, modificando o expandiendo las capacidades del sistema para adaptarlo a nuevas necesidades o estándares técnicos. 
+
+En un entorno colaborativo, cada actualización representa un avance incremental en el ciclo de vida del proyecto, gestionado de forma organizada para asegurar que el software sea siempre funcional, relevante y eficiente.
+
+**Escenario:** Supongamos que desea realizar una actualización al programa anterior para que el saludo al usuario sea más personalizado según la hora del día. Tras analizar el requerimiento, se deben realizar cambios en el código original siguiendo estas acciones:
+
+### Pasos a seguir
+
+1. Estando en la carpeta raíz, ejecute los siguientes comandos para verificar que los repositorios local y remoto estén actualizados:
+   
+   ```bash
+   git pull origin main
+   git status
+   ```
+   
+   > ✅ **Checkpoint 7 (esperado)** <br>
+   > `git status` muestra: `On branch main` y que no hay cambios pendientes.
+   > 
+   > ![fig1_35](images/exercises/fig1_35.png)
+
+2. Modifique y guarde los cambios en el archivo `src/greeter.py` para que incluya la lógica de horarios:
+   
+   ```py
+   def greet(name, hour=None):
+      if not name or not name.strip():
+         raise ValueError("El nombre no puede estar vacío.")
+
+      name = name.strip()
+
+      if hour is None:
+         return f"Hola, {name}!"
+
+      if not isinstance(hour, int) or hour < 0 or hour > 23:
+         raise ValueError("La hora debe estar entre 0 y 23.")
+
+      if 5 <= hour < 12:
+         greeting = "Buenos días"
+      elif 12 <= hour < 19:
+         greeting = "Buenas tardes"
+      else:
+         greeting = "Buenas noches"
+
+      return f"{greeting}, {name}."
+    ```
+
+3. Reemplace y guarde los cambios en el archivo tests/`test_greeter.py` para cubrir los nuevos casos de prueba:
+   
+   ```py
+   import pytest
+   from src.greeter import greet
+
+   def test_greet_default():
+      assert greet("don Ramon") == "Hola, don Ramon!"
+
+   def test_greet_morning():
+      assert greet("don Ramon", 8) == "Buenos días, don Ramon."    
+    
+   def test_greet_afternoon():
+      assert greet("don Ramon", 15) == "Buenas tardes, don Ramon."
+    
+   def test_greet_night():
+      assert greet("don Ramon", 22) == "Buenas noches, don Ramon."
+    
+   def test_invalid_hour():
+      with pytest.raises(ValueError):
+         greet("don Ramon", 25)
+
+   def test_empty_name():
+      with pytest.raises(ValueError):
+         greet("", 10)
+   ```
+
+4. Active el entorno virtual nuevamente y ejecute las pruebas unitarias:
+   
+   ```
+   pytest -q
+   ```
+
+   > ✅ **Checkpoint 8 (esperado)** <br>
+   > `pytest -q` muestra: `6 passed`
+   > 
+   > ![fig1_36](images/exercises/fig1_36.png)
+
+5. Ahora cree un nuevo archivo `src/main.py`, el cual será el encargado de la interacción con el usuario:
+   
+   ```py
+   import sys
+   from src.greeter import greet
+     
+   def main():
+      if len(sys.argv) < 2:
+         print("Uso: python -m src.main <nombre> [hora]")
+         return
+    
+      name = sys.argv[1]
+      hour = None
+    
+      if len(sys.argv) >= 3:
+         try:
+            hour = int(sys.argv[2])
+         except ValueError:
+            print("La hora debe ser un entero entre 0 y 23.")
+            return
+     
+      try:
+         print(greet(name, hour))
+      except ValueError as e:
+         print(f"ERROR: {e}")
+   
+   if __name__ == "__main__":
+       main()
+   ```
+
+   Realice varias pruebas manuales en la terminal para verificar el funcionamiento:
+
+   ```bash
+   python -m src.main Pepe 8
+   python -m src.main Pepe 15
+   python -m src.main Pepe 22
+   python -m src.main Pepe
+   ```
+
+   > ✅ **Checkpoint 8 (esperado)** <br>
+   > Se muestran las salidas esperadas según la lógica implementada:
+   > 
+   > ![fig1_36](images/exercises/fig1_36.png)
+   
+   Una vez hecho lo anterior desactive el entorno virtual.
+
+6. Subir los cambios siguiento el flujo completo `add → commit → log → push`
+   
+   ```bash
+   git status
+   git add src/greeter.py tests/test_greeter.py src/main.py
+   git commit -m "feat: saludo por hora + main ejecutable + pruebas"
+   git log --oneline --graph
+   git push origin main
+   ```
+   
+   > ✅ **Checkpoint 9 (esperado)** <br>
+   > * En GitHub, en la rama main, se ven los cambios en:
+   >   * src/greeter.py
+   >   * tests/test_greeter.py
+   >   * src/main.py
+   > * El historial de commits se ve reflejado correctamente:
+   > 
+   > ![fig1_38](images/exercises/fig1_38.png)
+ 
 
 ## Referencias
 
-1. https://carpentries-incubator.github.io/open-science-with-r/09-collaborating/index.html
-2. https://colab.research.google.com/github/astg606/py_materials/blob/master/git_tutorial/git_and_github.ipynb
-3. https://lmu-osc.github.io/Collaborative-RStudio-GitHub/
-4. https://learning.nceas.ucsb.edu/2021-11-RRCourse/git-collaboration-and-conflict-management.html
-5. https://blog.devgenius.io/git-workflow-complete-guide-for-beginners-with-commands-examples-afcccd50f195
-6. https://smartprogramming.in/tutorials/git-and-github/git-add-files-to-staging
-7. https://pages.cs.wisc.edu/~lcai64/
-8. https://kevinsguides.com/guides/code/devops/file-mgmt/git-github-workflow-branch-merge/
-9. https://blog.ltgt.net/teaching-git/
-10. https://ocw.mit.edu/courses/6-170-software-studio-spring-2013/9395cd5506f95fee592ddadfa920b0ee_MIT6_170S13_rec1-Git.pdf
+1. https://www.datacamp.com/tutorial/github-and-git-tutorial-for-beginners
+2. https://github.com/Pargat-Dhanjal/MLSA-Git-and-Github/tree/master?tab=readme-ov-file
+3. https://learngitbranching.js.org/?locale=es_ES
+4. https://docs.github.com/es/get-started/using-git/about-git
+5. https://carpentries-incubator.github.io/open-science-with-r/09-collaborating/index.html
+6. https://colab.research.google.com/github/astg606/py_materials/blob/master/git_tutorial/git_and_github.ipynb
+7. https://lmu-osc.github.io/Collaborative-RStudio-GitHub/
+8. https://learning.nceas.ucsb.edu/2021-11-RRCourse/git-collaboration-and-conflict-management.html
+9. https://blog.devgenius.io/git-workflow-complete-guide-for-beginners-with-commands-examples-afcccd50f195
+10. https://smartprogramming.in/tutorials/git-and-github/git-add-files-to-staging
+11. https://pages.cs.wisc.edu/~lcai64/
+12. https://kevinsguides.com/guides/code/devops/file-mgmt/git-github-workflow-branch-merge/
+13. https://blog.ltgt.net/teaching-git/
+14. https://ocw.mit.edu/courses/6-170-software-studio-spring-2013/9395cd5506f95fee592ddadfa920b0ee_MIT6_170S13_rec1-Git.pdf
+
+
+> [!important]
+> Este material fue desarrollado con apoyo de herramientas de IA como asistente de redacción y estructuración. El contenido ha sido supervisado, validado y refinado por intervención humana para garantizar su precisión técnica y coherencia pedagógica. No obstante, pueden haber errores.
