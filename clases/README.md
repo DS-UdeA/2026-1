@@ -14,7 +14,9 @@ A continuación se describe el cronograma del curso por clases.
 | 2      | 4     |Laboratorio| 16/02/2026   | --- | ---  | No hubo laboratorio  |
 | 2      | 5     |Teoria| 18/02/2026   | Clase 1 - Introducción y contextualización | Recursos clase 1 [[link]](clase_01/) | Sistemas basados en archivos, bases de datos, motores de bases de datos |
 | 2      | 6     |Teoria| 20/02/2026   | Clase 2 - Representación de los datos | Recursos clase 2 [[link]](clase_02/) | Representación en bases de datos |
-| 3      | 7     |Laboratorio| 25/02/2026   |  |  | Introducción al manejo de repositorios |
-| 3      | 8     |Teoria| 27/02/2026   |  |  |  |
-| 3      | 9     |Teoria| 01/01/2026   |  |  |  |
-
+| 3      | 7   |Laboratorio| 23/02/2026 | Introducción al manejo de repositorios | Recursos laboratorio 1 [[link]](../labs/lab1/) | Comandos basicos de `git` (`add`, `commit`, `push`, `pull`, `status`,`log`), sincronización de repositorio local y remoto, entornos virtuales de python |
+| 3      | 8     |Teoria| 25/02/2026   | Clase 3 - Almacenamiento de datos (Parte 1) | Recursos clase 3 [[link]](clase_03/) | Jeraquia de memoria, metricas de desempeño (Latencia y Trhoughput) |
+| 3      | 9     |Teoria| 27/02/2026   | Clase 3 - Almacenamiento de datos (Parte 2) | Recursos clase 3 [[link]](clase_03/) |  |
+| 3      | 10     |Laboratorio| 02/03/2026   |  |  |  |
+| 3      | 11    |Teoria| 04/03/2026   |  |  |  |
+| 3      | 12   |Teoria| 06/03/2026   |  |  |  |
