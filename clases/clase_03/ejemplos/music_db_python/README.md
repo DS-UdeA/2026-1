@@ -1,6 +1,6 @@
-# Implementación en Python: Conexión y operaciones sobre PostgreSQL
+![Built with AI](https://img.shields.io/badge/Built%20with-AI-blue.svg)
 
----
+# Implementación en Python: Conexión y operaciones sobre PostgreSQL
 
 ## 1. Propósito
 
@@ -362,3 +362,6 @@ El presente trabajo pretende demostrar que:
 * La integridad referencial protege la información.
 
 La interacción con PostgreSQL desde Python constituye el primer paso hacia el desarrollo de sistemas backend completos.
+
+> [!important]
+> Este material fue desarrollado con apoyo de herramientas de IA como asistente de redacción y estructuración. El contenido ha sido supervisado, validado y refinado por intervención humana para garantizar su precisión técnica y coherencia pedagógica. No obstante, pueden haber errores.
