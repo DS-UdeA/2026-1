@@ -1,7 +1,10 @@
 # Conexión a una base de datos
 
+En construcción...
+
 * https://realpython.com/python-sql-libraries/
 
+<!--
 ## Base de datos
 
 ### Modelo Entidad relación
@@ -60,9 +63,9 @@ erDiagram
 >[!caution]
 >En la tabla relacional hay un registro malo pues el album Body and Soul pertenece a Billie Holiday y no a Ella Fitzgerald y Louis Armstrong como esta en la tabla.
 
-### Repaso operaciones
+## Operaciones SQL
 
-Teniendo la base de datos con la información de las tablas realizar las consultas.
+Teniendo la base de datos con la información de las tablas realizar las consultas para ver si los datos coinciden
 
 
 
@@ -73,3 +76,10 @@ Nuestro objetivo es realizar las siguientes tareas sencillo que:
    * Nuevo album (con artista aun no agregado)
    * Intenta asociar el nuevo album a un artista que no esta registrado (ver que error saca). ¿Seria util colocar una información asociada a un artista no conocido?, ¿Se puede poner un NULL en ese campo?
    * Actualizar el artista asociado al album, luego reintentar la operación.
+   * Eliminar el album que tiene dos artistas.
+  
+
+## Uso de lenguaje de programación
+
+Reiniciar la base de datos a sus valores iniciales.
+-->
