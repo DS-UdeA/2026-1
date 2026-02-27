@@ -341,7 +341,7 @@ Se debe generar un error relacionado con violación de clave foránea.
 
 ---
 
-# 8. Observaciones importantes
+## 8. Observaciones importantes
 
 * **pgAdmin** facilita pruebas manuales y administración.
 * **Python** (o Java) permite que la interacción sea parte de un sistema real: aplicaciones, servicios web, APIs, automatización, etc.
@@ -352,7 +352,7 @@ En la práctica profesional, lo usual es:
 
 ---
 
-# 9. Conclusiones
+## 9. Conclusiones
 
 El presente trabajo pretende demostrar que:
 
