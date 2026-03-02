@@ -1,6 +1,8 @@
+![Built with AI](https://img.shields.io/badge/Built%20with-AI-blue.svg)
+
 # Laboratorio: Introducción a SQL y Documentación en GitHub 
 
-¡Bienvenidos a esta actividad introductoria! Hasta ahora hemos explorado cómo organizar datos en memoria, pero en el mundo real, los datos persistentes viven en Bases de Datos. Aunque ya tienen instalado PostgreSQL y han visto cómo ejecutar algunas consultas (*queries*), en esta práctica daremos un paso atrás para fortalecer la sintaxis fundamental de SQL y luego la pondremos a prueba resolviendo un misterio.
+Hasta ahora hemos explorado cómo organizar datos en memoria, pero en el mundo real, los datos persistentes viven en Bases de Datos. Aunque ya tienen instalado PostgreSQL y han visto cómo ejecutar algunas consultas (*queries*), en esta práctica daremos un paso atrás para fortalecer la sintaxis fundamental de SQL y luego la pondremos a prueba resolviendo un misterio.
 
 Además, aprenderemos a documentar nuestro proceso de forma profesional utilizando Markdown en GitHub.
 
@@ -280,3 +282,5 @@ Una vez que su reporte esté redactado y guardado, debe sincronizar todos estos 
 
 La entrega final del laboratorio consistirá en proporcionar el enlace público a este repositorio de GitHub a través del medio indicado por el equipo docente.
 
+> [!important]
+> Este material fue desarrollado con apoyo de herramientas de IA como asistente de redacción y estructuración. El contenido ha sido supervisado, validado y refinado por intervención humana para garantizar su precisión técnica y coherencia pedagógica. No obstante, pueden haber errores.
