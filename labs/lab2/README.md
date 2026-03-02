@@ -152,7 +152,13 @@ Antes de asumir su rol como detective y pasar al reto principal, realice una aut
 > * Si alguna de estas herramientas no le resulta del todo clara, le sugerimos repasar la lección correspondiente en SQLBolt. ¡Un buen detective conoce sus herramientas a la perfección antes de ir a la escena del crimen!
 > * Para facilitar el desarrollo del reto, se recomienda tener a mano la siguiente hoja resumen: **SQL Basics Cheat Sheet** [[pdf]](./sql/sql-basics-cheat-sheet-a4.pdf) [[link]](https://learnsql.com/blog/sql-basics-cheat-sheet/) 
 
-A continuación, le presento la redacción para la **Parte 2**, integrando perfectamente las instrucciones del reto con la estructura de carpetas que definió previamente (`consultas/respuestas.sql` y `evidencia/`).
+#### Recursos Adicionales Recomendados
+
+> [!tip]
+> **Sobre el uso de Inteligencia Artificial y el *Vibe Coding***
+> Una vez que haya interiorizado y comprendido los conceptos fundamentales de la sintaxis SQL, no está mal apoyarse en herramientas de Inteligencia Artificial para agilizar su trabajo (una práctica popularizada recientemente como *vibe coding*). Sin embargo, recuerde: el secreto de un buen ingeniero (o de un gran detective) no radica en dejar que la IA resuelva el problema a ciegas, sino en saber cómo estructurar lógicamente sus peticiones (*prompts*) y tener la capacidad crítica para auditar, entender y corregir el código generado. ¡Utilice la IA como su asistente de investigación, no como su reemplazo!
+
+Antes de adentrarse en la escena del crimen, si desea profundizar en sus conocimientos, repasar algún comando específico o entender mejor cómo integrar asistentes de IA en su flujo de escritura de consultas, le invitamos a explorar el recurso **[DataCamp: SQL with AI Cheat Sheet](https://www.datacamp.com/cheat-sheet/sql-with-ai-cheat-sheet)** el cual resume buenas prácticas para formular consultas SQL con apoyo de herramientas de IA.
 
 ### Parte 2: El Reto - *SQL Murder Mystery*
 
@@ -211,7 +217,66 @@ Para que su trabajo como detective sea evaluado, debe registrar rigurosamente su
 
 ![check_solution](check_solution.png)
 
-## Referencias
+Aquí tiene la redacción para la **Parte 3**, manteniendo el hilo narrativo del detective, el tono formal e incorporando las alertas de GitHub y la estructura de carpetas que hemos venido trabajando.
 
-* https://selectstarsql.com/
-* 
+Puede agregar este bloque justo al final de su documento:
+
+### Parte 3: Documentación y Entrega del Caso
+
+Todo buen detective sabe que un caso no se cierra hasta que se archiva el reporte oficial. Ahora que ha resuelto el misterio y recolectado las pruebas en su repositorio local, es momento de estructurar su `README.md` final y subir los cambios a GitHub.
+
+1. Abra el archivo `README.md` que se encuentra en la raíz de su repositorio local (`lab2-sql-murder-NombreApellido`).
+2. Borre el contenido por defecto (si lo hubiera) y redacte el reporte detallado de su investigación utilizando **Markdown**.
+   
+   > [!tip]
+   > Para saber como usar mardown consulte la siguiente documentación:
+   > * **Markdown Cheat Sheet** [[link]](https://www.markdownguide.org/cheat-sheet/)
+   > * **Markdown Cheatsheet - Adam Pritchard** [[link]](https://github.com/adam-p/markdown-here/wiki/markdown-cheatsheet)
+   > * **Markdown Cheat Sheet - Datacamp** [[link]](https://www.datacamp.com/cheat-sheet/markdown-cheat-sheet-23)
+   
+
+#### Estructura esperada del Reporte (`README.md`)
+
+Su documento debe ser completamente autocontenido, de forma que cualquier persona que lo lea entienda cómo resolvió el crimen paso a paso. Asegúrese de incluir las siguientes secciones:
+
+* **Título y Datos del Detective:** Nombre de la actividad y su nombre completo.
+* **Resumen del Caso:** Un breve párrafo introductorio indicando quién fue el culpable del asesinato.
+* **Bitácora de Investigación:** Documente el hilo lógico de su investigación de principio a fin. 
+    * **Consultas:** Utilice bloques de código en Markdown (con las comillas invertidas ` ```sql `) para mostrar las *queries* exactas que ejecutó. Recuerde que puede copiarlas directamente de su archivo `consultas/respuestas.sql`.
+    * **Explicaciones:** Debajo de cada *query*, explique brevemente en lenguaje natural qué pista buscaba y qué información nueva descubrió.
+    * **Evidencias Visuales:** Inserte las capturas de pantalla que guardó en la carpeta `evidencia/` para respaldar sus hallazgos más importantes (obligatoriamente debe incluir la captura con el mensaje de éxito final de la plataforma).
+    
+    *Recuerde la sintaxis para insertar imágenes locales en Markdown:*
+    ```markdown
+    ![Descripción de la captura o pista](evidencia/nombre_de_la_imagen.png)
+    ```
+
+#### Sincronización Final (Push)
+
+Una vez que su reporte esté redactado y guardado, debe sincronizar todos estos nuevos archivos e imágenes con su repositorio en la nube para efectuar la entrega. 
+
+1. Abra su terminal asegurándose de estar en la raíz de su proyecto local.
+2. Agregue todos los archivos modificados y nuevos (el README actualizado, las imágenes en `evidencia/` y el archivo en `consultas/`):
+   
+   ```bash
+   git add .
+   ```
+
+3. Cree un *commit* indicando el cierre del caso:
+   
+   ```bash
+   git commit -m "Entrega final: Reporte del caso resuelto y evidencias agregadas"
+   ```
+
+
+4. Suba los cambios a GitHub:
+   
+   ```bash
+   git push origin main
+   ```
+
+> [!important]
+> **Verificación final:** Antes de dar por terminada la actividad, ingrese a la página de su repositorio en GitHub (`https://github.com/SuUsuario/lab2-sql-murder-NombreApellido`) y verifique visualmente que el `README.md` esté bien formateado, que las imágenes carguen sin problemas y que las carpetas contengan los archivos correctos.
+
+La entrega final del laboratorio consistirá en proporcionar el enlace público a este repositorio de GitHub a través del medio indicado por el equipo docente.
+

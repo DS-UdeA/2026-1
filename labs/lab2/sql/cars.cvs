@@ -1,0 +1,20 @@
+make,model,year,propulsion_type,time_to_60_mph_s,limited_production_count
+Porsche,Taycan Turbo GT,2025,Electric,1.89,
+Lucid,Air Sapphire,2024,Electric,1.90,
+Tesla,Model S Plaid,2021,Electric,1.98,
+Ferrari,SF90 Stradale,2021,Hybrid,2.00,
+Porsche,918 Spyder,2015,Hybrid,2.10,918
+Porsche,911 Turbo S Lightweight (992),2020,ICE,2.10,
+Lamborghini,Revuelto,2024,Hybrid,2.20,
+Lamborghini,Huracan Performante,2018,ICE,2.20,
+Bugatti,Chiron Super Sport,2021,ICE,2.20,110
+Chevrolet,Corvette (C8) ZR1,2025,ICE,2.20,
+Tesla,Model S P100D,2017,Electric,2.28,
+Ferrari,296 GTB,2023,Hybrid,2.30,
+McLaren,750S,2024,ICE,2.30,
+Bugatti,Veyron,2005,ICE,2.40,450
+Bugatti,Chiron Sport,2017,ICE,2.40,60
+Nissan,GT-R Nismo,2020,ICE,2.48,
+BMW,M8 Competition,2019,ICE,2.50,
+Dodge,Challenger SRT Demon,2018,ICE,2.60,3300
+Audi,R8 V10 Plus,2017,ICE,2.60,
