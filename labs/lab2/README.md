@@ -16,6 +16,7 @@ Además, aprenderemos a documentar nuestro proceso de forma profesional utilizan
 
 * Contar con una cuenta activa en [GitHub](https://github.com/).
 * Repasar los conceptos básicos de uso de repositorios (clonar, hacer *commit*, hacer *push*), vistos en el [Laboratorio 1](https://github.com/DS-UdeA/2026-1/tree/main/labs/lab1).
+* Conocimiento básico de la estructura de una base de datos (Tablas, Filas, Columnas).
 * ¡Mucha disposición para investigar y aprender!
 
 ## Recursos a Utilizar
@@ -36,7 +37,7 @@ Antes de iniciar con la lectura y desarrollo de los recursos, es fundamental pre
 
 1. Ingrese a sus cuenta de GitHub y hagan clic en el botón **"New"** para crear un nuevo repositorio.
    
-2. Asigne como nombre del repositorio `lab2-sql-murder-NombreApellido`. Por ejemplo, si su nombre es Ruben Aguirre, el repositorio se deberá nombrar como: `lab2-sql-murder-RubenAguirre`
+2. Asigne como nombre del repositorio `lab2-sql-murder-NombreApellido`. Por ejemplo, si su nombre es *Ruben Aguirre*, el repositorio se deberá nombrar como: `lab2-sql-murder-RubenAguirre`
 3. Para la configuración del repositorio, solo marque los siguientes items:
    - [x] **Visibilidad**: "Public"
    - [x] **Readme** "Add a README file"
@@ -68,7 +69,7 @@ Antes de iniciar con la lectura y desarrollo de los recursos, es fundamental pre
 2. La estructura de esta carpeta será la siguiente:
    
    ```
-   lab2-sql-murder-nombreapellido/
+   lab2-sql-murder-NombreApellido/
    │
    ├── README.md
    ├── evidencia/
