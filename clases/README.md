@@ -19,7 +19,7 @@ A continuación se describe el cronograma del curso por clases.
 |        | 9     |Teoria| 27/02/2026   | Clase 3 - Almacenamiento de datos (Parte 2) | Recursos clase 3 [[link]](clase_03/) |  |
 | 4      | 10    |Laboratorio| 02/03/2026   | Lab 2 - Introducción a SQL y Documentación en GitHub | Recursos laboratorio 2 [[link]](../labs/lab2/) | Introducción a lenguaje SQL, lenguaje markdown |
 |        | 11    |Teoria| 04/03/2026   | --- | --- | No hubo clase |
-|        | 12   |Teoria| 06/03/2026   | Clase 4 - Archivos | Recursos clase 4 [[link]](clase_04/) | No hubo clase |
+|        | 12   |Teoria| 06/03/2026   | Clase 4 - Archivos | Recursos clase 4 [[link]](clase_04/) |  |
 
 
 ## Lecturas complementarias
