@@ -3,3 +3,7 @@
 ## Resumen
 
 To Do...
+
+## Lecturas recomenadas
+
+

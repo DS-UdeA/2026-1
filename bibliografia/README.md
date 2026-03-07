@@ -20,9 +20,6 @@ Este documento reúne la bibliografía oficial, los materiales de estudio y las 
 6. **Ramakrishnan, R., & Gehrke, J. (2003).** *Database Management Systems* (3rd Edition). McGraw-Hill.
     * **Enfoque:** Conocido como el "Cow Book", es una referencia estándar por su claridad al explicar la implementación de índices (B+ Trees, Hashing) y el optimizador de consultas.
 
-
-https://courses.cs.washington.edu/courses/cse444/
-
 ---
 
 ## Guías de Implementación (Por Lenguaje)
@@ -38,7 +35,8 @@ Seleccione los recursos correspondientes al lenguaje de programación.
 * **Proyecto SimpleDB (MIT/Boston College)**
     * Código fuente de referencia académica.
     * [🔗 Ver Repositorio en GitHub](https://github.com/MIT-DB-Class/simple-db-hw)
-
+* **Data Structures & Algorithm Analysis - Clifford A. Shaffer**
+  * [🌐 Sitio Web](https://people.cs.vt.edu/~shaffer/Book/)
 ### Python
 
 * **Goodrich, M. T., Tamassia, R., & Goldwasser, M. H. (2013).** *Data Structures and Algorithms in Python*. Wiley.
@@ -87,6 +85,8 @@ Seleccione los recursos correspondientes al lenguaje de programación.
 ### CS50's Introduction to Databases with SQL
 * [🌐 Sitio Web del Curso](https://cs50.harvard.edu/sql/)
 
+### CSE444: Database Systems Internals
+* [🌐 Sitio Web del Curso](https://courses.cs.washington.edu/courses/cse444/)
 
 ---
 
