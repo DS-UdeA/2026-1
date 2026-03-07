@@ -253,12 +253,6 @@ Los valores de la tabla son **aproximaciones conceptuales**.
 > **Nota**: Un valor de latencia inusualmente bajo (ej. < 1 µs) suele ser un indicador de que el experimento está midiendo la **Caché en RAM** y no el disco físico.
 
 ---
-Aquí tienes la actualización de la sección **Actividad de laboratorio**. He ajustado la narrativa para que mantenga ese equilibrio entre la formalidad académica y una guía cercana, asegurando que el flujo desde la caracterización del hardware hasta el análisis de resultados sea coherente y profesional.
-
----
-Aquí tiene la actualización de la sección **Actividad de laboratorio** con un tono formal, utilizando el tratamiento de "usted" y manteniendo el rigor académico y la claridad narrativa para el estudiante.
-
----
 
 ## Actividad de laboratorio
 
