@@ -5,6 +5,7 @@ Este documento reúne la bibliografía oficial, los materiales de estudio y las 
 ---
 
 ## Fundamentación Teórica
+
 *Lecturas obligatorias para comprender los conceptos clave, independientemente del lenguaje de programación que decida utilizar.*
 
 1.  **Petrov, A. (2019).** *Database Internals: A Deep Dive into How Distributed Data Systems Work*. O'Reilly Media.
@@ -37,6 +38,7 @@ Seleccione los recursos correspondientes al lenguaje de programación.
     * [🔗 Ver Repositorio en GitHub](https://github.com/MIT-DB-Class/simple-db-hw)
 * **Data Structures & Algorithm Analysis - Clifford A. Shaffer**
   * [🌐 Sitio Web](https://people.cs.vt.edu/~shaffer/Book/)
+  
 ### Python
 
 * **Goodrich, M. T., Tamassia, R., & Goldwasser, M. H. (2013).** *Data Structures and Algorithms in Python*. Wiley.
@@ -90,6 +92,55 @@ Seleccione los recursos correspondientes al lenguaje de programación.
 
 ---
 
+## Bases de datos
+
+
+A continuación se listan algunos sistemas de bases de datos académicos utilizados en cursos universitarios para estudiar la arquitectura interna de un DBMS.
+
+### Java
+
+- **SimpleDB (MIT)**  
+  Implementación educativa usada en cursos del MIT para enseñar los componentes básicos de un DBMS.  
+  - https://github.com/MIT-DB-Class/simple-db-hw
+  - https://github.com/awelm/simpledb
+
+---
+
+### C++
+
+- **BusTub (Carnegie Mellon University)**  
+  DBMS educativo utilizado en el curso CMU 15-445/645 para estudiar almacenamiento, índices y ejecución de consultas.  
+  https://github.com/cmu-db/bustub
+
+- **Minibase**  
+  Motor de base de datos educativo asociado al libro *Database Management Systems* de Ramakrishnan & Gehrke.  
+  https://github.com/zhangzhiyi/minibase
+
+---
+
+### Python
+
+- **SimpleDB (Python)**  
+  Implementación ligera de un DBMS en Python diseñada para explorar conceptos básicos de almacenamiento y manejo de registros.  
+  - https://github.com/coleifer/simpledb
+  
+
+- **TinyDB**  
+  Base de datos ligera escrita en Python que almacena datos en archivos JSON, útil para estudiar bases de datos embebidas.  
+  https://github.com/msiemens/tinydb
+
+---
+
+### Sistemas reales (para estudiar arquitectura)
+
+- **SQLite**  
+  Motor de base de datos embebido ampliamente utilizado y muy estudiado en cursos de bases de datos.  
+  https://github.com/sqlite/sqlite
+
+- **DuckDB**  
+  Sistema analítico moderno diseñado para procesamiento eficiente de datos en columnas.  
+  https://github.com/duckdb/duckdb
+
 ## Simuladores y Visualización
 *Herramientas obligatorias para realizar pruebas de escritorio antes de programar.*
 
@@ -99,7 +150,7 @@ Permite ver paso a paso cómo se comportan las estructuras al insertar o borrar 
 * [Ir a Algorithms](https://www.cs.usfca.edu/~galles/visualization/Algorithms.html)
   * [Árboles B-Tree](https://www.cs.usfca.edu/~galles/visualization/BTree.html)
   * [Árboles B+ Tree](https://www.cs.usfca.edu/~galles/visualization/BPlusTree.html)
-  * [#Hashing](https://www.cs.usfca.edu/~galles/visualization/OpenHash.html)
+  * [Hashing](https://www.cs.usfca.edu/~galles/visualization/OpenHash.html)
 
 ### VisuAlgo (National University of Singapore)
 Muestra la ejecución del algoritmo visualmente junto con su pseudocódigo.
