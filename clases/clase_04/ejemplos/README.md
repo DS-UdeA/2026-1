@@ -1,6 +1,7 @@
 # DBFiles — Representación física de datos en un DBMS
 
-<--
+<!--
+
 Este ejercicio estudia cómo un sistema gestor de bases de datos representa los datos en disco.
 
 El objetivo es entender la estructura fundamental que usan los DBMS modernos:
@@ -407,5 +408,4 @@ Pruebas →
 - inserción  
 - eliminación  
 - acceso por RID  
-
 -->
