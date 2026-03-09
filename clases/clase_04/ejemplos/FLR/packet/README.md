@@ -24,7 +24,6 @@ graph LR
         RN["... <br/> 50 bytes"]
         R0 --> R1 --> R2 --> RN
     end
-
 ```
 
 ### Paginación (Pages) y RID
@@ -33,7 +32,7 @@ Como se ilustra en las diapositivas, el hardware de almacenamiento no opera byte
 
 ```mermaid
 graph TD
-    subgraph "Estructura de Páginas (v2 y v3)"
+    subgraph "Estructura de Páginas <br/> (v2 y v3)"
         subgraph "Página 0 (128 bytes)"
             direction TB
             S00["Slot 0: <br/> Registro 0 (50 bytes)"]
@@ -56,7 +55,7 @@ En las bases de datos relacionales no se eliminan físicamente los registros des
 
 ```mermaid
 graph TD
-    subgraph "Página 0 (con Borrado Lógico)"
+    subgraph "Página 0 <br/> (con Borrado Lógico)"
         direction TB
         Homer["Slot 0: '  123Simpson Homer...' <br/> (Estado: Activo)"]
         Marge["Slot 1: '*****Simpson Marge...' <br/> (Estado: Borrado/Lápida)"]
@@ -71,7 +70,7 @@ Para evitar la fragmentación y el desperdicio de disco generado por los borrado
 
 ```mermaid
 graph TD
-    subgraph "Archivo Heap (v3) - Lista de Libres (Free List)"
+    subgraph "Archivo Heap (v3) - <br/> Lista de Libres (Free List)"
         direction TB
         Head["RAM: <br/> free_list_head = RID 1,0"]
         subgraph "Página 0"
@@ -102,17 +101,17 @@ Por favor, abran su terminal en el directorio donde residen los scripts y sigan 
 
 ### Fase 1: Comprensión de la Longitud Fija
 
-* **Ejecute:** `python heap_file_fixed.py`
-* **Puntos de Control (Checklist):**
-* [ ] La salida en consola muestra los datos empaquetados y desempaquetados sin pérdida de información.
-* [ ] Se confirma la búsqueda directa y exitosa en tiempo O(1) para el índice 2.
-* [ ] Al abrir el archivo `my_database.dat` en un editor de texto, se observa que todos los datos residen en una única línea continua.
+Ejecute el archivo [`heap_file_fixed.py`](heap_file_fixed.py)
 
+* **Puntos de Control (Checklist):**
+  * [ ] La salida en consola muestra los datos empaquetados y desempaquetados sin pérdida de información.
+  * [ ] Se confirma la búsqueda directa y exitosa en tiempo O(1) para el índice 2.
+  * [ ] Al abrir el archivo `my_database.dat` en un editor de texto, se observa que todos los datos residen en una única línea continua.
 
 
 ### Fase 2: Paginación y Lápidas
 
-* **Ejecute:** `python heap_file_v2_pages.py`
+Ejecute el script [`heap_file_v2_pages.py`](heap_file_v2_pages.py)
 * **Puntos de Control (Checklist):**
 * [ ] La consola indica que un registro (Marge) fue eliminado lógicamente con éxito.
 * [ ] Al intentar buscar de nuevo el registro eliminado, el motor reporta correctamente que "no existe".
