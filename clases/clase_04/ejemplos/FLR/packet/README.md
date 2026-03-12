@@ -14,16 +14,34 @@ Antes de proceder con la ejecución del código, es pertinente repasar los conce
 
 Representa la estructura de almacenamiento más básica. Los registros se insertan sin un orden específico predefinido. Al forzar que cada registro ocupe exactamente la misma cantidad de bytes (por ejemplo, 50 bytes), es posible calcular la ubicación de cualquier registro mediante una función matemática de complejidad O(1). Si el dato original es de menor tamaño, se rellena el espacio sobrante con caracteres en blanco (*Padding*).
 
-```mermaid
-graph LR
-    subgraph "Archivo Heap (v1) - Registros Continuos"
-        direction TB
-        R0["Registro 0 <br/> 50 bytes"]
-        R1["Registro 1 <br/> 50 bytes"]
-        R2["Registro 2 <br/> 50 bytes"]
-        RN["... <br/> 50 bytes"]
-        R0 --> R1 --> R2 --> RN
-    end
+
+```
+ARCHIVO: my_database.dat  (vista como secuencia lineal de bytes)
+─────────────────────────────────────────────────────────────────────────
+Byte 0                              Byte 49
+│◄──────────────── 50 bytes ───────────────►│
+┌──────┬───────────────┬───────────────┬─────┬──────────┐
+│  ID  │   Last Name   │  First Name   │ Age │  Salary  │
+│5 bytes│   15 bytes   │   15 bytes    │5 b  │ 10 bytes │
+├──────┼───────────────┼───────────────┼─────┼──────────┤
+│  123 │ Simpson       │ Homer         │  31 │ $400     │  ← Registro 0
+└──────┴───────────────┴───────────────┴─────┴──────────┘
+Byte 50                             Byte 99
+┌──────┬───────────────┬───────────────┬─────┬──────────┐
+│  443 │ Simpson       │ Marge         │  32 │ $140     │  ← Registro 1
+└──────┴───────────────┴───────────────┴─────┴──────────┘
+Byte 100                            Byte 149
+┌──────┬───────────────┬───────────────┬─────┬──────────┐
+│  244 │ Flanders      │ Ned           │  55 │ $300     │  ← Registro 2
+└──────┴───────────────┴───────────────┴─────┴──────────┘
+Byte 150                            Byte 199
+┌──────┬───────────────┬───────────────┬─────┬──────────┐
+│  134 │ Skinner       │ Seymour       │  55 │ $400     │  ← Registro 3
+└──────┴───────────────┴───────────────┴─────┴──────────┘
+
+FÓRMULA DE ACCESO DIRECTO O(1):
+  offset = índice × RECORD_SIZE
+  offset = 2     × 50          = 100  → Ned Flanders, sin leer Homer ni Marge
 ```
 
 ### Paginación (Pages) y RID
@@ -103,33 +121,34 @@ Por favor, abran su terminal en el directorio donde residen los scripts y sigan 
 
 Ejecute el archivo [`heap_file_fixed.py`](heap_file_fixed.py)
 
-* **Puntos de Control (Checklist):**
-  * [ ] La salida en consola muestra los datos empaquetados y desempaquetados sin pérdida de información.
-  * [ ] Se confirma la búsqueda directa y exitosa en tiempo O(1) para el índice 2.
-  * [ ] Al abrir el archivo `my_database.dat` en un editor de texto, se observa que todos los datos residen en una única línea continua.
+**Puntos de Control (Checklist)**:
+* [ ] La salida en consola muestra los datos empaquetados y desempaquetados sin pérdida de información.
+* [ ] Se confirma la búsqueda directa y exitosa en tiempo O(1) para el índice 2.
+* [ ] Al abrir el archivo `my_database.dat` en un editor de texto, se observa que todos los datos residen en una única línea continua.
 
 
 ### Fase 2: Paginación y Lápidas
 
 Ejecute el script [`heap_file_v2_pages.py`](heap_file_v2_pages.py)
-* **Puntos de Control (Checklist):**
+
+**Puntos de Control (Checklist)**:
 * [ ] La consola indica que un registro (Marge) fue eliminado lógicamente con éxito.
 * [ ] Al intentar buscar de nuevo el registro eliminado, el motor reporta correctamente que "no existe".
 * [ ] Al inspeccionar el archivo `my_database_pages.dat`, se aprecian secuencias de guiones (`-`) al final de cada bloque, lo que evidencia la fragmentación interna.
 * [ ] En el mismo archivo, se verifica que el ID del registro borrado fue reemplazado por `*****`, pero los demás datos del registro permanecen como "fantasmas".
 
-
-
 ### Fase 3: Lista Enlazada de Espacios Libres
 
-* **Parte A (Inspección de Punteros):** En el archivo `heap_file_v3_freemospace.py`, comenten temporalmente las líneas que efectúan las inserciones de reciclaje (hacia el final del archivo) y ejecuten el script.
+* **Parte A (Inspección de Punteros):** En el archivo [`heap_file_v3_freemospace.py`](heap_file_v3_freemospace.py), comenten temporalmente las líneas que efectúan las inserciones de reciclaje (hacia el final del archivo) y ejecuten el script.
+  
 * **Puntos de Control (Checklist):**
-* [ ] Al abrir `my_database_v3.dat`, los espacios vacíos almacenan cadenas estructurales como `*FREE*P0000S0001` o `*FREE*NONE`.
+  * [ ] Al abrir `my_database_v3.dat`, los espacios vacíos almacenan cadenas estructurales como `*FREE*P0000S0001` o `*FREE*NONE`.
 
 * **Parte B (Verificación del Reciclaje):** Descomenten las líneas de inserción y vuelvan a ejecutar el script.
+
 * **Puntos de Control (Checklist):**
-* [ ] En la consola se confirma que los nuevos registros (Lisa y Milhouse) fueron insertados mediante reciclaje.
-* [ ] Al inspeccionar el archivo `my_database_v3.dat`, se comprueba que los nuevos registros sobreescribieron exactamente los espacios marcados previamente por la lista enlazada, sin aumentar el tamaño total del archivo.
+  * [ ] En la consola se confirma que los nuevos registros (Lisa y Milhouse) fueron insertados mediante reciclaje.
+  * [ ] Al inspeccionar el archivo `my_database_v3.dat`, se comprueba que los nuevos registros sobreescribieron exactamente los espacios marcados previamente por la lista enlazada, sin aumentar el tamaño total del archivo.
 
 ## 4. Tip Avanzado: Inspección Hexadecimal (Hexdump)
 
