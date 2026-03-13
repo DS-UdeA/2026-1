@@ -64,9 +64,12 @@ def bulk_insert_in_pages(records_data):
     with open(FILE_NAME, "w") as file:
         current_page_data = ""
         records_in_current_page = 0
+        current_page_id = 0
         
         for data in records_data:
             rec_str = format_record(*data)
+            slot_id = records_in_current_page
+            print(f"  RID asignado: ({current_page_id}, {slot_id}) → {data[2]} {data[1]}")
             current_page_data += rec_str
             records_in_current_page += 1
             
@@ -85,6 +88,7 @@ def bulk_insert_in_pages(records_data):
                 # Reseteamos para la siguiente página
                 current_page_data = ""
                 records_in_current_page = 0
+                current_page_id += 1
                 
         # Si quedaron registros en una página a medio llenar al terminar el ciclo
         if records_in_current_page > 0:
@@ -128,7 +132,8 @@ def search_record_by_rid(page_id, slot_id):
 
 def search_record_by_rid(page_id, slot_id):
     """
-    Busca un registro usando su RID. Ignora los registros borrados lógicamente.
+    Busca un registro usando su RID.
+    Retorna: tupla con datos si existe, 'TOMBSTONE' si fue borrado, None si no existe.
     """
     if not os.path.exists(FILE_NAME):
         return None
@@ -137,15 +142,19 @@ def search_record_by_rid(page_id, slot_id):
         return None
 
     offset = (page_id * PAGE_SIZE) + (slot_id * RECORD_SIZE)
-    
+    print(f"  Offset calculado: ({page_id} × {PAGE_SIZE}) + ({slot_id} × {RECORD_SIZE}) = {offset} bytes → file.seek({offset})")
+
     with open(FILE_NAME, "r") as file:
         file.seek(offset)
         chunk = file.read(RECORD_SIZE)
-        
-        # ¡NUEVA LÓGICA!: Si empieza con '*' es un registro borrado (Lápida)
-        if not chunk or chunk.startswith("-") or chunk.startswith("*"):
+
+        if not chunk or chunk.startswith("-"):
             return None
-            
+
+        # Distinguimos lápida de registro válido
+        if chunk.startswith("*"):
+            return "TOMBSTONE"
+
         return parse_record(chunk)
         
 # ============================================================================
@@ -204,6 +213,7 @@ if __name__ == "__main__":
     ]
     
     # 1. Guardamos la base de datos en páginas
+    print("--- Poblando el Heap File en Páginas ---")
     bulk_insert_in_pages(simpsons_data)
     print("¡Base de datos paginada guardada con éxito!\n")
     
@@ -216,7 +226,9 @@ if __name__ == "__main__":
     print(f"Buscando RID({target_page}, {target_slot})...")
     
     registro = search_record_by_rid(target_page, target_slot)
-    if registro:
+    if registro == "TOMBSTONE":
+        print(f"RID({target_page}, {target_slot}) → TOMBSTONE (registro borrado lógicamente)")
+    elif registro:
         print(f"Encontrado: {registro}")
     else:
         print("Registro vacío o no existe.")
@@ -236,9 +248,13 @@ if __name__ == "__main__":
         
     # 4. Verificamos que ya no se puede buscar
     print("\n--- Verificando la búsqueda tras el borrado ---")
+    print(f"Buscando RID({target_page_del}, {target_slot_del}) tras el borrado...")
     registro_marge = search_record_by_rid(target_page_del, target_slot_del)
     
-    if registro_marge:
+    if registro_marge == "TOMBSTONE":
+        print(f"RID({target_page_del}, {target_slot_del}) → TOMBSTONE — el registro fue borrado lógicamente.")
+        print("El RID sigue existiendo en disco pero el motor lo ignora en búsquedas normales.")
+    elif registro_marge:
         print(f"Error: Aún puedo ver a: {registro_marge}")
     else:
-        print("Éxito: El motor de base de datos reporta que el registro no existe.")
+        print("Registro vacío o no existe.")

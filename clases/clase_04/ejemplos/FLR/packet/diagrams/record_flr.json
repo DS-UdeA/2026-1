@@ -1,0 +1,8 @@
+{reg: [
+  {bits: 5,  name: "ID",         attr: "5 bytes",  type: 2},
+  {bits: 15, name: "Last Name",  attr: "15 bytes", type: 3},
+  {bits: 15, name: "First Name", attr: "15 bytes", type: 4},
+  {bits: 5,  name: "Age",        attr: "5 bytes",  type: 2},
+  {bits: 10, name: "Salary",     attr: "10 bytes", type: 5}
+],
+config: {hspace: 700, bits: 50, lanes: 1, fontsize: 14}}

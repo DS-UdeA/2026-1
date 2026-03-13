@@ -32,7 +32,7 @@ def format_record(emp_id, last_name, first_name, age, salary):
     last_name_str = str(last_name).ljust(LAST_NAME_SIZE)
     first_name_str = str(first_name).ljust(FIRST_NAME_SIZE)
     age_str = str(age).rjust(AGE_SIZE)
-    salary_str = str(salary).ljust(SALARY_SIZE) 
+    salary_str = str(salary).ljust(SALARY_SIZE)
     return id_str + last_name_str + first_name_str + age_str + salary_str
 
 def parse_record(record_str):
@@ -47,7 +47,7 @@ def parse_record(record_str):
     age_str = record_str[cursor : cursor + AGE_SIZE]
     cursor += AGE_SIZE
     salary_str = record_str[cursor : cursor + SALARY_SIZE]
-    return (int(id_str.strip()), last_name_str.strip(), first_name_str.strip(), 
+    return (int(id_str.strip()), last_name_str.strip(), first_name_str.strip(),
             int(age_str.strip()), salary_str.strip())
 
 # ============================================================================
@@ -59,7 +59,10 @@ def bulk_insert_in_pages(records_data):
     with open(FILE_NAME, "w") as file:
         current_page_data = ""
         records_in_current_page = 0
+        current_page_id = 0
         for data in records_data:
+            slot_id = records_in_current_page
+            print(f"  RID asignado: ({current_page_id}, {slot_id}) -> {data[2]} {data[1]}")
             current_page_data += format_record(*data)
             records_in_current_page += 1
             if records_in_current_page == RECORDS_PER_PAGE:
@@ -67,6 +70,7 @@ def bulk_insert_in_pages(records_data):
                 file.write(current_page_data)
                 current_page_data = ""
                 records_in_current_page = 0
+                current_page_id += 1
         if records_in_current_page > 0:
             current_page_data += "-" * (PAGE_SIZE - len(current_page_data))
             file.write(current_page_data)
@@ -83,35 +87,32 @@ def delete_record_and_link(page_id, slot_id):
     global free_list_head
     offset = (page_id * PAGE_SIZE) + (slot_id * RECORD_SIZE)
 
-    # 1. Construimos el puntero (Lápida inteligente)
+    # 1. Construimos el puntero (Lapida inteligente)
     if free_list_head is None:
-        # Si es el primer borrado, apunta a la nada (Fin de la lista)
         next_ptr = "*FREE*NONE"
     else:
-        # Si ya había borrados, apunta al anterior hueco
         next_page, next_slot = free_list_head
-        # Formato: *FREE*P0000S0001
         next_ptr = f"*FREE*P{next_page:04d}S{next_slot:04d}"
 
-    # Rellenamos con puntos para completar los 50 bytes y hacerlo visual
+    # Rellenamos con puntos para completar los 50 bytes
     tombstone = next_ptr.ljust(RECORD_SIZE, ".")
 
-    # 2. Escribimos la lápida en el disco
+    # 2. Escribimos la lapida en el disco
     with open(FILE_NAME, "r+") as file:
         file.seek(offset)
         file.write(tombstone)
 
     # 3. Actualizamos la cabeza de la lista en RAM
     free_list_head = (page_id, slot_id)
-    print(f"[DELETE] Lápida escrita. Head ahora apunta a RID({page_id}, {slot_id})")
+    print(f"  [DELETE] RID({page_id}, {slot_id}) -> lapida escrita: '{next_ptr}'")
+    print(f"           Free List head -> RID({page_id}, {slot_id})")
 
 def insert_recycled_record(emp_id, last_name, first_name, age, salary):
     """
     Inserta un nuevo registro reutilizando un hueco si existe (O(1)).
     """
     global free_list_head
-    
-    # Si no hay huecos, el motor tendría que hacer un Append al final del archivo.
+
     if free_list_head is None:
         print("[INSERT] No hay espacio libre. Se requiere hacer Append (Omitido).")
         return False
@@ -122,15 +123,12 @@ def insert_recycled_record(emp_id, last_name, first_name, age, salary):
 
     with open(FILE_NAME, "r+") as file:
         file.seek(offset)
-        # Leemos los 50 bytes de la lápida
         tombstone = file.read(RECORD_SIZE)
 
-        # 2. Parseamos la lápida para saber cuál es el siguiente hueco
+        # 2. Parseamos la lapida para saber cual es el siguiente hueco
         if "NONE" in tombstone:
-            free_list_head = None # La lista de libres se vació
+            free_list_head = None
         else:
-            # Extraemos PxxxxSyyyy usando slicing exacto
-            # string de ejemplo: *FREE*P0000S0001
             p_str = tombstone[7:11]
             s_str = tombstone[12:16]
             free_list_head = (int(p_str), int(s_str))
@@ -139,53 +137,53 @@ def insert_recycled_record(emp_id, last_name, first_name, age, salary):
         file.seek(offset)
         new_record_str = format_record(emp_id, last_name, first_name, age, salary)
         file.write(new_record_str)
-        
-    print(f"[INSERT] Reciclado exitoso en RID({page_id}, {slot_id}).")
+
+    print(f"  [INSERT] {first_name} {last_name} -> reciclado en RID({page_id}, {slot_id})")
     if free_list_head:
-        print(f"         Head ahora apunta al siguiente hueco: RID{free_list_head}")
+        print(f"           Free List head -> RID{free_list_head} (siguiente hueco disponible)")
     else:
-        print(f"         La lista de huecos libres quedó vacía.")
+        print(f"           Free List vacia -- proximo INSERT expandira el archivo")
     return True
 
 # ============================================================================
 # BLOQUE PRINCIPAL (Pruebas de Escritorio)
 # ============================================================================
-
-'''
-Instrucciones:
-1. Comentar los insert de registros reciclados de modo que se corran los deletes.
-2. Correr.
-3. Ver el archivo.
-4. Descomentar los inserts.
-5. Correr.
-6. Ver el archivo y confirmar que los nuevos registros ocuparon los huecos.
-'''
 if __name__ == "__main__":
-    print(f"--- Laboratorio: Free List en Heap Files ---\n")
-    
+    print("--- Laboratorio: Free List en Heap Files ---")
+    print(f"Tamano de Pagina  : {PAGE_SIZE} bytes")
+    print(f"Tamano de Registro: {RECORD_SIZE} bytes")
+    print(f"Registros por Pagina: {RECORDS_PER_PAGE}")
+    print()
+
     simpsons_data = [
-        (123, "Simpson", "Homer", 31, "$400"),   # Page 0, Slot 0
-        (443, "Simpson", "Marge", 32, "$140"),   # Page 0, Slot 1
-        (244, "Flanders", "Ned", 55, "$300"),    # Page 1, Slot 0
-        (134, "Skinner", "Seymour", 55, "$400")  # Page 1, Slot 1
+        (123, "Simpson",  "Homer",   31, "$400"),  # Page 0, Slot 0
+        (443, "Simpson",  "Marge",   32, "$140"),  # Page 0, Slot 1
+        (244, "Flanders", "Ned",     55, "$300"),  # Page 1, Slot 0
+        (134, "Skinner",  "Seymour", 55, "$400")   # Page 1, Slot 1
     ]
+
+    print("--- Poblando el Heap File ---")
     bulk_insert_in_pages(simpsons_data)
     print("Base de datos inicial creada.\n")
 
     print("--- 1. Generando huecos (Deletes) ---")
-    # Borramos a Marge (Primera en salir, será el fondo de la pila)
-    delete_record_and_link(0, 1)  
-    
-    # Borramos a Ned (Último en salir, será la cabeza de la pila)
-    delete_record_and_link(1, 0)  
-    
-    print("\n--- 2. Insertando nuevos registros (Reciclaje) ---")
+    # Borramos a Marge (Primera en salir -> fondo de la pila LIFO)
+    delete_record_and_link(0, 1)
+    # Borramos a Ned  (Ultimo en salir  -> cabeza de la pila LIFO)
+    delete_record_and_link(1, 0)
+    print()
+    print(">>> Inspecciona 'my_database_v3.dat' ahora para ver las lapidas.")
+    print(">>> Busca cadenas como '*FREE*P0000S0001' o '*FREE*NONE' en los slots borrados.")
+    print()
+
+    # --- INICIO BLOQUE RECICLAJE (comentar hasta FIN BLOQUE para la Parte A) ---
+    print("--- 2. Insertando nuevos registros (Reciclaje) ---")
     print("Insertando a Lisa Simpson...")
-    # Lisa DEBERÍA tomar el lugar de Ned (El último hueco creado)
     insert_recycled_record(999, "Simpson", "Lisa", 8, "$10")
-    
-    print("\nInsertando a Milhouse Van Houten...")
-    # Milhouse DEBERÍA tomar el lugar de Marge
+
+    print()
+    print("Insertando a Milhouse Van Houten...")
     insert_recycled_record(888, "Van Houten", "Milhouse", 10, "$5")
-    
+    # --- FIN BLOQUE RECICLAJE ---
+
     print("\n--- Fin del Laboratorio ---")

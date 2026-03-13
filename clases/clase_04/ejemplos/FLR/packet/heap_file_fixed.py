@@ -203,11 +203,13 @@ if __name__ == "__main__":
     for i, record in enumerate(all_records):
         print(f"Registro en índice {i}: {record}")
 
+
     # 5. Probamos el Acceso Directo (Seek)
     print("\n--- Acceso Aleatorio O(1) con Seek ---")
     
     indice_a_buscar = 2
     print(f"Buscando directamente el registro en el índice {indice_a_buscar}...")
+    print(f"Offset calculado: {indice_a_buscar * RECORD_SIZE} bytes → file.seek({indice_a_buscar * RECORD_SIZE})")
     
     # Esto debería traer a Ned Flanders sin leer a Homer ni a Marge
     registro_encontrado = search_record_by_index(indice_a_buscar)
