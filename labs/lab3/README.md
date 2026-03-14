@@ -2,6 +2,27 @@
 
 # Lab — Acceso a Disco y Costo de I/O
 
+## Introducción
+
+¿Alguna vez se ha preguntado por qué una consulta a una base de datos 
+puede tardar milisegundos en un caso y varios segundos en otro, aunque 
+los datos sean exactamente los mismos? La respuesta frecuentemente no 
+está en el algoritmo, sino en **dónde están almacenados los datos y cómo 
+se accede a ellos**.
+
+En este laboratorio se medirá de forma empírica el impacto del patrón 
+de acceso a disco sobre el rendimiento de un sistema. Para ello se 
+compararán dos estrategias — acceso secuencial y acceso aleatorio — 
+sobre un archivo de prueba controlado, y se contrastarán los resultados 
+obtenidos con un modelo teórico de costo de I/O. Al finalizar, se contará 
+con evidencia concreta para responder por qué los motores de bases de datos 
+están diseñados para favorecer la lectura contigua de bloques.
+
+> [!note]
+> Este laboratorio complementa directamente los conceptos vistos en clase 
+> sobre jerarquía de memoria, bloques de I/O y modelo de costo. Se 
+> recomienda tener a mano las notas de la Clase 3 — Almacenamiento de datos.
+
 ## Objetivos
 
 Al finalizar este laboratorio el estudiante será capaz de:
@@ -11,6 +32,126 @@ Al finalizar este laboratorio el estudiante será capaz de:
 * Medir empíricamente el rendimiento de acceso a disco.
 * Comparar resultados experimentales con un modelo teórico de costo de I/O.
 * Analizar el impacto del patrón de acceso a datos en el rendimiento de sistemas.
+
+---
+
+## Contexto y conceptos claves
+
+En muchos sistemas modernos el rendimiento **no depende únicamente del algoritmo**, sino también de **cómo se accede a los datos**.
+
+Los datos pueden almacenarse en distintos niveles de la jerarquía de memoria:
+
+
+<div align="center">
+  <img src="images/fig1.svg" alt="Jerarquía de Memoria" width="80%">
+</div>
+
+Cada nivel tiene grandes diferencias en:
+
+* Latencia
+* Throughput
+* Costo
+
+En particular, el acceso a disco puede ser **millones de veces más lento que el acceso a memoria**.
+
+Por esta razón los sistemas de bases de datos y los sistemas operativos están diseñados para **minimizar accesos costosos a disco**.
+
+Este laboratorio explora uno de los factores más importantes: **el patrón de acceso a datos**
+
+---
+
+### Bloques de I/O
+
+Los dispositivos de almacenamiento **no leen bytes individuales**.
+
+La unidad mínima de transferencia es un **bloque de datos**. Por ejemplo, dependiendo del contexto en el cual se este hablando tenemos:
+* **Sistemas operativos**: bloque = 4 KB
+* **Motores de bases de datos**: página de base de datos = 4 KB – 16 KB
+
+Incluso si un programa solicita **1 byte**, el sistema leerá **todo el bloque**.
+
+### Acceso secuencial vs acceso aleatorio
+
+Cuando los datos se almacenan en disco, el **patrón de acceso** afecta significativamente el rendimiento.
+
+<div align="center">
+  <img src="images/fig3.svg" alt="Accesos" width="80%">
+</div>
+
+#### Acceso secuencial
+
+En acceso secuencial los bloques se encuentran **uno después del otro en el disco**.
+
+Este tipo de acceso se caracteriza por:
+* Pocos accesos físicos al disco
+* Alto throughput
+* Rendimiento alto
+
+#### Acceso aleatorio
+
+En acceso aleatorio los bloques se encuentran **dispersos en el disco**.
+
+Para este tipo se acceso se tiene:
+* Múltiples accesos al disco
+* Mayor latencia
+* Menor throughput
+
+#### ¿Por qué el acceso aleatorio es costoso incluso en SSD?
+
+A diferencia de un HDD, un SSD no tiene partes móviles, por lo que no 
+existe tiempo de seek ni latencia rotacional. Sin embargo, el acceso 
+aleatorio sigue siendo más lento que el secuencial por dos razones:
+
+- **Granularidad de escritura:** Los SSDs leen en páginas de 4–16 KB 
+  pero borran en bloques de 128–512 KB. Cada acceso aleatorio pequeño 
+  obliga al controlador a leer, modificar y reescribir bloques enteros 
+  (*write amplification*).
+- **Saturación del controlador:** Con miles de solicitudes dispersas 
+  por segundo, el controlador interno del SSD se convierte en el cuello 
+  de botella, sin importar la velocidad del medio de almacenamiento.
+
+Por esta razón, incluso en NVMe de alto rendimiento, el throughput en 
+acceso aleatorio puede ser entre 5 y 20 veces menor que en acceso 
+secuencial.
+
+---
+
+### Modelo teórico de costo de I/O
+
+Utilizaremos el siguiente modelo simplificado:
+
+$$
+TotalTime =
+AccessLatency \times M +
+\frac{DataSize}{ScanThroughput}
+$$
+
+Donde:
+* **$AccessLatency$**: Tiempo para acceder a un bloque
+* **$M$**: Número de accesos no contiguos
+* **$DataSize$**: Tamaño total de datos
+* **$ScanThroughput$**: Velocidad de transferencia
+
+
+> [!note]
+> **Relación con el modelo del HDD visto en clase**
+> 
+> En clase se estudió que el tiempo de acceso a un disco duro magnético 
+> se descompone en tres componentes físicos:
+>
+> $$T_{access} = T_{seek} + T_{rotation} + T_{transfer}$$
+>
+> El modelo utilizado en este laboratorio es una **abstracción** de ese 
+> modelo: el término $AccessLatency$ agrupa los componentes de seek y 
+> rotación en un único valor promedio, mientras que $DataSize / ScanThroughput$ 
+> corresponde al tiempo de transferencia escalado al volumen total de datos. 
+> Esta simplificación es válida para comparar tecnologías de almacenamiento 
+> entre sí, pero no captura la variabilidad interna de un HDD real.
+
+
+<div align="center">
+  <img src="images/fig2.svg" alt="Costos" width="80%">
+</div>
 
 ---
 
@@ -27,7 +168,7 @@ Se requiere tener instalado:
 
 ### Hardware mínimo recomendado
 
-En la siguiente tabla se describen las caracteristicas de hardware minimas recomentadas:
+En la siguiente tabla se describen las características de hardware mínimas recomendadas:
 
 | Recurso                | Requerimiento           |
 | ---------------------- | ----------------------- |
@@ -50,7 +191,7 @@ Por seguridad se recomienda tener al menos: 2 GB de espacio libre
 
 El laboratorio utiliza las siguientes librerías de Python:
 
-```python
+```
 os
 time
 numpy
@@ -62,111 +203,12 @@ En **Google Colab** estas librerías ya están instaladas.
 
 ---
 
-## Contexto
-
-En muchos sistemas modernos el rendimiento **no depende únicamente del algoritmo**, sino también de **cómo se accede a los datos**.
-
-Los datos pueden almacenarse en distintos niveles de la jerarquía de memoria:
-
-![Jerarquia de Memoria](images/fig1.png)
-
-
-Cada nivel tiene grandes diferencias en:
-
-* Latencia
-* Throughput
-* Costo
-
-En particular, el acceso a disco puede ser **millones de veces más lento que el acceso a memoria**.
-
-Por esta razón los sistemas de bases de datos y los sistemas operativos están diseñados para **minimizar accesos costosos a disco**.
-
-Este laboratorio explora uno de los factores más importantes: **el patrón de acceso a datos**
-
----
-
-## Conceptos clave
-
-### Bloques de I/O
-
-Los dispositivos de almacenamiento **no leen bytes individuales**.
-
-La unidad mínima de transferencia es un **bloque de datos**. Por ejemplo, dependiendo del contexto en el cual se este hablando tenemos:
-* **Sistemas operativos**: bloque = 4 KB
-* **Motores de bases de datos**: página de base de datos = 4 KB – 16 KB
-
-Incluso si un programa solicita **1 byte**, el sistema leerá **todo el bloque**.
-
-### Acceso secuencial vs acceso aleatorio
-
-Cuando los datos se almacenan en disco, el **patrón de acceso** afecta significativamente el rendimiento.
-
-#### Acceso secuencial
-
-En acceso secuencial los bloques se encuentran **uno después del otro en el disco**.
-
-```mermaid
-flowchart LR
-   subgraph SEQ["Acceso secuencial"]
-   direction LR
-   A[B1] --> B[B2] --> C[B3] --> D[B4] --> E[B5]
-end
-```
-
-Este tipo de acceso se caracteriza por:
-* Pocos accesos físicos al disco
-* Alto throughput
-* Rendimiento alto
-
-#### Acceso aleatorio
-
-En acceso aleatorio los bloques se encuentran **dispersos en el disco**.
-
-```mermaid
-flowchart TD
-    subgraph RAND["Acceso aleatorio"]
-    direction LR
-    R1[B1]
-    R2[B2]
-    R3[B3]
-    R4[B4]
-    R5[B5]
-    
-    R1 -.-> R3
-    R3 -.-> R5
-    R5 -.-> R2
-    R2 -.-> R4
-end
-```
-
-Para este tipo se acceso se tiene:
-* Múltiples accesos al disco
-* Mayor latencia
-* Menor throughput
-
----
-
-### Modelo teórico de costo de I/O
-
-Utilizaremos el siguiente modelo simplificado:
-
-$$
-TotalTime =
-AccessLatency \times M +
-\frac{DataSize}{ScanThroughput}
-$$
-
-Donde:
-* **$AccessLatency$**: Tiempo para acceder a un bloque
-* **$M$**: Número de accesos no contiguos
-* **$DataSize$**: Tamaño total de datos
-* **$ScanThroughput$**: Velocidad de transferencia
-
----
-
 ## Preparación y Normalización del Entorno Experimental
 
-Con el fin de garantizar la validez de nuestras pruebas y la consistencia de los datos, necesitamos controlar las variables que podrían generar ruido en los resultados. Dado que el hardware de cada computador influye directamente en la velocidad de lectura y escritura, es necesario realizar los siguientes pasos de normalización para que todos partamos de una base comparable.
+Para que las mediciones sean válidas y comparables entre equipos, es 
+necesario controlar algunas variables antes de ejecutar el experimento. 
+Los pasos a continuación toman menos de cinco minutos y marcan una 
+diferencia real en la calidad de los resultados.
 
 ### Paso 1: Identificación de la Tecnología de Almacenamiento
 
@@ -239,15 +281,28 @@ Para mitigar este efecto (técnica de **Cold Cache Simulation**):
 
 ### Referencias de Rendimiento Teórico
 
+
 Utilice estos valores como línea base para validar si sus resultados son coherentes con la teoría:
 
-| Tecnología | Latencia Promedio | Throughput Típico | Escala de Tiempo |
-| --- | --- | --- | --- |
-| **HDD** | 10 ms | 100 - 150 MB/s | Milisegundos |
-| **SSD (SATA)** | 100 µs | 500 - 550 MB/s | Microsegundos |
-| **SSD NVMe** | 10 - 20 µs | 2 - 7 GB/s | Microsegundos |
+| Tecnología | Latencia Promedio | Throughput Típico | IOPS Típico (4 KB aleatorio) | Escala de Tiempo |
+| --- | --- | --- | --- | --- |
+| **HDD** | 10 ms | 100 - 150 MB/s | 75 – 300 | Milisegundos |
+| **SSD (SATA)** | 100 µs | 500 - 550 MB/s | 50,000 – 100,000 | Microsegundos |
+| **SSD NVMe** | 10 - 20 µs | 2 - 7 GB/s | 500,000 – 1,000,000+ | Microsegundos |
 
 Los valores de la tabla son **aproximaciones conceptuales**.
+
+> [!note]
+> **¿Qué es IOPS?** Las siglas corresponden a *Input/Output Operations 
+> Per Second* — es decir, cuántas operaciones de lectura o escritura 
+> completa el dispositivo por segundo. Se calcula como:
+>
+> $$IOPS = \frac{1}{T_{I/O}}$$
+>
+> A diferencia del throughput, que mide el volumen de datos transferidos, 
+> IOPS mide la frecuencia de operaciones. Es especialmente relevante en 
+> cargas de trabajo con muchas lecturas pequeñas y dispersas, como las 
+> consultas a bases de datos sin índice.
 
 > [!warning]
 > **Nota**: Un valor de latencia inusualmente bajo (ej. < 1 µs) suele ser un indicador de que el experimento está midiendo la **Caché en RAM** y no el disco físico.
@@ -256,13 +311,17 @@ Los valores de la tabla son **aproximaciones conceptuales**.
 
 ## Actividad de laboratorio
 
-Una vez comprendidos los conceptos teóricos y normalizado el entorno, se iniciará la fase práctica. Esta actividad se divide en tres etapas fundamentales: caracterización del equipo, ejecución del protocolo y análisis crítico de los datos.
+Con el entorno preparado, es momento de pasar a la práctica. La actividad 
+se organiza en tres etapas: caracterización del equipo, ejecución del 
+notebook y análisis de los resultados.
 
-### Etapa 1 — Caracterización de la Estación de Trabajo
+### Etapa 1 — Caracterización del Equipo
 
-Para que los resultados obtenidos tengan **validez científica**, es indispensable documentar las especificaciones del hardware utilizado. Esta "ficha técnica" no es un mero requisito administrativo; es la herramienta que le permitirá discernir si las variaciones en el rendimiento se deben a la lógica del algoritmo o a las capacidades y limitaciones físicas de su arquitectura.
-
-Antes de ejecutar cualquier celda de código, por favor complete el siguiente registro de metadatos (Actualice los valores de la tabla con los observados para el equipo en el cual va a llevar a cabo las pruebas):
+Antes de ejecutar cualquier celda de código, registre las especificaciones 
+del equipo en la siguiente tabla. Esta información es fundamental para 
+interpretar los resultados: dos máquinas con distinto tipo de disco pueden 
+arrojar diferencias de rendimiento de hasta dos órdenes de magnitud, y sin 
+este registro no es posible saber a qué atribuir esas diferencias.
 
 | Parámetro | Valor Observado |
 | --- | --- |
@@ -290,19 +349,68 @@ Imagine que el procesador es un operario. Si este se encuentra ocupado al 40% at
 
 ### Etapa 2 — Configuración y Ejecución del Notebook
 
-El núcleo del experimento se encuentra en el archivo de Python Notebook adjunto. Este entorno está diseñado para automatizar las mediciones complejas y permitir que usted centre su esfuerzo en el análisis de los datos.
+> [!important]
+> Esta es la etapa central del laboratorio. Antes de continuar, 
+> asegúrese de haber completado la tabla de caracterización de la 
+> Etapa 1 y de haber aplicado los pasos de preparación del entorno.
 
-1. **Localice el archivo:** `disk_io_lab_guided.ipynb`.
-2. **Entorno de ejecución:** Puede utilizar un entorno local (**Jupyter Notebook/Lab**) para medir su propio hardware, o **Google Colab** para observar el comportamiento de máquinas virtuales en la nube.
+#### Paso 1 — Obtenga los archivos
 
-#### Flujo de ejecución
+Clone el repositorio del laboratorio en su máquina local:
 
-Ejecute el notebook de manera secuencial (de arriba hacia abajo). El sistema realizará de forma automática las siguientes tareas:
+```bash
+git clone https://github.com/DS-UdeA/2026-1.git
+cd 2026-1/labs/lab3
+```
 
-1. **Generación del Dataset:** Creación de un archivo de prueba de tamaño controlado.
-2. **Benchmark Secuencial:** Medición de lectura contigua de bloques.
-3. **Benchmark Aleatorio:** Simulación de saltos (*seeks*) aleatorios para medir la latencia de acceso.
-4. **Procesamiento Estadístico:** Cálculo de *throughput* y promedios de tiempo.
+Si prefiere trabajar en Google Colab, abra el notebook directamente 
+desde GitHub usando el botón **"Open in Colab"** que aparece al inicio 
+del archivo `.ipynb`.
+
+> [!warning]
+> **Limitación importante de Google Colab:** Colab ejecuta el código 
+> en servidores remotos con disco de red. Los tiempos medidos **no 
+> reflejarán el hardware de su máquina** sino el de la infraestructura 
+> de Google. Los resultados serán válidos para analizar el comportamiento 
+> del modelo, pero no para comparar con las especificaciones de su equipo 
+> personal. Para mediciones reales de su hardware, ejecute en local.
+
+#### Paso 2 — Abra el notebook
+
+Desde la carpeta del laboratorio, ejecute:
+
+```bash
+jupyter notebook disk_io_lab_guided.ipynb
+```
+
+#### Paso 3 — Ejecute las celdas en orden
+
+Recorra el notebook de arriba hacia abajo, ejecutando cada celda de 
+forma secuencial. **No omita celdas ni cambie el orden de ejecución**, 
+ya que cada sección depende de los resultados de la anterior.
+
+El notebook realizará automáticamente las siguientes tareas:
+
+1. **Verificación del entorno:** Confirma que las librerías están disponibles.
+2. **Generación del archivo de prueba:** Crea un archivo binario de tamaño controlado.
+3. **Benchmark secuencial:** Mide la lectura contigua de bloques.
+4. **Benchmark aleatorio:** Simula saltos dispersos para medir latencia de acceso.
+5. **Cálculo del modelo teórico:** Compara sus mediciones con las estimaciones teóricas.
+6. **Visualizaciones:** Genera las gráficas que deberá incluir en su informe.
+
+
+> [!tip]
+> **¿Desea cambiar el tamaño del archivo de prueba?**
+> Si modifica el parámetro `FILE_SIZE_MB` en el notebook y quiere que 
+> el archivo se regenere, elimine primero el archivo anterior ejecutando 
+> en la terminal:
+> ```bash
+> rm -rf 2026-1/labs/lab3/io_lab_data/
+> ```
+> En Windows (PowerShell):
+> ```powershell
+> Remove-Item -Recurse -Force .\io_lab_data\
+> ```
 
 ### Etapa 3 — Análisis e Interpretación de Hallazgos
 
@@ -329,33 +437,11 @@ flowchart TD
 
 ```
 
----
+#### Preguntas de Análisis Científico
 
-## Evidencias y Entregables
-
-Para la validación de esta práctica, su repositorio debe mantener la siguiente estructura organizada:
-
-```text
-lab-io/
-├── README.md                # Informe principal con análisis y respuestas
-├── disk_io_lab_guided.ipynb # Notebook ejecutado con resultados visibles
-└── images/                  # Capturas de pantalla de las gráficas generadas
-
-```
-
-### Capturas Requeridas en el Informe
-
-Incluya las siguientes imágenes en su `README.md` (utilizando el formato: `![descripcion](images/archivo.png)`):
-
-1. **Tabla resumida de resultados** (última celda del notebook).
-2. **Gráfica de Throughput Comparativo**.
-3. **Gráfica de Tiempo Total (Teoría vs. Práctica)**.
-
----
-
-## Preguntas de Análisis Científico
-
-Responda de manera argumentada en su archivo `README.md`:
+Responda de manera argumentada en el `README.md` de su repositorio de entrega. 
+Para cada pregunta incluya al menos un párrafo de análisis apoyado en los 
+resultados obtenidos en el notebook.
 
 1. **Diferencial de Desempeño:** ¿Cuál patrón de acceso resultó ser más eficiente en su máquina y cuál es la proporción de diferencia (*ventaja secuencial*)?
 2. **Efecto del Tamaño de Bloque:** ¿Cómo influye el tamaño de la unidad de lectura en la mitigación del costo del acceso aleatorio?
@@ -365,9 +451,73 @@ Responda de manera argumentada en su archivo `README.md`:
 
 ---
 
-## Reflexión Final
+## Evidencias y Entregables
 
-Este experimento demuestra que el rendimiento de los sistemas modernos está dictado por la **localidad de los datos**. Un algoritmo óptimo puede volverse ineficiente si ignora la manera en que el hardware recupera los bloques de información. Comprender el costo del I/O es el paso fundamental para diseñar sistemas escalables, desde estructuras de datos en disco (como **B+ Trees**) hasta sistemas de archivos de alto rendimiento.
+> [!tip]
+> **¿Cómo exportar las gráficas?** Al finalizar la ejecución del notebook, 
+> haga clic derecho sobre cada gráfica → *"Guardar imagen como"* y 
+> guárdela en la carpeta `images/` con el nombre indicado en la estructura 
+> de entrega. En Google Colab puede usar el menú *Archivo → Descargar*.
+
+Al finalizar el laboratorio, cree un repositorio en GitHub con la siguiente 
+estructura:
+
+```text
+lab-io/
+├── README.md                # Su informe: análisis, respuestas y capturas
+├── disk_io_lab_guided.ipynb # Notebook ejecutado con todas las celdas visibles
+└── images/                  # Imágenes exportadas desde el notebook
+    ├── fig_throughput.png
+    ├── fig_tiempo_teoria_vs_practica_secuencial.png
+    ├── fig_tiempo_teoria_vs_practica_aleatorio.png
+    └── fig_speedup.png
+```
+
+### ¿Qué debe contener su README.md?
+
+Su README de entrega **no es una copia de esta guía** — es su informe. 
+Debe contener las siguientes secciones en este orden:
+
+#### 1. Especificaciones del equipo
+
+La tabla de caracterización completada con sus datos reales.
+
+#### 2. Resultados del experimento
+
+Las cuatro gráficas generadas por el notebook, incrustadas con el 
+formato `![descripcion](images/nombre_archivo.png)`.
+
+#### 3. Análisis y conclusiones
+
+Las cinco preguntas respondidas. Para cada una se espera:
+
+- Al menos un párrafo de argumentación propia
+- Referencia explícita a los valores numéricos obtenidos en el notebook
+- Conexión con los conceptos teóricos vistos en clase
+
+#### Lista de verificación antes de entregar
+
+Antes de hacer el commit final, verifique que su repositorio cumple con 
+lo siguiente:
+
+- [ ] El notebook tiene todas las celdas ejecutadas y los resultados visibles
+- [ ] La carpeta `images/` contiene las cuatro gráficas con los nombres correctos
+- [ ] El README incluye la tabla de caracterización con datos reales (no los ejemplos)
+- [ ] Cada pregunta tiene al menos un párrafo de respuesta argumentada
+- [ ] Las gráficas están incrustadas correctamente en el README y se visualizan
+- [ ] El repositorio es público o fue compartido con el docente
+
+---
+
+## Referencias
+
+## Referencias
+
+- Silberschatz, A., Korth, H. F., & Sudarshan, S. (2019). *Database System Concepts* (7th ed.). McGraw-Hill. Capítulo 12.
+- [CS145 — Stanford](https://cs145-fa20.github.io/)
+- [CSE444 — University of Washington](https://courses.cs.washington.edu/courses/cse444/)
+- [15-445 — Carnegie Mellon University](https://15445.courses.cs.cmu.edu/spring2026/)
+- [CS186 — UC Berkeley](https://cs186berkeley.net/notes/note3/)
 
 > [!important]
 > Este material fue desarrollado con apoyo de herramientas de IA como asistente de redacción y estructuración. El contenido ha sido supervisado, validado y refinado por intervención humana para garantizar su precisión técnica y coherencia pedagógica. No obstante, pueden haber errores.
