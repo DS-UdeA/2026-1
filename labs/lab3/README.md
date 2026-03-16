@@ -354,13 +354,15 @@ Imagine que el procesador es un operario. Si este se encuentra ocupado al 40% at
 > asegúrese de haber completado la tabla de caracterización de la 
 > Etapa 1 y de haber aplicado los pasos de preparación del entorno.
 
-#### Paso 1 — Obtenga los archivos
+#### Paso 1 — Cree el repositorio y obtenga los archivos necesarios para la practica
 
-Clone el repositorio del laboratorio en su máquina local:
+Tal y como se hizo en la practica anterior, cree un repositorio en github publico para la entrega del laboratorio cuyo nombre tenga el siguiente formato `lab3-IO_performance-NombreApellido`.
+
+Luego clone este repositorio en su máquina local:
 
 ```bash
-git clone https://github.com/DS-UdeA/2026-1.git
-cd 2026-1/labs/lab3
+git clone lab3-IO_performance-NombreApellido
+cd lab3-IO_performance-NombreApellido
 ```
 
 Si prefiere trabajar en Google Colab, abra el notebook directamente 
@@ -374,6 +376,21 @@ del archivo `.ipynb`.
 > de Google. Los resultados serán válidos para analizar el comportamiento 
 > del modelo, pero no para comparar con las especificaciones de su equipo 
 > personal. Para mediciones reales de su hardware, ejecute en local.
+
+La estructura de este repositorio será la siguiente:
+
+```text
+lab3-IO_performance-NombreApellido/
+├── README.md                # Su informe: análisis, respuestas y capturas
+├── disk_io_lab_guided.ipynb # Notebook ejecutado con todas las celdas visibles
+└── images/                  # Imágenes exportadas desde el notebook
+    ├── fig_throughput.png
+    ├── fig_tiempo_teoria_vs_practica_secuencial.png
+    ├── fig_tiempo_teoria_vs_practica_aleatorio.png
+    └── fig_speedup.png
+```
+
+De modo que antes de iniciar, asegurese de dejar lista la estructura de archivos y descargar el notebook.
 
 #### Paso 2 — Abra el notebook
 
