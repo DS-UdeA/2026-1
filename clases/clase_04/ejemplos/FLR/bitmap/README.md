@@ -1,3 +1,5 @@
+![Built with AI](https://img.shields.io/badge/Built%20with-AI-blue.svg)
+
 # Heap Files — Parte II: Gestión de Espacio con Bitmaps y Encabezados de Página
 
 * **Laboratorio de Estructuras de Datos · Universidad de Antioquia**
@@ -671,3 +673,7 @@ los siguientes recursos para profundizar:
 - **Carnegie Mellon University — CMU 15-445/645:** *Intro to Database Systems*.
   Clases sobre *Database Storage* del profesor Andy Pavlo.
   Disponible en: [https://15445.courses.cs.cmu.edu](https://15445.courses.cs.cmu.edu)
+
+
+> [!important]
+> Este material fue desarrollado con apoyo de herramientas de IA como asistente de redacción y estructuración. El contenido ha sido supervisado, validado y refinado por intervención humana para garantizar su precisión técnica y coherencia pedagógica. No obstante, pueden haber errores.

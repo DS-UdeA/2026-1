@@ -1,3 +1,0 @@
-# DBFiles — Representación física de datos en un DBMS
-
-...
