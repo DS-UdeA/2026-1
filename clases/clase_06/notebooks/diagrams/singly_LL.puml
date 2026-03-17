@@ -1,0 +1,22 @@
+@startuml
+class Node {
+  + data: any
+  + next: Node
+  + __init__(data: any)
+}
+
+class SinglyLinkedList {
+  - _head: Node
+  - _size: int
+  + __init__()
+  + prepend(data: any): None
+  + append(data: any): None
+  + search(data: any): bool
+  + delete(data: any): bool
+  + size(): int
+  + __str__(): str
+}
+
+SinglyLinkedList "1" --> "0..1" Node : head
+Node --> "0..1" Node : next
+@enduml

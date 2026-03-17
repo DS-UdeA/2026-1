@@ -1,0 +1,15 @@
+@startuml
+class DynamicArray {
+  - _data: list
+  - _capacity: int
+  - _size: int
+  + __init__()
+  + append(value: any): None
+  + get(index: int): any
+  + set(index: int, value: any): None
+  + size(): int
+  + capacity(): int
+  - _resize(): None
+  + __str__(): str
+}
+@enduml

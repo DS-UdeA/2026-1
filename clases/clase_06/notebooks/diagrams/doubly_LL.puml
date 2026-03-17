@@ -1,0 +1,27 @@
+@startuml
+class DoublyNode {
+  + data: any
+  + next: DoublyNode
+  + prev: DoublyNode
+  + __init__(data: any)
+}
+
+class DoublyLinkedList {
+  - _head: DoublyNode
+  - _tail: DoublyNode
+  - _size: int
+  + __init__()
+  + append(data: any): None
+  + prepend(data: any): None
+  + delete_node(node: DoublyNode): None
+  + search(data: any): DoublyNode
+  + size(): int
+  + __str__(): str
+}
+
+DoublyLinkedList "1" --> "0..1" DoublyNode : head
+DoublyLinkedList "1" --> "0..1" DoublyNode : tail
+
+DoublyNode --> "0..1" DoublyNode : next
+DoublyNode --> "0..1" DoublyNode : prev
+@enduml
