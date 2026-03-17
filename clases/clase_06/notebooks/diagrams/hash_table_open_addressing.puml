@@ -1,0 +1,18 @@
+@startuml
+class HashTableOpenAddressing {
+  - _keys: list
+  - _values: list
+  - _n_buckets: int
+  - _size: int
+  - _DELETED: object
+  - _probe_type: str
+  + __init__(n_buckets: int, probe_type: str)
+  + put(key: any, value: any): None
+  + get(key: any): any
+  + delete(key: any): bool
+  + load_factor(): float
+  - _hash(key: any): int
+  - _probe(index: int, i: int): int
+  + __str__(): str
+}
+@enduml

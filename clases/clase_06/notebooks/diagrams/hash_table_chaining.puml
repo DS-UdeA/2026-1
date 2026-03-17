@@ -1,0 +1,14 @@
+@startuml
+class HashTableChaining {
+  - _buckets: list[list]
+  - _n_buckets: int
+  - _size: int
+  + __init__(n_buckets: int)
+  + put(key: any, value: any): None
+  + get(key: any): any
+  + delete(key: any): bool
+  + load_factor(): float
+  - _hash(key: any): int
+  + __str__(): str
+}
+@enduml
