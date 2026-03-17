@@ -1,94 +1,407 @@
-# Implementación de Heap Files - Parte II (Gestión de Espacio con Bitmaps)
+# Heap Files — Parte II: Gestión de Espacio con Bitmaps y Encabezados de Página
 
-Esta segunda parte esta enfocada en el almacenamiento físico de bases de datos. En esta sesión, evolucionaremos nuestro motor de almacenamiento para dotarlo de resiliencia y metadatos persistentes, introduciendo el concepto de Encabezados de Página (*Page Headers*) y Mapas de Bits (*Bitmaps*).
+**Laboratorio de Estructuras de Datos · Universidad de Antioquia**
+**Versión del motor:** `heap_file_v4_bitmap.py`
+**Prerrequisito obligatorio:** Haber completado la Parte I (`packet/`)
 
-## 1. Contexto y Enlace con la Fase Anterior
+---
 
-Al finalizar la primera parte (Versiones 1 a 3), logramos implementar un sistema de páginas y una lista enlazada para reciclar el espacio de los registros borrados. Sin embargo, concluimos con una advertencia arquitectónica crítica: **nuestro motor dependía de la memoria RAM para mantener el estado de la base de datos**.
+## Punto de Partida: ¿Por qué esta entrega existe?
 
-La variable `free_list_head`, que indicaba dónde estaba el próximo espacio libre, existía únicamente en el entorno de ejecución del script. En un Sistema Gestor de Bases de Datos (DBMS) real, si el servidor experimenta un corte de energía, la memoria RAM se volatiliza. Al reiniciar, el motor no tendría forma de saber qué espacios dentro del archivo `.dat` están libres u ocupados sin tener que realizar un costoso escaneo secuencial de todo el disco.
+> *"Un sistema que olvida su estado al apagarse no es un sistema de base de datos, es un bloc de notas."*
 
-Para solucionar este problema de persistencia y separar los metadatos de los datos del usuario, es imperativo estructurar un **Encabezado (Header)** físico dentro de cada bloque de disco.
+Al finalizar la Parte I se logró un avance significativo: el motor era capaz de organizar registros en páginas físicas y reciclar el espacio de los borrados mediante una **Free List** encadenada. Sin embargo, al cerrar el análisis de la versión `v3`, quedó expuesta una fragilidad arquitectónica crítica.
 
-## 2. Repaso Teórico Fundamental
+Observe el siguiente fragmento de `heap_file_v3_freemospace.py`:
 
-En esta fase, implementaremos la arquitectura estándar utilizada por motores como PostgreSQL o SQL Server para la gestión de espacio libre dentro de un bloque: el Bitmap.
-
-* **Encabezado de Página (Page Header):** Es una región de bytes reservada estrictamente al inicio de cada página. Su propósito es almacenar metadatos (información sobre los datos). Nunca se utiliza para guardar información de los registros de la tabla.
-* **Mapa de Bits (Bitmap):** Es un arreglo secuencial ubicado dentro del Page Header. Cada bit (o en nuestro caso didáctico, cada carácter) corresponde a una ranura (*slot*) específica en la página.
-* Un valor de `1` indica que el slot correspondiente está ocupado.
-* Un valor de `0` indica que el slot correspondiente está libre o ha sido borrado.
-
-
-* **Borrado Lógico Optimizado:** Al usar un Bitmap, ya no es necesario ir hasta el registro y sobrescribir su clave primaria con asteriscos (`*****`). El borrado se convierte en una operación ultra rápida de Entrada/Salida (I/O) que consiste únicamente en cambiar un `1` por un `0` en el encabezado.
-* **Nueva Formulación Matemática:** La introducción del encabezado desplaza físicamente el inicio de los datos. Por lo tanto, la ecuación para calcular el desplazamiento (*offset*) en tiempo O(1) debe incorporar el tamaño de este encabezado:
-
-$$Offset = (Page\_ID \times Page\_Size) + HEADER\_SIZE + (Slot\_ID \times Record\_Size)$$
-
-### Diagrama de la Nueva Arquitectura (Versión 4)
-
-A continuación, se ilustra la distribución física de los 128 bytes de nuestra página utilizando un Bitmap. Note cómo los 28 bytes que antes representaban "fragmentación interna" al final de la página han sido trasladados al inicio para cumplir una función útil como encabezado.
-
-```mermaid
-graph TD
-    subgraph "Estructura de Página con Bitmap (v4)"
-        direction TB
-        subgraph "Page Header (28 bytes)"
-            B["Bitmap: '10' <br/> (Slot 0 Ocupado, <br/> Slot 1 Libre)"]
-            P["Padding del Header: <br/>======================="]
-            B --> P
-        end
-        subgraph "Área de Datos (100 bytes)"
-            S0["Slot 0: Registro de Homer <br/> (50 bytes)"]
-            S1["Slot 1: Datos Fantasma de <br/> Marge (50 bytes - <br/> Considerado libre por <br/>el Bitmap)"]
-            S0 --> S1
-        end
-        P --> S0
-    end
+```python
+# --- ENGINE STATE (In RAM) ---
+# In a real DBMS, this is stored in a "Header Page" (Page 0).
+# For simplicity, we keep it in RAM.
+free_list_head = None  # Tuple (page_id, slot_id) pointing to the first free slot
 ```
 
-## 2. Arquitectura de la Implementación
+Esta variable global **vive únicamente en la memoria RAM** del proceso Python. El siguiente diagrama ilustra exactamente el problema:
 
-El código de esta fase se encuentra consolidado en el archivo **`heap_file_v4_bitmap.py`**. Las principales innovaciones en el código respecto a la versión anterior son:
+![Diagrama: Estado del motor ante un crash](images/diagram_ram_crash.svg)
 
-1. **`create_empty_page()`:** Una nueva función que inicializa bloques en el disco escribiendo un encabezado limpio (`00====...`) antes de escribir los espacios en blanco.
-2. **Independencia de la RAM:** Se eliminan las variables globales. Cada vez que se ejecuta un `INSERT` o `DELETE`, el motor invoca la función `read_page_bitmap()`, la cual va directamente al disco físico a consultar el estado real de la página.
-3. **Escaneo de Metadatos:** La función de búsqueda (`search_record_by_rid`) ahora lee el Bitmap primero. Si el bit indica `0`, la función retorna vacío de inmediato, ahorrando el costo de mover el cabezal del disco hacia el área de datos.
 
-## 3. Guía de Ejecución y Validación
+La versión `v4` resuelve este problema de raíz: **los metadatos sobre el espacio libre se escriben directamente en el disco**, dentro de un encabezado físico al inicio de cada página. El motor ya no necesita recordar nada en RAM.
 
-Por favor, abran su terminal en el directorio correspondiente y sigan estos pasos para validar el funcionamiento del Bitmap.
 
-Ejecute el script [`heap_file_v4_bitmap.py`](heap_file_v4_bitmap.py)
+---
 
-**Puntos de Control (Checklist):**
-* [ ] Verifique en la consola que la eliminación de Marge Simpson reporta una actualización en el Bitmap (cambiando de `'11'` a `'10'`).
-* [ ] Confirme en la consola que la subsecuente inserción de Lisa Simpson logra reciclar el espacio de Marge gracias a que el motor detectó el `'0'` en el Bitmap.
-* [ ] Abra el archivo `my_database_v4.dat` en un editor de texto. Deberá observar claramente la separación estructural: una cabecera como `11==========================` seguida inmediatamente por los datos de los registros. Ya no hay asteriscos (`*****`) mezclados con la información.
+## Repaso Teórico: Los Tres Conceptos Clave
 
-## 4. Tip Avanzado: Inspección Hexadecimal (Hexdump)
+Antes de explorar el código, es fundamental consolidar los conceptos teóricos
+que dan sustento a esta versión del motor. Cada uno de ellos fue introducido
+en las diapositivas de clase y aquí se aterriza en su implementación concreta.
 
-Para observar cómo los metadatos y los datos coexisten a nivel de bytes, proceda a realizar un volcado hexadecimal del archivo recién generado.
+---
 
-En una terminal Unix (Linux/macOS), ejecute: `hexdump -C my_database_v4.dat`
+### 2.1 Encabezado de Página (Page Header)
 
-Debería observar un patrón similar a este en los primeros bytes de cada página:
+Como se vio en clase, una página de base de datos no es un bloque homogéneo de datos: está dividida en dos zonas con responsabilidades distintas.
 
-```text
-00000000  31 31 3d 3d 3d 3d 3d 3d  3d 3d 3d 3d 3d 3d 3d 3d  |11==============|
-00000010  3d 3d 3d 3d 3d 3d 3d 3d  3d 3d 3d 3d 20 20 31 32  |============  12|
-00000020  33 53 69 6d 70 73 6f 6e  20 20 20 20 20 20 20 20  |3Simpson        |
+> [!note]
+> **Page Header:** Región de bytes reservada al **inicio** de cada página, destinada exclusivamente a almacenar **metadatos** — información sobre los datos, no los datos en sí mismos.
 
+En la versión `v4`, el encabezado ocupa los primeros **28 bytes** de cada página y se inicializa de la siguiente manera:
+
+```python
+# heap_file_v4_bitmap.py
+
+HEADER_SIZE = 28
+RECORDS_PER_PAGE = (PAGE_SIZE - HEADER_SIZE) // RECORD_SIZE  # (128 - 28) // 50 = 2
+
+def create_empty_page():
+    """Generates a 128-byte block with a clean initialized header ('00')."""
+    bitmap = "0" * RECORDS_PER_PAGE        # '00' — both slots empty
+    header_padding = "=" * (HEADER_SIZE - RECORDS_PER_PAGE)  # fill remaining header bytes
+    header = bitmap + header_padding
+
+    empty_slots = " " * (RECORDS_PER_PAGE * RECORD_SIZE)  # 100 bytes of blank data area
+    return header + empty_slots
 ```
 
-Observe detenidamente la primera línea. Los valores hexadecimales `31 31` corresponden a los caracteres ASCII `11` (nuestro Bitmap indicando que ambos slots están ocupados). Los valores `3d` corresponden al carácter `=` que usamos como relleno del Header. Inmediatamente después del byte de desplazamiento 0x0000001C (28 en decimal), comienzan los datos reales del registro (el ID `123`).
+> [!tip]
+> Observe que los **28 bytes** que en la `v3` representaban fragmentación interna al final de la página ahora han sido trasladados al inicio para cumplir una función útil. Nada se desperdicia.
 
-## 5. Referencias y Material para Profundización
+---
 
-Se recomienda complementar esta práctica con la lectura de los siguientes recursos, prestando especial atención a los capítulos sobre Page Layout y Free Space Management:
+### 2.2 Mapa de Bits (Bitmap)
 
-* **Silberschatz, A., Korth, H. F., & Sudarshan, S.** *Fundamentos de Bases de Datos*.
-* **Ramakrishnan, R., & Gehrke, J.** *Sistemas de Gestión de Bases de Datos*.
-* **UC Berkeley CS 186 (Curso de Introducción a Sistemas de Bases de Datos):** *Course Notes - Note 3: Storage*. Disponible en: [https://cs186berkeley.net/notes/note3/](https://cs186berkeley.net/notes/note3/).
-* **Curso de la Universidad Carnegie Mellon (CMU):** *15-445/645 Intro to Database Systems*. Clases teóricas sobre "Database Storage" impartidas por el profesor Andy Pavlo.
+El bitmap es el componente central del encabezado. Como se describió en clase, es un arreglo donde **cada posición corresponde a un slot** de la página:
+
+| Valor del bit | Significado |
+|:---:|---|
+| `1` | El slot está **ocupado** — hay un registro válido |
+| `0` | El slot está **libre** — fue borrado o nunca fue usado |
+
+En la implementación, leer y escribir el bitmap son operaciones quirúrgicas que **no tocan el área de datos**:
+
+```python
+def read_page_bitmap(page_id):
+    """Reads only the bitmap from the page header — does not touch record data."""
+    offset = page_id * PAGE_SIZE
+    with open(FILE_NAME, "r") as file:
+        file.seek(offset)
+        header = file.read(HEADER_SIZE)
+        return header[:RECORDS_PER_PAGE]  # returns e.g. '10' or '11' or '00'
+
+def update_page_bitmap(page_id, new_bitmap):
+    """Overwrites only the bitmap bytes on disk without touching record data."""
+    offset = page_id * PAGE_SIZE
+    with open(FILE_NAME, "r+") as file:
+        file.seek(offset)
+        file.write(new_bitmap)  # writes exactly RECORDS_PER_PAGE characters
+```
+
+Esta separación es la clave de la resiliencia: si el proceso termina abruptamente después de un `update_page_bitmap()`, el estado de ocupación de cada slot queda grabado en el disco y puede ser consultado al reiniciar.
+
+---
+
+### 2.3 La Nueva Fórmula de Acceso O(1)
+
+La introducción del encabezado desplaza físicamente el inicio del área de
+datos. La fórmula de la `v3` ya no es válida y debe incorporar el tamaño
+del header:
+
+![Arquitectura de página v4 y fórmula de offset](images/diagram_page_architecture.svg)
+
+| Versión | Fórmula de offset |
+|:---:|---|
+| `v3` | `(page_id × PAGE_SIZE) + (slot_id × RECORD_SIZE)` |
+| `v4` | `(page_id × PAGE_SIZE) + HEADER_SIZE + (slot_id × RECORD_SIZE)` |
+
+**Ejemplo concreto:** Para acceder al Slot 1 de la Página 0:
+
+```python
+offset = (0 * PAGE_SIZE) + HEADER_SIZE + (1 * RECORD_SIZE)
+       = (0 * 128)       + 28           + (1 * 50)
+       = 78  # bytes desde el inicio del archivo
+```
+
+El motor salta directamente al byte 78 sin leer nada en el camino. La complejidad sigue siendo **O(1)**, ahora con la garantía de que el bitmap que protege ese slot también reside en el disco.
+
+---
+
+## Las Operaciones DML (Data Manipulation Language) a través del Bitmap
+
+Con los tres conceptos fundamentales claros, es posible entender cómo cada operación del motor interactúa con el bitmap antes de tocar el área de datos. El siguiente diagrama resume el flujo de cada operación:
+
+![Flujo de operaciones DML con Bitmap](images/diagram_dml_operations.svg)
+
+---
+
+### 3.1 INSERT — Encontrar espacio libre sin depender de la RAM
+
+En la `v3`, el motor consultaba la variable `free_list_head` en RAM para saber dónde insertar. En la `v4`, esa consulta se hace directamente al disco:
+
+```python
+def insert_record(emp_id, last_name, first_name, age, salary):
+    """Scans page bitmaps to find a free slot, then writes the record."""
+    record_str = format_record(emp_id, last_name, first_name, age, salary)
+    page_id = 0
+
+    while True:
+        bitmap = read_page_bitmap(page_id)
+
+        # If bitmap is None, we reached EOF — a new page must be created
+        if bitmap is None:
+            with open(FILE_NAME, "a") as file:
+                file.write(create_empty_page())
+            bitmap = "0" * RECORDS_PER_PAGE
+
+        if '0' in bitmap:
+            slot_id = bitmap.find('0')  # first free slot index
+            break
+
+        page_id += 1  # page is full ('11') — check the next one
+
+    # Update the bitmap on disk BEFORE writing the record
+    new_bitmap_list = list(bitmap)
+    new_bitmap_list[slot_id] = '1'
+    update_page_bitmap(page_id, "".join(new_bitmap_list))
+
+    # Write the record at its exact offset
+    offset = (page_id * PAGE_SIZE) + HEADER_SIZE + (slot_id * RECORD_SIZE)
+    with open(FILE_NAME, "r+") as file:
+        file.seek(offset)
+        file.write(record_str)
+```
+
+> [!note]
+> El bitmap se actualiza en disco **antes** de escribir el registro. Esto
+> garantiza que si el proceso falla entre ambas operaciones, el motor nunca
+> marcará un slot como libre cuando en realidad contiene datos parciales.
+
+---
+
+### 3.2 DELETE — Borrado lógico en una sola operación de disco
+
+Esta es la mejora más visible respecto a las versiones anteriores. En la `v2` el borrado requería sobrescribir el campo ID con asteriscos (`*****`), mezclando metadatos con datos. En la `v4`, el borrado es una operación quirúrgica sobre el encabezado únicamente:
+
+```python
+def delete_record(page_id, slot_id):
+    """Logical delete: flips a single bit in the header. Record data untouched."""
+    bitmap = read_page_bitmap(page_id)
+
+    if not bitmap or bitmap[slot_id] == '0':
+        print(f"[DELETE] Slot {slot_id} on page {page_id} is already empty.")
+        return False
+
+    # Flip the bit: '1' → '0'
+    new_bitmap_list = list(bitmap)
+    new_bitmap_list[slot_id] = '0'
+    update_page_bitmap(page_id, "".join(new_bitmap_list))
+    return True
+```
+
+| Versión | Operaciones de disco al borrar |
+|:---:|---|
+| `v2` | 1 lectura + 1 escritura sobre el **registro** (50 bytes) |
+| `v3` | 1 lectura + 1 escritura sobre el **registro** + actualización en RAM |
+| `v4` | 1 lectura + 1 escritura sobre el **header** (2 bytes) |
+
+> [!tip]
+> Al no sobrescribir el área de datos, los bytes del registro borrado quedan
+> intactos en disco. Esto es relevante en sistemas reales donde se requieren
+> mecanismos de recuperación ante fallos (recovery).
+
+---
+
+### 3.3 SELECT — Early Exit gracias al Bitmap
+
+La operación de búsqueda por RID incorpora una optimización importante: si el bitmap reporta que un slot está libre, el motor retorna `None` de inmediato sin mover el cabezal del disco hacia el área de datos.
+
+```python
+def search_record_by_rid(page_id, slot_id):
+    """Checks the bitmap first. Returns None immediately if slot is free (early exit)."""
+    bitmap = read_page_bitmap(page_id)
+
+    if not bitmap or slot_id >= RECORDS_PER_PAGE:
+        return None
+
+    # Early exit: no disk seek to the data area needed
+    if bitmap[slot_id] == '0':
+        return None
+
+    # Only if the bit is '1' do we pay the cost of reading the record
+    offset = (page_id * PAGE_SIZE) + HEADER_SIZE + (slot_id * RECORD_SIZE)
+    with open(FILE_NAME, "r") as file:
+        file.seek(offset)
+        chunk = file.read(RECORD_SIZE)
+        return parse_record(chunk)
+```
+
+> [!note]
+> En un sistema real con páginas de 8 KB y miles de registros, evitar el `file.seek()` 
+> al área de datos representa una reducción significativa en operaciones de E/S, que es el recurso más costoso en un DBMS orientado a disco.
+
+---
+
+## Guía de Ejecución y Validación
+
+Esta sección acompaña la ejecución del script paso a paso. El objetivo no es
+solo verificar que el código corre sin errores, sino entender **por qué** cada
+salida en consola y cada byte en disco tienen el aspecto que tienen.
+
+---
+
+### 4.1 Preparación del entorno
+
+Desde la terminal, ubíquese en el directorio `bitmap/` y ejecute:
+```bash
+python heap_file_v4_bitmap.py
+```
+
+Si el archivo `my_database_v4.dat` existe de una ejecución anterior, el script
+lo eliminará automáticamente antes de comenzar:
+```python
+# heap_file_v4_bitmap.py — main block
+if os.path.exists(FILE_NAME):
+    os.remove(FILE_NAME)
+```
+
+> [!note]
+> Esta limpieza garantiza que cada ejecución parte de un estado conocido.
+> En un motor real, esta operación equivaldría a formatear la base de datos
+> desde cero — una acción irreversible que los DBMS protegen con múltiples
+> confirmaciones.
+
+---
+
+### 4.2 Puntos de Control
+
+Siga la ejecución en consola y valide cada punto en el orden indicado. 
+
+```
+--- Laboratorio: Heap Files v4 (Bitmaps) ---
+
+1. Inserciones Iniciales:
+[INSERT] Homer insertado en RID(0, 0). Bitmap actualizado a '10'
+[INSERT] Marge insertado en RID(0, 1). Bitmap actualizado a '11'
+[INSERT] Ned insertado en RID(1, 0). Bitmap actualizado a '10'
+[INSERT] Seymour insertado en RID(1, 1). Bitmap actualizado a '11'
+
+2. Estado tras borrado (Deletes):
+[DELETE] Registro en RID(0, 1) eliminado lógicamente. Bitmap ahora es '10'
+
+3. Búsqueda tras borrado:
+Marge no fue encontrada (El Bitmap reporta el slot como '0').
+
+4. Inserción de reciclaje:
+[INSERT] Lisa insertado en RID(0, 1). Bitmap actualizado a '11'
+```
+
+Tal y como se muestra anteriormenteo, la salida completa se muestra a continuación y lo que se hará será ir inspeccionando de manera gradual esta para comprender el efecto de las operaciones sobre las estructuras asociadas a la base de datos.
+
+---
+
+#### Punto 1 — Las inserciones iniciales crean y llenan páginas correctamente
+
+**Salida esperada en consola:**
+
+```
+...
+1. Inserciones Iniciales:
+[INSERT] Homer insertado en RID(0, 0). Bitmap actualizado a '10'
+[INSERT] Marge insertado en RID(0, 1). Bitmap actualizado a '11'
+[INSERT] Ned insertado en RID(1, 0). Bitmap actualizado a '10'
+[INSERT] Seymour insertado en RID(1, 1). Bitmap actualizado a '11'
+...
+```
+
+> [!tip]
+> **¿Por qué es importante?**
+> Observe que al insertar a Ned, el motor detectó que la Página 0 tenía bitmap `'11'` (llena) y creó automáticamente la Página 1 con un header limpio `'00'`. Este comportamiento reemplaza por completo la necesidad de una
+> `free_list_head` en RAM: el escaneo de bitmaps en disco es la única fuente de verdad.
+
+---
+
+#### Punto 2 — El borrado de Marge solo modifica el header
+
+**Salida esperada en consola:**
+
+```
+...
+2. Estado tras borrado (Deletes):
+[DELETE] Registro en RID(0, 1) eliminado lógicamente. Bitmap ahora es '10'
+...
+```
+
+
+> [!tip]
+> **¿Por qué es importante?**
+> El bitmap de la Página 0 pasó de `'11'` a `'10'` con una única escritura de 2 bytes al encabezado. Compruebe en el archivo `my_database_v4.dat` que los datos de Marge siguen físicamente en disco — los 50 bytes del Slot 1 no fueron
+sobrescritos. Solo el bit cambió.
+
+---
+
+#### Punto 3 — La búsqueda tras el borrado aplica early exit
+
+**Salida esperada en consola:**
+
+```
+...
+3. Búsqueda tras borrado:
+Marge no fue encontrada (El Bitmap reporta el slot como '0').
+...
+```
+
+> [!tip]
+> **¿Por qué es importante?**
+> El motor leyó el header de la Página 0, encontró `'10'` en el bitmap, y retornó `None` **sin ejecutar un `file.seek()`** hacia el área de datos. En términos de E/S, el costo fue de una sola lectura de 28 bytes en lugar de 28 + 50 = 78 bytes. A escala de millones de registros, esta diferencia es determinante.
+
+---
+
+#### Punto 4 — La inserción de Lisa recicla el espacio de Marge
+
+**Salida esperada en consola:**
+
+```
+4. Inserción de reciclaje:
+[INSERT] Lisa insertado en RID(0, 1). Bitmap actualizado a '11'
+```
+
+> [!tip]
+> **¿Por qué es importante?**
+> El motor escaneó los bitmaps desde la Página 0, encontró el `'0'` en la posición 1, y reutilizó exactamente el espacio que Marge dejó libre. No se creó ninguna página nueva. Esto confirma que el ciclo completo **INSERT → DELETE → INSERT** funciona de forma persistente y sin depender de ninguna variable en RAM.
+
+---
+
+#### Punto 5 — Inspección visual del archivo `.dat`
+
+Abra `my_database_v4.dat` en un editor de texto. La estructura esperada al
+finalizar la ejecución es la siguiente:
+
+```
+11==========================  123Simpson        Homer           31$400             999Simpson        Lisa            8 $10
+10==========================  123Simpson        Homer           31$400             443Simpson        Marge           32$140
+```
+
+Verifique que:
+- Los primeros caracteres de cada página son el bitmap (`11`, `10`, etc.).
+- El relleno del header es visible como una cadena de signos `=`.
+- **No hay asteriscos** (`*****`) mezclados con los datos — a diferencia
+  de las versiones `v2` y `v3`.
+
+> [!tip]
+> Si los datos aparecen en una sola línea continua, es el comportamiento
+> esperado: el archivo `.dat` no usa saltos de línea. Cada página ocupa
+> exactamente 128 bytes consecutivos. Un editor hexadecimal mostrará la
+> separación con mayor claridad (ver Sección 5).
+
+---
+
+### 4.3 Lista de Verificación Final
+
+Una vez completada la ejecución, confirme que se cumplen todos los puntos:
+
+- [ ] Las inserciones reportan el bitmap actualizado en consola
+- [ ] El borrado de Marge muestra `'11' → '10'` sin tocar los datos
+- [ ] La búsqueda tras el borrado retorna vacío por early exit
+- [ ] Lisa se inserta en `RID(0, 1)` reciclando el espacio de Marge
+- [ ] El archivo `.dat` no contiene asteriscos (`*****`)
 

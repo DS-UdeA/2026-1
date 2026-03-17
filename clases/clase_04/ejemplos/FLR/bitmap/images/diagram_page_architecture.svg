@@ -1,0 +1,62 @@
+<svg width="100%" viewBox="0 0 680 310" xmlns="http://www.w3.org/2000/svg">
+  <defs>
+    <marker id="arrow" viewBox="0 0 10 10" refX="8" refY="5" markerWidth="6" markerHeight="6" orient="auto-start-reverse">
+      <path d="M2 1L8 5L2 9" fill="none" stroke="context-stroke" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round"/>
+    </marker>
+  </defs>
+
+  <text x="340" y="28" text-anchor="middle" font-family="sans-serif" font-size="13" font-weight="500" fill="#3d3d3a">Distribución física de una página (128 bytes)</text>
+
+  <rect x="60" y="44" width="560" height="120" rx="8" fill="#F1EFE8" stroke="#5F5E5A" stroke-width="0.5"/>
+
+  <rect x="60" y="44" width="122" height="120" rx="8" fill="#B5D4F4" stroke="#185FA5" stroke-width="0.5"/>
+  <rect x="152" y="44" width="30" height="120" fill="#B5D4F4" stroke="none"/>
+
+  <text x="121" y="68" text-anchor="middle" font-family="sans-serif" font-size="12" font-weight="500" fill="#0C447C">Page Header</text>
+  <text x="121" y="84" text-anchor="middle" font-family="sans-serif" font-size="11" fill="#185FA5">28 bytes</text>
+
+  <rect x="72" y="94" width="98" height="32" rx="4" fill="#ffffff" stroke="#185FA5" stroke-width="0.5"/>
+  <text x="121" y="107" text-anchor="middle" font-family="monospace" font-size="13" font-weight="500" fill="#0C447C">1  1</text>
+  <text x="121" y="120" text-anchor="middle" font-family="sans-serif" font-size="10" fill="#185FA5">Bitmap (2 bits)</text>
+
+  <rect x="72" y="132" width="98" height="22" rx="4" fill="#ffffff" stroke="#185FA5" stroke-width="0.5" stroke-dasharray="3 2"/>
+  <text x="121" y="147" text-anchor="middle" font-family="monospace" font-size="10" fill="#5F5E5A">= = = = = = = …</text>
+
+  <rect x="182" y="44" width="219" height="120" rx="0" fill="#EAF3DE" stroke="#3B6D11" stroke-width="0.5"/>
+  <text x="291" y="68" text-anchor="middle" font-family="sans-serif" font-size="12" font-weight="500" fill="#27500A">Slot 0</text>
+  <text x="291" y="84" text-anchor="middle" font-family="sans-serif" font-size="11" fill="#3B6D11">50 bytes</text>
+  <rect x="194" y="94" width="195" height="56" rx="4" fill="#ffffff" stroke="#3B6D11" stroke-width="0.5"/>
+  <text x="291" y="114" text-anchor="middle" font-family="monospace" font-size="11" fill="#27500A">123  Simpson  Homer</text>
+  <text x="291" y="132" text-anchor="middle" font-family="monospace" font-size="11" fill="#27500A">31  $400</text>
+
+  <rect x="401" y="44" width="219" height="120" rx="0" fill="#EAF3DE" stroke="#3B6D11" stroke-width="0.5"/>
+  <rect x="581" y="44" width="39" height="120" rx="8" fill="#EAF3DE" stroke="#3B6D11" stroke-width="0.5"/>
+  <rect x="581" y="44" width="20" height="120" fill="#EAF3DE" stroke="none"/>
+  <text x="510" y="68" text-anchor="middle" font-family="sans-serif" font-size="12" font-weight="500" fill="#27500A">Slot 1</text>
+  <text x="510" y="84" text-anchor="middle" font-family="sans-serif" font-size="11" fill="#3B6D11">50 bytes</text>
+  <rect x="413" y="94" width="195" height="56" rx="4" fill="#ffffff" stroke="#3B6D11" stroke-width="0.5"/>
+  <text x="510" y="114" text-anchor="middle" font-family="monospace" font-size="11" fill="#27500A">443  Simpson  Marge</text>
+  <text x="510" y="132" text-anchor="middle" font-family="monospace" font-size="11" fill="#27500A">32  $140</text>
+
+  <line x1="401" y1="44" x2="401" y2="164" stroke="#3B6D11" stroke-width="0.5" stroke-dasharray="4 3"/>
+
+  <line x1="60"  y1="178" x2="60"  y2="190" stroke="#5F5E5A" stroke-width="0.5"/>
+  <line x1="182" y1="178" x2="182" y2="190" stroke="#185FA5" stroke-width="0.5"/>
+  <line x1="401" y1="178" x2="401" y2="190" stroke="#3B6D11" stroke-width="0.5"/>
+  <line x1="620" y1="178" x2="620" y2="190" stroke="#5F5E5A" stroke-width="0.5"/>
+  <line x1="60" y1="184" x2="620" y2="184" stroke="#5F5E5A" stroke-width="0.5"/>
+
+  <text x="60"  y="204" text-anchor="middle" font-family="monospace" font-size="11" fill="#5F5E5A">0</text>
+  <text x="182" y="204" text-anchor="middle" font-family="monospace" font-size="11" fill="#185FA5">28</text>
+  <text x="401" y="204" text-anchor="middle" font-family="monospace" font-size="11" fill="#3B6D11">78</text>
+  <text x="620" y="204" text-anchor="middle" font-family="monospace" font-size="11" fill="#5F5E5A">128</text>
+
+  <text x="121" y="222" text-anchor="middle" font-family="sans-serif" font-size="11" fill="#0C447C">HEADER_SIZE = 28</text>
+  <text x="291" y="222" text-anchor="middle" font-family="sans-serif" font-size="11" fill="#27500A">Slot 0 → offset = 28</text>
+  <text x="510" y="222" text-anchor="middle" font-family="sans-serif" font-size="11" fill="#27500A">Slot 1 → offset = 78</text>
+
+  <rect x="60" y="244" width="560" height="52" rx="8" fill="#EEEDFE" stroke="#534AB7" stroke-width="0.5"/>
+  <text x="340" y="264" text-anchor="middle" font-family="sans-serif" font-size="12" font-weight="500" fill="#3C3489">Fórmula de acceso O(1) — v4</text>
+  <text x="340" y="284" text-anchor="middle" font-family="monospace" font-size="12" fill="#26215C">offset = (page_id × PAGE_SIZE) + HEADER_SIZE + (slot_id × RECORD_SIZE)</text>
+
+</svg>

@@ -1,0 +1,156 @@
+<svg width="100%" viewBox="0 0 680 580" xmlns="http://www.w3.org/2000/svg">
+  <defs>
+    <marker id="arrow" viewBox="0 0 10 10" refX="8" refY="5" markerWidth="6" markerHeight="6" orient="auto-start-reverse">
+      <path d="M2 1L8 5L2 9" fill="none" stroke="context-stroke" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round"/>
+    </marker>
+  </defs>
+
+  <!-- ===== COLUMN HEADERS ===== -->
+  <rect x="40"  y="16" width="180" height="34" rx="6" fill="#EAF3DE" stroke="#3B6D11" stroke-width="0.5"/>
+  <text x="130" y="38" text-anchor="middle" font-family="sans-serif" font-size="13" font-weight="500" fill="#27500A">INSERT</text>
+
+  <rect x="250" y="16" width="180" height="34" rx="6" fill="#FCEBEB" stroke="#A32D2D" stroke-width="0.5"/>
+  <text x="340" y="38" text-anchor="middle" font-family="sans-serif" font-size="13" font-weight="500" fill="#791F1F">DELETE</text>
+
+  <rect x="460" y="16" width="180" height="34" rx="6" fill="#EEEDFE" stroke="#534AB7" stroke-width="0.5"/>
+  <text x="550" y="38" text-anchor="middle" font-family="sans-serif" font-size="13" font-weight="500" fill="#3C3489">SELECT (por RID)</text>
+
+  <!-- ===== DIVIDERS ===== -->
+  <line x1="240" y1="16" x2="240" y2="560" stroke="#D3D1C7" stroke-width="0.5" stroke-dasharray="5 4"/>
+  <line x1="450" y1="16" x2="450" y2="560" stroke="#D3D1C7" stroke-width="0.5" stroke-dasharray="5 4"/>
+
+  <!-- ==================== INSERT COLUMN ==================== -->
+
+  <!-- Step 1 -->
+  <rect x="50" y="72" width="160" height="44" rx="6" fill="#EAF3DE" stroke="#3B6D11" stroke-width="0.5"/>
+  <text x="130" y="89" text-anchor="middle" font-family="sans-serif" font-size="11" font-weight="500" fill="#27500A">1. Leer bitmap</text>
+  <text x="130" y="106" text-anchor="middle" font-family="sans-serif" font-size="10" fill="#3B6D11">page_id = 0, 1, 2 …</text>
+  <line x1="130" y1="116" x2="130" y2="136" stroke="#3B6D11" stroke-width="0.5" marker-end="url(#arrow)"/>
+
+  <!-- Decision diamond -->
+  <polygon points="130,138 175,162 130,186 85,162" fill="#ffffff" stroke="#3B6D11" stroke-width="0.5"/>
+  <text x="130" y="158" text-anchor="middle" font-family="sans-serif" font-size="10" fill="#27500A">¿hay '0'</text>
+  <text x="130" y="171" text-anchor="middle" font-family="sans-serif" font-size="10" fill="#27500A">en bitmap?</text>
+
+  <!-- No branch -->
+  <line x1="175" y1="162" x2="210" y2="162" stroke="#A32D2D" stroke-width="0.5" marker-end="url(#arrow)"/>
+  <text x="190" y="156" text-anchor="middle" font-family="sans-serif" font-size="9" fill="#A32D2D">No</text>
+  <text x="225" y="162" font-family="sans-serif" font-size="9" fill="#5F5E5A">nueva pág.</text>
+
+  <!-- Yes branch -->
+  <line x1="130" y1="186" x2="130" y2="206" stroke="#3B6D11" stroke-width="0.5" marker-end="url(#arrow)"/>
+  <text x="140" y="200" font-family="sans-serif" font-size="9" fill="#3B6D11">Sí</text>
+
+  <!-- Step 2 -->
+  <rect x="50" y="208" width="160" height="44" rx="6" fill="#EAF3DE" stroke="#3B6D11" stroke-width="0.5"/>
+  <text x="130" y="225" text-anchor="middle" font-family="sans-serif" font-size="11" font-weight="500" fill="#27500A">2. Actualizar bitmap</text>
+  <text x="130" y="242" text-anchor="middle" font-family="sans-serif" font-size="10" fill="#3B6D11">'0' → '1' en disco</text>
+  <line x1="130" y1="252" x2="130" y2="272" stroke="#3B6D11" stroke-width="0.5" marker-end="url(#arrow)"/>
+
+  <!-- Step 3 -->
+  <rect x="50" y="274" width="160" height="44" rx="6" fill="#EAF3DE" stroke="#3B6D11" stroke-width="0.5"/>
+  <text x="130" y="291" text-anchor="middle" font-family="sans-serif" font-size="11" font-weight="500" fill="#27500A">3. Escribir registro</text>
+  <text x="130" y="308" text-anchor="middle" font-family="sans-serif" font-size="10" fill="#3B6D11">file.seek(offset) → write</text>
+  <line x1="130" y1="318" x2="130" y2="338" stroke="#3B6D11" stroke-width="0.5" marker-end="url(#arrow)"/>
+
+  <!-- Result -->
+  <rect x="50" y="340" width="160" height="36" rx="6" fill="#C0DD97" stroke="#3B6D11" stroke-width="0.5"/>
+  <text x="130" y="353" text-anchor="middle" font-family="sans-serif" font-size="11" fill="#27500A">RID asignado</text>
+  <text x="130" y="368" text-anchor="middle" font-family="monospace" font-size="10" fill="#27500A">(page_id, slot_id)</text>
+
+  <!-- Cost label -->
+  <rect x="50" y="396" width="160" height="28" rx="5" fill="#F1EFE8" stroke="#888780" stroke-width="0.5"/>
+  <text x="130" y="414" text-anchor="middle" font-family="sans-serif" font-size="10" fill="#444441">Costo: O(páginas) + O(1) write</text>
+
+  <!-- ==================== DELETE COLUMN ==================== -->
+
+  <!-- Step 1 -->
+  <rect x="260" y="72" width="160" height="44" rx="6" fill="#FCEBEB" stroke="#A32D2D" stroke-width="0.5"/>
+  <text x="340" y="89" text-anchor="middle" font-family="sans-serif" font-size="11" font-weight="500" fill="#791F1F">1. Leer bitmap</text>
+  <text x="340" y="106" text-anchor="middle" font-family="sans-serif" font-size="10" fill="#A32D2D">read_page_bitmap(page_id)</text>
+  <line x1="340" y1="116" x2="340" y2="136" stroke="#A32D2D" stroke-width="0.5" marker-end="url(#arrow)"/>
+
+  <!-- Decision diamond -->
+  <polygon points="340,138 385,162 340,186 295,162" fill="#ffffff" stroke="#A32D2D" stroke-width="0.5"/>
+  <text x="340" y="158" text-anchor="middle" font-family="sans-serif" font-size="10" fill="#791F1F">¿bit[slot]</text>
+  <text x="340" y="171" text-anchor="middle" font-family="sans-serif" font-size="10" fill="#791F1F">== '1'?</text>
+
+  <!-- No branch -->
+  <line x1="385" y1="162" x2="420" y2="162" stroke="#888780" stroke-width="0.5" marker-end="url(#arrow)"/>
+  <text x="400" y="156" text-anchor="middle" font-family="sans-serif" font-size="9" fill="#888780">No</text>
+  <text x="428" y="162" font-family="sans-serif" font-size="9" fill="#5F5E5A">error</text>
+
+  <!-- Yes branch -->
+  <line x1="340" y1="186" x2="340" y2="206" stroke="#A32D2D" stroke-width="0.5" marker-end="url(#arrow)"/>
+  <text x="350" y="200" font-family="sans-serif" font-size="9" fill="#A32D2D">Sí</text>
+
+  <!-- Step 2 -->
+  <rect x="260" y="208" width="160" height="44" rx="6" fill="#FCEBEB" stroke="#A32D2D" stroke-width="0.5"/>
+  <text x="340" y="225" text-anchor="middle" font-family="sans-serif" font-size="11" font-weight="500" fill="#791F1F">2. Actualizar bitmap</text>
+  <text x="340" y="242" text-anchor="middle" font-family="sans-serif" font-size="10" fill="#A32D2D">'1' → '0' en disco</text>
+  <line x1="340" y1="252" x2="340" y2="272" stroke="#A32D2D" stroke-width="0.5" marker-end="url(#arrow)"/>
+
+  <!-- Result -->
+  <rect x="260" y="274" width="160" height="36" rx="6" fill="#F7C1C1" stroke="#A32D2D" stroke-width="0.5"/>
+  <text x="340" y="291" text-anchor="middle" font-family="sans-serif" font-size="11" fill="#791F1F">Borrado lógico</text>
+  <text x="340" y="308" text-anchor="middle" font-family="sans-serif" font-size="10" fill="#791F1F">dato en disco intacto</text>
+
+  <!-- Key insight box -->
+  <rect x="260" y="330" width="160" height="44" rx="6" fill="#FAEEDA" stroke="#BA7517" stroke-width="0.5"/>
+  <text x="340" y="347" text-anchor="middle" font-family="sans-serif" font-size="10" font-weight="500" fill="#633806">Sin asteriscos (*****)</text>
+  <text x="340" y="362" text-anchor="middle" font-family="sans-serif" font-size="10" fill="#854F0B">Solo 1 escritura al header</text>
+
+  <!-- Cost label -->
+  <rect x="260" y="396" width="160" height="28" rx="5" fill="#F1EFE8" stroke="#888780" stroke-width="0.5"/>
+  <text x="340" y="414" text-anchor="middle" font-family="sans-serif" font-size="10" fill="#444441">Costo: O(1) — solo el header</text>
+
+  <!-- ==================== SELECT COLUMN ==================== -->
+
+  <!-- Step 1 -->
+  <rect x="470" y="72" width="160" height="44" rx="6" fill="#EEEDFE" stroke="#534AB7" stroke-width="0.5"/>
+  <text x="550" y="89" text-anchor="middle" font-family="sans-serif" font-size="11" font-weight="500" fill="#3C3489">1. Leer bitmap</text>
+  <text x="550" y="106" text-anchor="middle" font-family="sans-serif" font-size="10" fill="#534AB7">read_page_bitmap(page_id)</text>
+  <line x1="550" y1="116" x2="550" y2="136" stroke="#534AB7" stroke-width="0.5" marker-end="url(#arrow)"/>
+
+  <!-- Decision diamond -->
+  <polygon points="550,138 595,162 550,186 505,162" fill="#ffffff" stroke="#534AB7" stroke-width="0.5"/>
+  <text x="550" y="158" text-anchor="middle" font-family="sans-serif" font-size="10" fill="#3C3489">¿bit[slot]</text>
+  <text x="550" y="171" text-anchor="middle" font-family="sans-serif" font-size="10" fill="#3C3489">== '1'?</text>
+
+  <!-- No branch — return None immediately -->
+  <line x1="505" y1="162" x2="472" y2="162" stroke="#888780" stroke-width="0.5" marker-end="url(#arrow)"/>
+  <text x="490" y="156" text-anchor="middle" font-family="sans-serif" font-size="9" fill="#888780">No</text>
+  <rect x="460" y="172" width="50" height="22" rx="4" fill="#F1EFE8" stroke="#888780" stroke-width="0.5"/>
+  <text x="485" y="187" text-anchor="middle" font-family="sans-serif" font-size="9" fill="#444441">→ None</text>
+
+  <!-- Yes branch -->
+  <line x1="550" y1="186" x2="550" y2="206" stroke="#534AB7" stroke-width="0.5" marker-end="url(#arrow)"/>
+  <text x="560" y="200" font-family="sans-serif" font-size="9" fill="#534AB7">Sí</text>
+
+  <!-- Step 2 -->
+  <rect x="470" y="208" width="160" height="44" rx="6" fill="#EEEDFE" stroke="#534AB7" stroke-width="0.5"/>
+  <text x="550" y="225" text-anchor="middle" font-family="sans-serif" font-size="11" font-weight="500" fill="#3C3489">2. Calcular offset</text>
+  <text x="550" y="242" text-anchor="middle" font-family="monospace" font-size="9" fill="#534AB7">pg×128 + 28 + sl×50</text>
+  <line x1="550" y1="252" x2="550" y2="272" stroke="#534AB7" stroke-width="0.5" marker-end="url(#arrow)"/>
+
+  <!-- Step 3 -->
+  <rect x="470" y="274" width="160" height="44" rx="6" fill="#EEEDFE" stroke="#534AB7" stroke-width="0.5"/>
+  <text x="550" y="291" text-anchor="middle" font-family="sans-serif" font-size="11" font-weight="500" fill="#3C3489">3. Leer registro</text>
+  <text x="550" y="308" text-anchor="middle" font-family="sans-serif" font-size="10" fill="#534AB7">file.seek(offset) → read</text>
+  <line x1="550" y1="318" x2="550" y2="338" stroke="#534AB7" stroke-width="0.5" marker-end="url(#arrow)"/>
+
+  <!-- Result -->
+  <rect x="470" y="340" width="160" height="36" rx="6" fill="#CECBF6" stroke="#534AB7" stroke-width="0.5"/>
+  <text x="550" y="357" text-anchor="middle" font-family="sans-serif" font-size="11" fill="#26215C">Registro devuelto</text>
+  <text x="550" y="372" text-anchor="middle" font-family="monospace" font-size="10" fill="#3C3489">parse_record(chunk)</text>
+
+  <!-- Cost label -->
+  <rect x="470" y="396" width="160" height="28" rx="5" fill="#F1EFE8" stroke="#888780" stroke-width="0.5"/>
+  <text x="550" y="414" text-anchor="middle" font-family="sans-serif" font-size="10" fill="#444441">Costo: O(1) — con early exit</text>
+
+  <!-- ===== KEY INSIGHT FOOTER ===== -->
+  <rect x="40" y="444" width="600" height="52" rx="8" fill="#F1EFE8" stroke="#888780" stroke-width="0.5"/>
+  <text x="340" y="464" text-anchor="middle" font-family="sans-serif" font-size="11" font-weight="500" fill="#444441">Ventaja del Bitmap frente a la v3</text>
+  <text x="340" y="482" text-anchor="middle" font-family="sans-serif" font-size="11" fill="#5F5E5A">El estado de cada slot persiste en disco → el motor no depende de la RAM para saber qué espacios están libres</text>
+
+</svg>
