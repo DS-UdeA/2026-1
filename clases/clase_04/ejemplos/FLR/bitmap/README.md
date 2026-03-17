@@ -1,12 +1,43 @@
 # Heap Files — Parte II: Gestión de Espacio con Bitmaps y Encabezados de Página
 
-**Laboratorio de Estructuras de Datos · Universidad de Antioquia**
-**Versión del motor:** `heap_file_v4_bitmap.py`
-**Prerrequisito obligatorio:** Haber completado la Parte I (`packet/`)
+* **Laboratorio de Estructuras de Datos · Universidad de Antioquia**
+* **Versión del motor:** `heap_file_v4_bitmap.py`
+* **Prerrequisito obligatorio:** Haber completado la Parte I (`packet/`)
 
 ---
 
-## Punto de Partida: ¿Por qué esta entrega existe?
+## Tabla de Contenido
+
+- [Heap Files — Parte II: Gestión de Espacio con Bitmaps y Encabezados de Página](#heap-files--parte-ii-gestión-de-espacio-con-bitmaps-y-encabezados-de-página)
+  - [Tabla de Contenido](#tabla-de-contenido)
+  - [1. Punto de Partida: ¿Por qué esta entrega existe?](#1-punto-de-partida-por-qué-esta-entrega-existe)
+  - [2. Repaso Teórico: Los Tres Conceptos Clave](#2-repaso-teórico-los-tres-conceptos-clave)
+    - [2.1 Encabezado de Página (Page Header)](#21-encabezado-de-página-page-header)
+    - [2.2 Mapa de Bits (Bitmap)](#22-mapa-de-bits-bitmap)
+    - [2.3 La Nueva Fórmula de Acceso O(1)](#23-la-nueva-fórmula-de-acceso-o1)
+  - [3. Las Operaciones DML (Data Manipulation Language) a través del Bitmap](#3-las-operaciones-dml-data-manipulation-language-a-través-del-bitmap)
+    - [3.1 INSERT — Encontrar espacio libre sin depender de la RAM](#31-insert--encontrar-espacio-libre-sin-depender-de-la-ram)
+    - [3.2 DELETE — Borrado lógico en una sola operación de disco](#32-delete--borrado-lógico-en-una-sola-operación-de-disco)
+    - [3.3 SELECT — Early Exit gracias al Bitmap](#33-select--early-exit-gracias-al-bitmap)
+  - [4. Guía de Ejecución y Validación](#4-guía-de-ejecución-y-validación)
+    - [4.1 Preparación del entorno](#41-preparación-del-entorno)
+    - [4.2 Puntos de Control](#42-puntos-de-control)
+      - [Punto 1 — Las inserciones iniciales crean y llenan páginas correctamente](#punto-1--las-inserciones-iniciales-crean-y-llenan-páginas-correctamente)
+      - [Punto 2 — El borrado de Marge solo modifica el header](#punto-2--el-borrado-de-marge-solo-modifica-el-header)
+      - [Punto 3 — La búsqueda tras el borrado aplica early exit](#punto-3--la-búsqueda-tras-el-borrado-aplica-early-exit)
+      - [Punto 4 — La inserción de Lisa recicla el espacio de Marge](#punto-4--la-inserción-de-lisa-recicla-el-espacio-de-marge)
+      - [Punto 5 — Inspección visual del archivo `.dat`](#punto-5--inspección-visual-del-archivo-dat)
+    - [4.3 Lista de Verificación Final](#43-lista-de-verificación-final)
+  - [5. Inspección a Nivel de Bytes (Hexdump)](#5-inspección-a-nivel-de-bytes-hexdump)
+    - [5.1 ¿Qué es un Hexdump?](#51-qué-es-un-hexdump)
+    - [5.2 Paso 1 — Estado inicial: todas las páginas llenas](#52-paso-1--estado-inicial-todas-las-páginas-llenas)
+    - [5.3 Paso 2 — Estado tras el borrado: bitmap modificado](#53-paso-2--estado-tras-el-borrado-bitmap-modificado)
+    - [5.4 Paso 3 — Estado final: reciclaje confirmado](#54-paso-3--estado-final-reciclaje-confirmado)
+  - [6. Referencias y Material de Profundización](#6-referencias-y-material-de-profundización)
+
+---
+
+## 1. Punto de Partida: ¿Por qué esta entrega existe?
 
 > *"Un sistema que olvida su estado al apagarse no es un sistema de base de datos, es un bloc de notas."*
 
@@ -25,13 +56,11 @@ Esta variable global **vive únicamente en la memoria RAM** del proceso Python. 
 
 ![Diagrama: Estado del motor ante un crash](images/diagram_ram_crash.svg)
 
-
 La versión `v4` resuelve este problema de raíz: **los metadatos sobre el espacio libre se escriben directamente en el disco**, dentro de un encabezado físico al inicio de cada página. El motor ya no necesita recordar nada en RAM.
-
 
 ---
 
-## Repaso Teórico: Los Tres Conceptos Clave
+## 2. Repaso Teórico: Los Tres Conceptos Clave
 
 Antes de explorar el código, es fundamental consolidar los conceptos teóricos
 que dan sustento a esta versión del motor. Cada uno de ellos fue introducido
@@ -126,7 +155,7 @@ El motor salta directamente al byte 78 sin leer nada en el camino. La complejida
 
 ---
 
-## Las Operaciones DML (Data Manipulation Language) a través del Bitmap
+## 3. Las Operaciones DML (Data Manipulation Language) a través del Bitmap
 
 Con los tres conceptos fundamentales claros, es posible entender cómo cada operación del motor interactúa con el bitmap antes de tocar el área de datos. El siguiente diagrama resume el flujo de cada operación:
 
@@ -236,12 +265,14 @@ def search_record_by_rid(page_id, slot_id):
 ```
 
 > [!note]
-> En un sistema real con páginas de 8 KB y miles de registros, evitar el `file.seek()` 
-> al área de datos representa una reducción significativa en operaciones de E/S, que es el recurso más costoso en un DBMS orientado a disco.
+> En un sistema real con páginas de 8 KB y miles de registros, evitar el
+> `file.seek()` al área de datos representa una reducción significativa en
+> operaciones de E/S, que es el recurso más costoso en un DBMS orientado
+> a disco.
 
 ---
 
-## Guía de Ejecución y Validación
+## 4. Guía de Ejecución y Validación
 
 Esta sección acompaña la ejecución del script paso a paso. El objetivo no es
 solo verificar que el código corre sin errores, sino entender **por qué** cada
@@ -252,12 +283,14 @@ salida en consola y cada byte en disco tienen el aspecto que tienen.
 ### 4.1 Preparación del entorno
 
 Desde la terminal, ubíquese en el directorio `bitmap/` y ejecute:
+
 ```bash
 python heap_file_v4_bitmap.py
 ```
 
 Si el archivo `my_database_v4.dat` existe de una ejecución anterior, el script
 lo eliminará automáticamente antes de comenzar:
+
 ```python
 # heap_file_v4_bitmap.py — main block
 if os.path.exists(FILE_NAME):
@@ -274,7 +307,7 @@ if os.path.exists(FILE_NAME):
 
 ### 4.2 Puntos de Control
 
-Siga la ejecución en consola y valide cada punto en el orden indicado. 
+Siga la ejecución en consola y valide cada punto en el orden indicado.
 
 ```
 --- Laboratorio: Heap Files v4 (Bitmaps) ---
@@ -295,7 +328,7 @@ Marge no fue encontrada (El Bitmap reporta el slot como '0').
 [INSERT] Lisa insertado en RID(0, 1). Bitmap actualizado a '11'
 ```
 
-Tal y como se muestra anteriormenteo, la salida completa se muestra a continuación y lo que se hará será ir inspeccionando de manera gradual esta para comprender el efecto de las operaciones sobre las estructuras asociadas a la base de datos.
+La salida completa se muestra anteriormente y lo que se hará será ir inspeccionando de manera gradual esta para comprender el efecto de las operaciones sobre las estructuras asociadas a la base de datos.
 
 ---
 
@@ -315,8 +348,10 @@ Tal y como se muestra anteriormenteo, la salida completa se muestra a continuaci
 
 > [!tip]
 > **¿Por qué es importante?**
-> Observe que al insertar a Ned, el motor detectó que la Página 0 tenía bitmap `'11'` (llena) y creó automáticamente la Página 1 con un header limpio `'00'`. Este comportamiento reemplaza por completo la necesidad de una
-> `free_list_head` en RAM: el escaneo de bitmaps en disco es la única fuente de verdad.
+> Observe que al insertar a Ned, el motor detectó que la Página 0 tenía bitmap
+> `'11'` (llena) y creó automáticamente la Página 1 con un header limpio `'00'`.
+> Este comportamiento reemplaza por completo la necesidad de una `free_list_head`
+> en RAM: el escaneo de bitmaps en disco es la única fuente de verdad.
 
 ---
 
@@ -331,11 +366,12 @@ Tal y como se muestra anteriormenteo, la salida completa se muestra a continuaci
 ...
 ```
 
-
 > [!tip]
 > **¿Por qué es importante?**
-> El bitmap de la Página 0 pasó de `'11'` a `'10'` con una única escritura de 2 bytes al encabezado. Compruebe en el archivo `my_database_v4.dat` que los datos de Marge siguen físicamente en disco — los 50 bytes del Slot 1 no fueron
-sobrescritos. Solo el bit cambió.
+> El bitmap de la Página 0 pasó de `'11'` a `'10'` con una única escritura de
+> 2 bytes al encabezado. Compruebe en el archivo `my_database_v4.dat` que los
+> datos de Marge siguen físicamente en disco — los 50 bytes del Slot 1 no fueron
+> sobrescritos. Solo el bit cambió.
 
 ---
 
@@ -352,7 +388,11 @@ Marge no fue encontrada (El Bitmap reporta el slot como '0').
 
 > [!tip]
 > **¿Por qué es importante?**
-> El motor leyó el header de la Página 0, encontró `'10'` en el bitmap, y retornó `None` **sin ejecutar un `file.seek()`** hacia el área de datos. En términos de E/S, el costo fue de una sola lectura de 28 bytes en lugar de 28 + 50 = 78 bytes. A escala de millones de registros, esta diferencia es determinante.
+> El motor leyó el header de la Página 0, encontró `'10'` en el bitmap, y
+> retornó `None` **sin ejecutar un `file.seek()`** hacia el área de datos. En
+> términos de E/S, el costo fue de una sola lectura de 28 bytes en lugar de
+> 28 + 50 = 78 bytes. A escala de millones de registros, esta diferencia es
+> determinante.
 
 ---
 
@@ -367,7 +407,11 @@ Marge no fue encontrada (El Bitmap reporta el slot como '0').
 
 > [!tip]
 > **¿Por qué es importante?**
-> El motor escaneó los bitmaps desde la Página 0, encontró el `'0'` en la posición 1, y reutilizó exactamente el espacio que Marge dejó libre. No se creó ninguna página nueva. Esto confirma que el ciclo completo **INSERT → DELETE → INSERT** funciona de forma persistente y sin depender de ninguna variable en RAM.
+> El motor escaneó los bitmaps desde la Página 0, encontró el `'0'` en la
+> posición 1, y reutilizó exactamente el espacio que Marge dejó libre. No se
+> creó ninguna página nueva. Esto confirma que el ciclo completo
+> **INSERT → DELETE → INSERT** funciona de forma persistente y sin depender
+> de ninguna variable en RAM.
 
 ---
 
@@ -406,9 +450,8 @@ Una vez completada la ejecución, confirme que se cumplen todos los puntos:
 - [ ] El archivo `.dat` no contiene asteriscos (`*****`)
 
 ---
----
 
-## Inspección a Nivel de Bytes (Hexdump)
+## 5. Inspección a Nivel de Bytes (Hexdump)
 
 Esta sección es opcional pero altamente recomendada. Permite observar cómo
 los metadatos y los datos de usuario coexisten físicamente en el archivo `.dat`
@@ -441,6 +484,7 @@ con todos los registros insertados y ningún borrado aplicado.
 Abra `heap_file_v4_bitmap.py` y localice el bloque principal. Comente
 temporalmente las líneas correspondientes al borrado y a la inserción de Lisa,
 de modo que el script solo ejecute las inserciones iniciales:
+
 ```python
 if __name__ == "__main__":
     if os.path.exists(FILE_NAME): os.remove(FILE_NAME)
@@ -496,8 +540,6 @@ La siguiente tabla desglosa los bytes más relevantes:
 | `0x02` … `0x1B` | `3d` | `=` | Relleno del Page Header (26 bytes) |
 | `0x1C` … `0x1F` | `20 20 31 32` | `  12` | Inicio del Slot 0 — campo ID (`  123`) |
 
-<br>
-
 > [!note]
 > El offset `0x1C` equivale al byte **28** en decimal, que es exactamente
 > `HEADER_SIZE`. Esto confirma visualmente que la fórmula de offset es
@@ -525,11 +567,11 @@ borrado, dejando la inserción de Lisa aún comentada:
     print("\n2. Estado tras borrado (Deletes):")
     delete_record(0, 1)                               # ← descomentar
 
-    # print("\n3. Búsqueda tras borrado:")              ← mantener comentado
+    # print("\n3. Búsqueda tras borrado:")             ← mantener comentado
     # ...
 
-    # print("\n4. Inserción de reciclaje:")             ← mantener comentado
-    # insert_record(999, "Simpson", "Lisa", 8, "$10")   ← mantener comentado
+    # print("\n4. Inserción de reciclaje:")            ← mantener comentado
+    # insert_record(999, "Simpson", "Lisa", 8, "$10")  ← mantener comentado
 ```
 
 Guarde y ejecute nuevamente:
@@ -559,8 +601,6 @@ hexdump -C my_database_v4.dat
 | `0x01` | `31` → `1` | `30` → `0` | **Bit cambiado** — Slot 1 marcado libre |
 | `0x1C` … | datos de Homer | datos de Homer | Sin cambio — datos intactos |
 | `0x46` … | datos de Marge | datos de Marge | Sin cambio — datos intactos |
-
-<br>
 
 > [!tip]
 > El único byte que cambió en todo el archivo fue `0x01`: de `31` a `30`.
@@ -612,7 +652,7 @@ a mostrar `11` — ahora con los datos de Lisa en el Slot 1 en lugar de Marge:
 
 ---
 
-## Referencias y Material de Profundización
+## 6. Referencias y Material de Profundización
 
 Los conceptos implementados en esta práctica tienen respaldo directo en la
 literatura estándar de sistemas de bases de datos. Se recomienda consultar
