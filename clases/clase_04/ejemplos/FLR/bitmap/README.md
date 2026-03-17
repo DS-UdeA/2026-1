@@ -405,3 +405,229 @@ Una vez completada la ejecución, confirme que se cumplen todos los puntos:
 - [ ] Lisa se inserta en `RID(0, 1)` reciclando el espacio de Marge
 - [ ] El archivo `.dat` no contiene asteriscos (`*****`)
 
+---
+---
+
+## Inspección a Nivel de Bytes (Hexdump)
+
+Esta sección es opcional pero altamente recomendada. Permite observar cómo
+los metadatos y los datos de usuario coexisten físicamente en el archivo `.dat`
+sin ningún tipo de abstracción de por medio.
+
+---
+
+### 5.1 ¿Qué es un Hexdump?
+
+Un volcado hexadecimal (*hexdump*) es una representación del contenido binario
+de un archivo donde cada byte se muestra simultáneamente en dos formatos:
+
+- **Hexadecimal** (columna central): el valor numérico del byte en base 16.
+- **ASCII** (columna derecha): el carácter imprimible que corresponde a ese
+  valor, o un punto `.` si el byte no es imprimible.
+
+Esta herramienta permite ver exactamente qué hay en cada posición del archivo,
+incluyendo espacios en blanco, caracteres de relleno y los propios bytes del
+bitmap — sin ninguna capa de abstracción de por medio.
+
+---
+
+### 5.2 Paso 1 — Estado inicial: todas las páginas llenas
+
+El objetivo de este primer paso es observar el archivo en su estado inicial,
+con todos los registros insertados y ningún borrado aplicado.
+
+**Instrucciones:**
+
+Abra `heap_file_v4_bitmap.py` y localice el bloque principal. Comente
+temporalmente las líneas correspondientes al borrado y a la inserción de Lisa,
+de modo que el script solo ejecute las inserciones iniciales:
+```python
+if __name__ == "__main__":
+    if os.path.exists(FILE_NAME): os.remove(FILE_NAME)
+
+    print(f"--- Laboratorio: Heap Files v4 (Bitmaps) ---\n")
+
+    print("1. Inserciones Iniciales:")
+    insert_record(123, "Simpson", "Homer", 31, "$400")
+    insert_record(443, "Simpson", "Marge", 32, "$140")
+    insert_record(244, "Flanders", "Ned", 55, "$300")
+    insert_record(134, "Skinner", "Seymour", 55, "$400")
+
+    # print("\n2. Estado tras borrado (Deletes):")   ← comentar
+    # delete_record(0, 1)                            ← comentar
+
+    # print("\n3. Búsqueda tras borrado:")            ← comentar
+    # registro = search_record_by_rid(0, 1)          ← comentar
+    # ...                                            ← comentar
+
+    # print("\n4. Inserción de reciclaje:")           ← comentar
+    # insert_record(999, "Simpson", "Lisa", 8, "$10") ← comentar
+```
+
+Guarde el archivo y ejecútelo:
+
+```bash
+python heap_file_v4_bitmap.py
+```
+
+Luego ejecute el hexdump:
+
+```bash
+# Unix (Linux / macOS)
+hexdump -C my_database_v4.dat
+
+# Windows (PowerShell)
+Format-Hex my_database_v4.dat
+```
+
+**Salida esperada (primeros 32 bytes — Página 0):**
+
+```
+00000000  31 31 3d 3d 3d 3d 3d 3d  3d 3d 3d 3d 3d 3d 3d 3d  |11==============|
+00000010  3d 3d 3d 3d 3d 3d 3d 3d  3d 3d 3d 3d 20 20 31 32  |============  12|
+```
+
+La siguiente tabla desglosa los bytes más relevantes:
+
+| Offset (hex) | Valor hex | Carácter | Significado |
+|:---:|:---:|:---:|---|
+| `0x00` | `31` | `1` | Bit 0 del Bitmap — Slot 0 ocupado |
+| `0x01` | `31` | `1` | Bit 1 del Bitmap — Slot 1 ocupado |
+| `0x02` … `0x1B` | `3d` | `=` | Relleno del Page Header (26 bytes) |
+| `0x1C` … `0x1F` | `20 20 31 32` | `  12` | Inicio del Slot 0 — campo ID (`  123`) |
+
+<br>
+
+> [!note]
+> El offset `0x1C` equivale al byte **28** en decimal, que es exactamente
+> `HEADER_SIZE`. Esto confirma visualmente que la fórmula de offset es
+> correcta: los datos comienzan exactamente después del encabezado.
+
+**Lista de verificación — Paso 1:**
+
+- [ ] Los primeros dos bytes del archivo son `31 31` (bitmap `'11'`)
+- [ ] Los bytes `0x02` a `0x1B` son todos `3d` (carácter `=`)
+- [ ] A partir del byte `0x1C` comienzan los datos del registro de Homer
+
+---
+
+### 5.3 Paso 2 — Estado tras el borrado: bitmap modificado
+
+El objetivo de este segundo paso es observar el efecto exacto que tiene
+`delete_record(0, 1)` sobre el archivo físico.
+
+**Instrucciones:**
+
+Regrese a `heap_file_v4_bitmap.py` y descomente únicamente las líneas del
+borrado, dejando la inserción de Lisa aún comentada:
+
+```python
+    print("\n2. Estado tras borrado (Deletes):")
+    delete_record(0, 1)                               # ← descomentar
+
+    # print("\n3. Búsqueda tras borrado:")              ← mantener comentado
+    # ...
+
+    # print("\n4. Inserción de reciclaje:")             ← mantener comentado
+    # insert_record(999, "Simpson", "Lisa", 8, "$10")   ← mantener comentado
+```
+
+Guarde y ejecute nuevamente:
+
+```bash
+python heap_file_v4_bitmap.py
+```
+
+Luego ejecute el hexdump otra vez:
+
+```bash
+hexdump -C my_database_v4.dat
+```
+
+**Salida esperada (primeros 32 bytes — Página 0):**
+
+```
+00000000  31 30 3d 3d 3d 3d 3d 3d  3d 3d 3d 3d 3d 3d 3d 3d  |10==============|
+00000010  3d 3d 3d 3d 3d 3d 3d 3d  3d 3d 3d 3d 20 20 31 32  |============  12|
+```
+
+**Comparación directa entre Paso 1 y Paso 2:**
+
+| Offset | Paso 1 (antes del borrado) | Paso 2 (después del borrado) | Cambio |
+|:---:|:---:|:---:|---|
+| `0x00` | `31` → `1` | `31` → `1` | Sin cambio — Slot 0 sigue ocupado |
+| `0x01` | `31` → `1` | `30` → `0` | **Bit cambiado** — Slot 1 marcado libre |
+| `0x1C` … | datos de Homer | datos de Homer | Sin cambio — datos intactos |
+| `0x46` … | datos de Marge | datos de Marge | Sin cambio — datos intactos |
+
+<br>
+
+> [!tip]
+> El único byte que cambió en todo el archivo fue `0x01`: de `31` a `30`.
+> Eso es todo lo que el motor escribió en disco para borrar a Marge Simpson.
+> Compare esto con la `v2`, donde el borrado sobrescribía 5 bytes del
+> registro con `2A 2A 2A 2A 2A` (los asteriscos `*****` en hexadecimal),
+> mezclando metadatos con el área de datos.
+
+**Lista de verificación — Paso 2:**
+
+- [ ] El byte `0x00` sigue siendo `31` (Slot 0 aún ocupado)
+- [ ] El byte `0x01` cambió de `31` a `30` (Slot 1 marcado libre)
+- [ ] Los datos de Marge en `0x46` siguen presentes — no fueron sobrescritos
+- [ ] No hay bytes `2A` (`*`) en ninguna posición del archivo
+
+---
+
+### 5.4 Paso 3 — Estado final: reciclaje confirmado
+
+**Instrucciones:**
+
+Descomente todas las líneas restantes para que el script ejecute el flujo
+completo:
+
+```python
+    print("\n2. Estado tras borrado (Deletes):")
+    delete_record(0, 1)
+
+    print("\n3. Búsqueda tras borrado:")              # ← descomentar
+    registro = search_record_by_rid(0, 1)             # ← descomentar
+
+    print("\n4. Inserción de reciclaje:")             # ← descomentar
+    insert_record(999, "Simpson", "Lisa", 8, "$10")   # ← descomentar
+```
+
+Guarde, ejecute y repita el hexdump. El bitmap de la Página 0 debe volver
+a mostrar `11` — ahora con los datos de Lisa en el Slot 1 en lugar de Marge:
+
+```
+00000000  31 31 3d 3d 3d 3d 3d 3d  3d 3d 3d 3d 3d 3d 3d 3d  |11==============|
+```
+
+**Lista de verificación — Paso 3:**
+
+- [ ] El byte `0x01` volvió a `31` tras la inserción de Lisa
+- [ ] El bitmap de la Página 0 es nuevamente `'11'`
+- [ ] No se creó una tercera página — el espacio fue reciclado
+- [ ] Los datos de Homer en el Slot 0 permanecen sin cambios
+
+---
+
+## Referencias y Material de Profundización
+
+Los conceptos implementados en esta práctica tienen respaldo directo en la
+literatura estándar de sistemas de bases de datos. Se recomienda consultar
+los siguientes recursos para profundizar:
+
+- **Silberschatz, A., Korth, H. F., & Sudarshan, S.** *Fundamentos de Bases
+  de Datos*. Capítulos sobre organización de archivos y gestión de espacio
+  libre en páginas.
+
+- **Ramakrishnan, R., & Gehrke, J.** *Sistemas de Gestión de Bases de Datos*.
+  Sección sobre Page Layout y Free Space Management.
+
+- **UC Berkeley — CS 186:** *Course Notes, Note 3: Storage*.
+  Disponible en: [https://cs186berkeley.net/notes/note3/](https://cs186berkeley.net/notes/note3/)
+
+- **Carnegie Mellon University — CMU 15-445/645:** *Intro to Database Systems*.
+  Clases sobre *Database Storage* del profesor Andy Pavlo.
+  Disponible en: [https://15445.courses.cs.cmu.edu](https://15445.courses.cs.cmu.edu)
