@@ -1,0 +1,139 @@
+<svg viewBox="0 0 760 455" xmlns="http://www.w3.org/2000/svg" font-family="sans-serif">
+
+  <rect width="760" height="455" fill="#f8f9fa" rx="8"/>
+
+  <text x="380" y="30" text-anchor="middle" font-size="15" font-weight="bold" fill="#1a1a2e">
+    Slotted Page — Anatomía y Crecimiento Opuesto
+  </text>
+  <text x="380" y="48" text-anchor="middle" font-size="11" fill="#555">
+    PAGE_SIZE = 256 bytes  ·  después de insertar 4 registros de longitud variable
+  </text>
+
+  <!-- PAGE BLOCK -->
+  <rect x="60" y="65" width="640" height="80" fill="white" stroke="#334155" stroke-width="2" rx="4"/>
+
+  <rect x="60"  y="65" width="50"  height="80" fill="#1e3a8a" rx="4"/>
+  <text x="85"  y="101" text-anchor="middle" font-size="9" fill="white" font-weight="bold">HEADER</text>
+  <text x="85"  y="113" text-anchor="middle" font-size="8" fill="#93c5fd">8 bytes</text>
+
+  <rect x="110" y="65" width="52" height="80" fill="#3b82f6" stroke="#1e40af" stroke-width="1"/>
+  <text x="136" y="99"  text-anchor="middle" font-size="9"  fill="white" font-weight="bold">Slot 0</text>
+  <text x="136" y="111" text-anchor="middle" font-size="8"  fill="#dbeafe">off=215</text>
+  <text x="136" y="121" text-anchor="middle" font-size="8"  fill="#dbeafe">len=41</text>
+
+  <rect x="162" y="65" width="52" height="80" fill="#60a5fa" stroke="#1e40af" stroke-width="1"/>
+  <text x="188" y="99"  text-anchor="middle" font-size="9"  fill="white" font-weight="bold">Slot 1</text>
+  <text x="188" y="111" text-anchor="middle" font-size="8"  fill="#dbeafe">off=180</text>
+  <text x="188" y="121" text-anchor="middle" font-size="8"  fill="#dbeafe">len=35</text>
+
+  <rect x="214" y="65" width="52" height="80" fill="#60a5fa" stroke="#1e40af" stroke-width="1"/>
+  <text x="240" y="99"  text-anchor="middle" font-size="9"  fill="white" font-weight="bold">Slot 2</text>
+  <text x="240" y="111" text-anchor="middle" font-size="8"  fill="#dbeafe">off=140</text>
+  <text x="240" y="121" text-anchor="middle" font-size="8"  fill="#dbeafe">len=40</text>
+
+  <rect x="266" y="65" width="52" height="80" fill="#60a5fa" stroke="#1e40af" stroke-width="1"/>
+  <text x="292" y="99"  text-anchor="middle" font-size="9"  fill="white" font-weight="bold">Slot 3</text>
+  <text x="292" y="111" text-anchor="middle" font-size="8"  fill="#dbeafe">off=100</text>
+  <text x="292" y="121" text-anchor="middle" font-size="8"  fill="#dbeafe">len=40</text>
+
+  <rect x="318" y="65" width="136" height="80" fill="#f1f5f9" stroke="#94a3b8" stroke-width="1" stroke-dasharray="5,3"/>
+  <text x="386" y="101" text-anchor="middle" font-size="10" fill="#64748b" font-style="italic">espacio libre</text>
+  <text x="386" y="114" text-anchor="middle" font-size="9"  fill="#94a3b8">76 bytes</text>
+
+  <rect x="454" y="65" width="52" height="80" fill="#86efac" stroke="#15803d" stroke-width="1"/>
+  <text x="480" y="95"  text-anchor="middle" font-size="9"  fill="#14532d" font-weight="bold">Katz</text>
+  <text x="480" y="107" text-anchor="middle" font-size="8"  fill="#14532d">Comp.Sci.</text>
+  <text x="480" y="118" text-anchor="middle" font-size="8"  fill="#166534">40 B</text>
+  <text x="480" y="128" text-anchor="middle" font-size="8"  fill="#166534">byte 100</text>
+
+  <rect x="506" y="65" width="52" height="80" fill="#6ee7b7" stroke="#15803d" stroke-width="1"/>
+  <text x="532" y="95"  text-anchor="middle" font-size="9"  fill="#14532d" font-weight="bold">El Said</text>
+  <text x="532" y="107" text-anchor="middle" font-size="8"  fill="#14532d">History</text>
+  <text x="532" y="118" text-anchor="middle" font-size="8"  fill="#166534">40 B</text>
+  <text x="532" y="128" text-anchor="middle" font-size="8"  fill="#166534">byte 140</text>
+
+  <rect x="558" y="65" width="52" height="80" fill="#a7f3d0" stroke="#15803d" stroke-width="1"/>
+  <text x="584" y="95"  text-anchor="middle" font-size="9"  fill="#14532d" font-weight="bold">Wu</text>
+  <text x="584" y="107" text-anchor="middle" font-size="8"  fill="#14532d">Finance</text>
+  <text x="584" y="118" text-anchor="middle" font-size="8"  fill="#166534">35 B</text>
+  <text x="584" y="128" text-anchor="middle" font-size="8"  fill="#166534">byte 180</text>
+
+  <rect x="610" y="65" width="90" height="80" fill="#d1fae5" stroke="#15803d" stroke-width="1" rx="0 4 4 0"/>
+  <text x="655" y="95"  text-anchor="middle" font-size="9"  fill="#14532d" font-weight="bold">Einstein</text>
+  <text x="655" y="107" text-anchor="middle" font-size="8"  fill="#14532d">Physics</text>
+  <text x="655" y="118" text-anchor="middle" font-size="8"  fill="#166534">41 B</text>
+  <text x="655" y="128" text-anchor="middle" font-size="8"  fill="#166534">byte 215</text>
+
+  <!-- GROWTH ARROWS -->
+  <text x="265" y="165" text-anchor="middle" font-size="10" fill="#1d4ed8" font-weight="bold">Slot directory crece →</text>
+  <line x1="163" y1="158" x2="315" y2="158" stroke="#1d4ed8" stroke-width="2"/>
+  <polygon points="315,153 326,158 315,163" fill="#1d4ed8"/>
+
+  <text x="520" y="165" text-anchor="middle" font-size="10" fill="#15803d" font-weight="bold">← Registros crecen</text>
+  <line x1="694" y1="158" x2="455" y2="158" stroke="#15803d" stroke-width="2"/>
+  <polygon points="455,153 444,158 455,163" fill="#15803d"/>
+
+  <!-- free_ptr / data_ptr labels -->
+  <line x1="318" y1="63" x2="318" y2="50" stroke="#94a3b8" stroke-width="1.2"/>
+  <text x="318" y="46" text-anchor="middle" font-size="9" fill="#475569">free_ptr=28</text>
+  <line x1="454" y1="63" x2="454" y2="50" stroke="#94a3b8" stroke-width="1.2"/>
+  <text x="454" y="46" text-anchor="middle" font-size="9" fill="#475569">data_ptr=100</text>
+
+  <!-- BYTE RULER -->
+  <text x="60"  y="185" font-size="9" fill="#64748b">0</text>
+  <text x="110" y="185" font-size="9" fill="#64748b">8</text>
+  <text x="162" y="185" font-size="9" fill="#64748b">12</text>
+  <text x="214" y="185" font-size="9" fill="#64748b">16</text>
+  <text x="266" y="185" font-size="9" fill="#64748b">20</text>
+  <text x="318" y="185" font-size="9" fill="#64748b">28</text>
+  <text x="446" y="185" font-size="9" fill="#64748b">100</text>
+  <text x="498" y="185" font-size="9" fill="#64748b">140</text>
+  <text x="550" y="185" font-size="9" fill="#64748b">180</text>
+  <text x="602" y="185" font-size="9" fill="#64748b">215</text>
+  <text x="690" y="185" font-size="9" fill="#64748b">255</text>
+
+  <!-- PAGE HEADER DETAIL -->
+  <text x="60" y="210" font-size="11" font-weight="bold" fill="#1a1a2e">Detalle del Page Header (8 bytes):</text>
+  <rect x="60" y="218" width="640" height="34" fill="white" stroke="#1e3a8a" stroke-width="1.5" rx="3"/>
+
+  <rect x="60"  y="218" width="160" height="34" fill="#dbeafe" stroke="#1e3a8a" stroke-width="1"/>
+  <text x="140" y="232" text-anchor="middle" font-size="9" fill="#1e3a8a" font-weight="bold">num_slots = 4</text>
+  <text x="140" y="245" text-anchor="middle" font-size="8" fill="#3b82f6">(2 bytes — uint16)</text>
+
+  <rect x="220" y="218" width="160" height="34" fill="#dbeafe" stroke="#1e3a8a" stroke-width="1"/>
+  <text x="300" y="232" text-anchor="middle" font-size="9" fill="#1e3a8a" font-weight="bold">free_ptr = 28</text>
+  <text x="300" y="245" text-anchor="middle" font-size="8" fill="#3b82f6">fin del directorio de slots</text>
+
+  <rect x="380" y="218" width="160" height="34" fill="#dbeafe" stroke="#1e3a8a" stroke-width="1"/>
+  <text x="460" y="232" text-anchor="middle" font-size="9" fill="#1e3a8a" font-weight="bold">data_ptr = 100</text>
+  <text x="460" y="245" text-anchor="middle" font-size="8" fill="#3b82f6">inicio del área de registros</text>
+
+  <rect x="540" y="218" width="160" height="34" fill="#dbeafe" stroke="#1e3a8a" stroke-width="1"/>
+  <text x="620" y="232" text-anchor="middle" font-size="9" fill="#1e3a8a" font-weight="bold">page_id = 0</text>
+  <text x="620" y="245" text-anchor="middle" font-size="8" fill="#3b82f6">(2 bytes — uint16)</text>
+
+  <!-- RID CONCEPT -->
+  <text x="60" y="275" font-size="11" font-weight="bold" fill="#1a1a2e">Cómo funciona el RID = (page_id, slot_id):</text>
+
+  <!-- RID Box: y=283, height=150 → bottom y=433 -->
+  <rect x="60" y="283" width="640" height="150" fill="white" stroke="#7c3aed" stroke-width="1.5" rx="4"/>
+
+  <!-- Paso 1: circle cy=310 -->
+  <circle cx="100" cy="310" r="13" fill="#7c3aed"/>
+  <text x="100" y="314" text-anchor="middle" font-size="11" fill="white" font-weight="bold">1</text>
+  <text x="124" y="306" font-size="10" fill="#1a1a2e" font-weight="bold">El motor recibe RID(0, 3)</text>
+  <text x="124" y="320" font-size="9"  fill="#64748b">  → page_id=0, slot_id=3</text>
+
+  <!-- Paso 2: circle cy=352 -->
+  <circle cx="100" cy="352" r="13" fill="#7c3aed"/>
+  <text x="100" y="356" text-anchor="middle" font-size="11" fill="white" font-weight="bold">2</text>
+  <text x="124" y="348" font-size="10" fill="#1a1a2e" font-weight="bold">Lee la entrada del directorio de slots para slot_id=3</text>
+  <text x="124" y="362" font-size="9"  fill="#64748b">  → posición: PAGE_HEADER_SIZE + 3 × SLOT_SIZE = byte 8 + 12 = 20</text>
+  <text x="124" y="375" font-size="9"  fill="#64748b">  → obtiene: (offset=100, length=40)</text>
+
+  <!-- Paso 3: circle cy=405 -->
+  <circle cx="100" cy="405" r="13" fill="#7c3aed"/>
+  <text x="100" y="409" text-anchor="middle" font-size="11" fill="white" font-weight="bold">3</text>
+  <text x="124" y="401" font-size="10" fill="#1a1a2e" font-weight="bold">Salta al byte 100 de la página y lee 40 bytes → registro de Katz</text>
+
+</svg>

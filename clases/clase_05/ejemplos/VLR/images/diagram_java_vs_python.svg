@@ -1,0 +1,63 @@
+<svg width="100%" viewBox="0 0 680 400" xmlns="http://www.w3.org/2000/svg" font-family="sans-serif">
+  <rect width="680" height="400" fill="#f8f9fa" rx="8"/>
+
+  <text x="340" y="24" text-anchor="middle" font-size="14" font-weight="500" fill="#1a1a2e">Misma operación, dos lenguajes</text>
+  <text x="340" y="40" text-anchor="middle" font-size="12" fill="#64748b">Escribir offset=215 y length=41 — resultado en disco idéntico</text>
+
+  <!-- Cabeceras -->
+  <rect x="40"  y="50" width="283" height="30" rx="6" fill="#FAC775" stroke="#854F0B" stroke-width="0.5"/>
+  <text x="182" y="65" text-anchor="middle" font-size="14" font-weight="500" fill="#412402" dominant-baseline="central">Java — ByteBuffer</text>
+  <text x="340" y="65" text-anchor="middle" font-size="14" font-weight="500" fill="#64748b" dominant-baseline="central">≡</text>
+  <rect x="357" y="50" width="283" height="30" rx="6" fill="#9FE1CB" stroke="#0F6E56" stroke-width="0.5"/>
+  <text x="499" y="65" text-anchor="middle" font-size="14" font-weight="500" fill="#04342C" dominant-baseline="central">Python — struct</text>
+
+  <!-- crear -->
+  <text x="340" y="91" text-anchor="middle" font-size="12" fill="#94a3b8">crear</text>
+  <line x1="40" y1="95" x2="640" y2="95" stroke="#e2e8f0" stroke-width="1"/>
+  <rect x="40"  y="97" width="283" height="36" rx="4" fill="#f1f5f9" stroke="#cbd5e1" stroke-width="0.5"/>
+  <text x="182" y="115" text-anchor="middle" font-size="12" fill="#334155" dominant-baseline="central" font-family="monospace">ByteBuffer.allocate(256)</text>
+  <rect x="357" y="97" width="283" height="36" rx="4" fill="#f1f5f9" stroke="#cbd5e1" stroke-width="0.5"/>
+  <text x="499" y="115" text-anchor="middle" font-size="12" fill="#334155" dominant-baseline="central" font-family="monospace">bytearray(256)</text>
+
+  <!-- orden -->
+  <text x="340" y="139" text-anchor="middle" font-size="12" fill="#94a3b8">orden</text>
+  <line x1="40" y1="143" x2="640" y2="143" stroke="#e2e8f0" stroke-width="1"/>
+  <rect x="40"  y="145" width="283" height="36" rx="4" fill="#f1f5f9" stroke="#cbd5e1" stroke-width="0.5"/>
+  <text x="182" y="163" text-anchor="middle" font-size="12" fill="#334155" dominant-baseline="central" font-family="monospace">buf.order(ByteOrder.BIG_ENDIAN)</text>
+  <rect x="357" y="145" width="283" height="36" rx="4" fill="#f1f5f9" stroke="#cbd5e1" stroke-width="0.5"/>
+  <text x="499" y="163" text-anchor="middle" font-size="12" fill="#334155" dominant-baseline="central">prefijo '&gt;' en el format string</text>
+
+  <!-- escribir (h=50: Java necesita 2 líneas) -->
+  <text x="340" y="187" text-anchor="middle" font-size="12" fill="#94a3b8">escribir</text>
+  <line x1="40" y1="191" x2="640" y2="191" stroke="#e2e8f0" stroke-width="1"/>
+  <rect x="40"  y="193" width="283" height="50" rx="4" fill="#f1f5f9" stroke="#cbd5e1" stroke-width="0.5"/>
+  <text x="182" y="211" text-anchor="middle" font-size="12" fill="#334155" dominant-baseline="central" font-family="monospace">buf.putShort(8, (short) 215)</text>
+  <text x="182" y="229" text-anchor="middle" font-size="12" fill="#334155" dominant-baseline="central" font-family="monospace">buf.putShort(10, (short) 41)</text>
+  <rect x="357" y="193" width="283" height="50" rx="4" fill="#f1f5f9" stroke="#cbd5e1" stroke-width="0.5"/>
+  <text x="499" y="218" text-anchor="middle" font-size="12" fill="#334155" dominant-baseline="central" font-family="monospace">pack_into('&gt;HH', buf, 8, 215, 41)</text>
+
+  <!-- leer -->
+  <text x="340" y="249" text-anchor="middle" font-size="12" fill="#94a3b8">leer</text>
+  <line x1="40" y1="253" x2="640" y2="253" stroke="#e2e8f0" stroke-width="1"/>
+  <rect x="40"  y="255" width="283" height="36" rx="4" fill="#f1f5f9" stroke="#cbd5e1" stroke-width="0.5"/>
+  <text x="182" y="273" text-anchor="middle" font-size="12" fill="#334155" dominant-baseline="central" font-family="monospace">buf.getShort(8), buf.getShort(10)</text>
+  <rect x="357" y="255" width="283" height="36" rx="4" fill="#f1f5f9" stroke="#cbd5e1" stroke-width="0.5"/>
+  <text x="499" y="273" text-anchor="middle" font-size="12" fill="#334155" dominant-baseline="central" font-family="monospace">unpack_from('&gt;HH', buf, 8)</text>
+
+  <!-- Resultado -->
+  <line x1="40" y1="301" x2="640" y2="301" stroke="#e2e8f0" stroke-width="1"/>
+  <text x="44" y="322" font-size="12" fill="#334155" dominant-baseline="central">Bytes 8–11 en disco:</text>
+  <rect x="210" y="309" width="32" height="26" rx="3" fill="#9FE1CB" stroke="#0F6E56" stroke-width="0.5"/>
+  <text x="226" y="322" text-anchor="middle" font-size="12" fill="#04342C" dominant-baseline="central">00</text>
+  <rect x="246" y="309" width="32" height="26" rx="3" fill="#9FE1CB" stroke="#0F6E56" stroke-width="0.5"/>
+  <text x="262" y="322" text-anchor="middle" font-size="12" fill="#04342C" dominant-baseline="central">d7</text>
+  <rect x="282" y="309" width="32" height="26" rx="3" fill="#9FE1CB" stroke="#0F6E56" stroke-width="0.5"/>
+  <text x="298" y="322" text-anchor="middle" font-size="12" fill="#04342C" dominant-baseline="central">00</text>
+  <rect x="318" y="309" width="32" height="26" rx="3" fill="#9FE1CB" stroke="#0F6E56" stroke-width="0.5"/>
+  <text x="334" y="322" text-anchor="middle" font-size="12" fill="#04342C" dominant-baseline="central">29</text>
+  <text x="362" y="322" font-size="12" fill="#64748b" dominant-baseline="central">← idéntico en ambos lenguajes</text>
+
+  <line x1="40" y1="345" x2="640" y2="345" stroke="#e2e8f0" stroke-width="1"/>
+  <text x="340" y="363" text-anchor="middle" font-size="12" fill="#64748b">Java: una llamada por campo  ·  Python: todos los campos en una sola llamada</text>
+  <text x="340" y="381" text-anchor="middle" font-size="12" fill="#94a3b8" font-family="monospace">struct.pack('&gt;HHq', a, b, c)  ≡  putShort(a) + putShort(b) + putLong(c)</text>
+</svg>

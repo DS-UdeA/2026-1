@@ -1,0 +1,151 @@
+<svg viewBox="0 0 760 330" xmlns="http://www.w3.org/2000/svg" font-family="monospace, sans-serif">
+
+  <!-- Background -->
+  <rect width="760" height="330" fill="#f8f9fa" rx="8"/>
+
+  <!-- ══════════════════════════════════════════════════
+       TÍTULO
+  ══════════════════════════════════════════════════ -->
+  <text x="380" y="26" text-anchor="middle" font-size="15" font-weight="bold" fill="#1a1a2e">
+    Anatomía de un Registro VLR — Formato Arreglo de Desplazamientos
+  </text>
+  <text x="380" y="42" text-anchor="middle" font-size="11" fill="#555">
+    Registro: instructor(ID=22222, name='Einstein', dept_name='Physics', salary=95000.00)
+  </text>
+
+  <!-- ══════════════════════════════════════════════════
+       SECCIÓN 1 — ESTRUCTURA LÓGICA
+  ══════════════════════════════════════════════════ -->
+  <text x="30" y="64" font-size="11" fill="#333" font-weight="bold">Estructura lógica:</text>
+
+  <!-- Etiquetas de campo (encima de las cajas) -->
+  <text x="80"  y="80" text-anchor="middle" font-size="10" fill="#6b21a8">ID</text>
+  <text x="195" y="80" text-anchor="middle" font-size="10" fill="#6b21a8">name</text>
+  <text x="360" y="80" text-anchor="middle" font-size="10" fill="#6b21a8">dept_name</text>
+  <text x="528" y="80" text-anchor="middle" font-size="10" fill="#065f46">salary</text>
+
+  <!-- Cajas de tipo -->
+  <rect x="30"  y="85" width="100" height="34" fill="#e8d5f5" stroke="#7c3aed" stroke-width="1.4" rx="4"/>
+  <text x="80"  y="107" text-anchor="middle" font-size="10" fill="#4c1d95">varchar(5)</text>
+
+  <rect x="140" y="85" width="110" height="34" fill="#e8d5f5" stroke="#7c3aed" stroke-width="1.4" rx="4"/>
+  <text x="195" y="107" text-anchor="middle" font-size="10" fill="#4c1d95">varchar(20)</text>
+
+  <rect x="260" y="85" width="200" height="34" fill="#e8d5f5" stroke="#7c3aed" stroke-width="1.4" rx="4"/>
+  <text x="360" y="107" text-anchor="middle" font-size="10" fill="#4c1d95">varchar(20)</text>
+
+  <rect x="470" y="85" width="115" height="34" fill="#d1fae5" stroke="#065f46" stroke-width="1.4" rx="4"/>
+  <text x="528" y="107" text-anchor="middle" font-size="10" fill="#064e3b">numeric(8,2)</text>
+
+  <!-- ══════════════════════════════════════════════════
+       SECCIÓN 2 — REPRESENTACIÓN EN DISCO
+  ══════════════════════════════════════════════════ -->
+
+  <!-- Etiqueta de sección — su propia línea -->
+  <text x="30" y="143" font-size="11" fill="#333" font-weight="bold">En disco (byte a byte):</text>
+
+  <!-- Etiquetas de zona — encima de los bloques, separadas -->
+  <text x="206" y="159" text-anchor="middle" font-size="10" font-weight="bold" fill="#1d4ed8">SECCIÓN FIJA (21 bytes)</text>
+  <text x="535" y="159" text-anchor="middle" font-size="10" font-weight="bold" fill="#9d174d">SECCIÓN VARIABLE (20 bytes)</text>
+
+  <!-- Contornos de zona -->
+  <rect x="30"  y="164" width="353" height="46" fill="#dbeafe" stroke="#2563eb" stroke-width="1.5" rx="3"/>
+  <rect x="387" y="164" width="300" height="46" fill="#fce7f3" stroke="#be185d" stroke-width="1.5" rx="3"/>
+
+  <!-- Par 0: ptr→ID (bytes 0-3) -->
+  <rect x="30"  y="164" width="67" height="46" fill="#93c5fd" stroke="#1e40af" stroke-width="1" rx="3 0 0 3"/>
+  <text x="63"  y="184" text-anchor="middle" font-size="10" fill="#1e3a8a" font-weight="bold">(21, 5)</text>
+  <text x="63"  y="199" text-anchor="middle" font-size="9"  fill="#1e3a8a">ptr → ID</text>
+
+  <!-- Par 1: ptr→name (bytes 4-7) -->
+  <rect x="97"  y="164" width="67" height="46" fill="#93c5fd" stroke="#1e40af" stroke-width="1"/>
+  <text x="130" y="184" text-anchor="middle" font-size="10" fill="#1e3a8a" font-weight="bold">(26, 8)</text>
+  <text x="130" y="199" text-anchor="middle" font-size="9"  fill="#1e3a8a">ptr → name</text>
+
+  <!-- Par 2: ptr→dept (bytes 8-11) -->
+  <rect x="164" y="164" width="67" height="46" fill="#93c5fd" stroke="#1e40af" stroke-width="1"/>
+  <text x="197" y="184" text-anchor="middle" font-size="10" fill="#1e3a8a" font-weight="bold">(34, 7)</text>
+  <text x="197" y="199" text-anchor="middle" font-size="9"  fill="#1e3a8a">ptr → dept</text>
+
+  <!-- Salary (bytes 12-19) -->
+  <rect x="231" y="164" width="135" height="46" fill="#bbf7d0" stroke="#15803d" stroke-width="1"/>
+  <text x="298" y="184" text-anchor="middle" font-size="10" fill="#14532d" font-weight="bold">9500000</text>
+  <text x="298" y="199" text-anchor="middle" font-size="9"  fill="#14532d">salary int64 (8B)</text>
+
+  <!-- Null bitmap (byte 20) -->
+  <rect x="366" y="164" width="17" height="46" fill="#fef9c3" stroke="#ca8a04" stroke-width="1" rx="0 3 3 0"/>
+  <text x="374" y="182" text-anchor="middle" font-size="8" fill="#78350f" font-weight="bold">0</text>
+  <text x="374" y="193" text-anchor="middle" font-size="7" fill="#78350f">×</text>
+  <text x="374" y="203" text-anchor="middle" font-size="7" fill="#92400e">null</text>
+
+  <!-- ID data (bytes 21-25) -->
+  <rect x="387" y="164" width="75" height="46" fill="#f9a8d4" stroke="#be185d" stroke-width="1" rx="3 0 0 3"/>
+  <text x="424" y="184" text-anchor="middle" font-size="10" fill="#831843" font-weight="bold">22222</text>
+  <text x="424" y="199" text-anchor="middle" font-size="9"  fill="#831843">ID (5B)</text>
+
+  <!-- name data (bytes 26-33) -->
+  <rect x="462" y="164" width="120" height="46" fill="#f9a8d4" stroke="#be185d" stroke-width="1"/>
+  <text x="522" y="184" text-anchor="middle" font-size="10" fill="#831843" font-weight="bold">Einstein</text>
+  <text x="522" y="199" text-anchor="middle" font-size="9"  fill="#831843">name (8B)</text>
+
+  <!-- dept_name data (bytes 34-40) -->
+  <rect x="582" y="164" width="105" height="46" fill="#f9a8d4" stroke="#be185d" stroke-width="1" rx="0 3 3 0"/>
+  <text x="634" y="184" text-anchor="middle" font-size="10" fill="#831843" font-weight="bold">Physics</text>
+  <text x="634" y="199" text-anchor="middle" font-size="9"  fill="#831843">dept (7B)</text>
+
+  <!-- ══════════════════════════════════════════════════
+       BYTE RULER
+  ══════════════════════════════════════════════════ -->
+  <line x1="30"  y1="213" x2="30"  y2="219" stroke="#64748b" stroke-width="1.2"/>
+  <line x1="97"  y1="213" x2="97"  y2="219" stroke="#64748b" stroke-width="1.2"/>
+  <line x1="164" y1="213" x2="164" y2="219" stroke="#64748b" stroke-width="1.2"/>
+  <line x1="231" y1="213" x2="231" y2="219" stroke="#64748b" stroke-width="1.2"/>
+  <line x1="366" y1="213" x2="366" y2="219" stroke="#64748b" stroke-width="1.2"/>
+  <line x1="387" y1="213" x2="387" y2="221" stroke="#9d174d" stroke-width="1.8"/>
+  <line x1="462" y1="213" x2="462" y2="219" stroke="#64748b" stroke-width="1.2"/>
+  <line x1="582" y1="213" x2="582" y2="219" stroke="#64748b" stroke-width="1.2"/>
+  <line x1="687" y1="213" x2="687" y2="219" stroke="#64748b" stroke-width="1.2"/>
+
+  <text x="30"  y="231" text-anchor="middle" font-size="9" fill="#64748b">0</text>
+  <text x="97"  y="231" text-anchor="middle" font-size="9" fill="#64748b">4</text>
+  <text x="164" y="231" text-anchor="middle" font-size="9" fill="#64748b">8</text>
+  <text x="231" y="231" text-anchor="middle" font-size="9" fill="#64748b">12</text>
+  <text x="366" y="231" text-anchor="middle" font-size="9" fill="#64748b">20</text>
+  <text x="387" y="231" text-anchor="middle" font-size="9" fill="#9d174d" font-weight="bold">21</text>
+  <text x="462" y="231" text-anchor="middle" font-size="9" fill="#64748b">26</text>
+  <text x="582" y="231" text-anchor="middle" font-size="9" fill="#64748b">34</text>
+  <text x="687" y="231" text-anchor="middle" font-size="9" fill="#64748b">41</text>
+
+  <line x1="30" y1="239" x2="687" y2="239" stroke="#cbd5e1" stroke-width="1"/>
+  <polygon points="30,235 22,239 30,243"   fill="#cbd5e1"/>
+  <polygon points="687,235 695,239 687,243" fill="#cbd5e1"/>
+  <text x="358" y="250" text-anchor="middle" font-size="9" fill="#94a3b8">bytes</text>
+
+  <!-- ══════════════════════════════════════════════════
+       FLECHAS DE INDIRECCIÓN O(1)
+  ══════════════════════════════════════════════════ -->
+
+  <!-- Flecha 0: Par-0 → ID data -->
+  <line x1="63"  y1="213" x2="63"  y2="264" stroke="#3b82f6" stroke-width="1.4" stroke-dasharray="5,2"/>
+  <line x1="63"  y1="264" x2="420" y2="264" stroke="#3b82f6" stroke-width="1.4" stroke-dasharray="5,2"/>
+  <polygon points="416,260 426,264 416,268" fill="#3b82f6"/>
+  <text x="250" y="261" text-anchor="middle" font-size="9" fill="#2563eb">O(1): seek → byte 21, leer 5B</text>
+
+  <!-- Flecha 1: Par-1 → name data -->
+  <line x1="130" y1="213" x2="130" y2="278" stroke="#6366f1" stroke-width="1.4" stroke-dasharray="5,2"/>
+  <line x1="130" y1="278" x2="518" y2="278" stroke="#6366f1" stroke-width="1.4" stroke-dasharray="5,2"/>
+  <polygon points="514,274 524,278 514,282" fill="#6366f1"/>
+  <text x="340" y="275" text-anchor="middle" font-size="9" fill="#4f46e5">O(1): seek → byte 26, leer 8B</text>
+
+  <!-- Flecha 2: Par-2 → dept data -->
+  <line x1="197" y1="213" x2="197" y2="292" stroke="#8b5cf6" stroke-width="1.4" stroke-dasharray="5,2"/>
+  <line x1="197" y1="292" x2="630" y2="292" stroke="#8b5cf6" stroke-width="1.4" stroke-dasharray="5,2"/>
+  <polygon points="626,288 636,292 626,296" fill="#8b5cf6"/>
+  <text x="420" y="289" text-anchor="middle" font-size="9" fill="#7c3aed">O(1): seek → byte 34, leer 7B</text>
+
+  <!-- Nota pie de diagrama -->
+  <text x="30" y="321" font-size="9" fill="#94a3b8" font-style="italic">
+    * La comparación de tamaños entre los tres formatos se encuentra en la tabla del README.
+  </text>
+
+</svg>

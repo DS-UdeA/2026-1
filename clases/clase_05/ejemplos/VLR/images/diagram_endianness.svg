@@ -1,0 +1,69 @@
+<svg width="100%" viewBox="0 0 680 320" xmlns="http://www.w3.org/2000/svg" font-family="monospace, sans-serif">
+
+  <rect width="680" height="320" fill="#f8f9fa" rx="8"/>
+
+  <!-- Header -->
+  <text x="340" y="28" text-anchor="middle" font-size="13" font-weight="bold" fill="#1a1a2e">
+    Entero de 4 bytes: 0x12345678 = 305 419 896 en decimal
+  </text>
+
+  <!-- Dirección de memoria -->
+  <text x="138" y="54" text-anchor="end"    font-size="11" fill="#64748b">dirección →</text>
+  <text x="218" y="54" text-anchor="middle" font-size="11" fill="#64748b">[0]</text>
+  <text x="323" y="54" text-anchor="middle" font-size="11" fill="#64748b">[1]</text>
+  <text x="428" y="54" text-anchor="middle" font-size="11" fill="#64748b">[2]</text>
+  <text x="533" y="54" text-anchor="middle" font-size="11" fill="#64748b">[3]</text>
+
+  <!-- BIG-ENDIAN -->
+  <text x="138" y="100" text-anchor="end" font-size="12" font-weight="bold" fill="#0f6e56">Big-endian</text>
+
+  <rect x="163" y="66" width="110" height="50" rx="6" fill="#9FE1CB" stroke="#0F6E56" stroke-width="0.8"/>
+  <text x="218" y="84"  text-anchor="middle" font-size="13" font-weight="bold" fill="#04342C">0x12</text>
+  <text x="218" y="104" text-anchor="middle" font-size="10" fill="#085041">MSB primero</text>
+
+  <rect x="268" y="66" width="110" height="50" rx="6" fill="#9FE1CB" stroke="#0F6E56" stroke-width="0.8"/>
+  <text x="323" y="91"  text-anchor="middle" font-size="13" font-weight="bold" fill="#04342C">0x34</text>
+
+  <rect x="373" y="66" width="110" height="50" rx="6" fill="#9FE1CB" stroke="#0F6E56" stroke-width="0.8"/>
+  <text x="428" y="91"  text-anchor="middle" font-size="13" font-weight="bold" fill="#04342C">0x56</text>
+
+  <rect x="478" y="66" width="110" height="50" rx="6" fill="#9FE1CB" stroke="#0F6E56" stroke-width="0.8"/>
+  <text x="533" y="84"  text-anchor="middle" font-size="13" font-weight="bold" fill="#04342C">0x78</text>
+  <text x="533" y="104" text-anchor="middle" font-size="10" fill="#085041">LSB al final</text>
+
+  <!-- Separador -->
+  <line x1="40" y1="138" x2="640" y2="138" stroke="#e2e8f0" stroke-width="1"/>
+
+  <!-- LITTLE-ENDIAN -->
+  <text x="138" y="186" text-anchor="end" font-size="12" font-weight="bold" fill="#993c1d">Little-endian</text>
+
+  <rect x="163" y="152" width="110" height="50" rx="6" fill="#F5C4B3" stroke="#993C1D" stroke-width="0.8"/>
+  <text x="218" y="170" text-anchor="middle" font-size="13" font-weight="bold" fill="#4A1B0C">0x78</text>
+  <text x="218" y="190" text-anchor="middle" font-size="10" fill="#712B13">LSB primero</text>
+
+  <rect x="268" y="152" width="110" height="50" rx="6" fill="#F5C4B3" stroke="#993C1D" stroke-width="0.8"/>
+  <text x="323" y="177" text-anchor="middle" font-size="13" font-weight="bold" fill="#4A1B0C">0x56</text>
+
+  <rect x="373" y="152" width="110" height="50" rx="6" fill="#F5C4B3" stroke="#993C1D" stroke-width="0.8"/>
+  <text x="428" y="177" text-anchor="middle" font-size="13" font-weight="bold" fill="#4A1B0C">0x34</text>
+
+  <rect x="478" y="152" width="110" height="50" rx="6" fill="#F5C4B3" stroke="#993C1D" stroke-width="0.8"/>
+  <text x="533" y="170" text-anchor="middle" font-size="13" font-weight="bold" fill="#4A1B0C">0x12</text>
+  <text x="533" y="190" text-anchor="middle" font-size="10" fill="#712B13">MSB al final</text>
+
+  <!-- Nota: mismo número -->
+  <line x1="40" y1="222" x2="640" y2="222" stroke="#e2e8f0" stroke-width="1"/>
+  <text x="340" y="242" text-anchor="middle" font-size="11" fill="#64748b">
+    Ambas representaciones guardan el mismo número — solo difiere el orden de los bytes.
+  </text>
+
+  <!-- Nota laboratorio — dos líneas dentro del cuadro -->
+  <rect x="40" y="256" width="600" height="50" rx="6" fill="#e2e8f0" stroke="#94a3b8" stroke-width="0.8"/>
+  <text x="340" y="275" text-anchor="middle" font-size="10" fill="#334155">
+    Este laboratorio usa big-endian (prefijo &gt; en struct).
+  </text>
+  <text x="340" y="293" text-anchor="middle" font-size="10" fill="#334155">
+    PostgreSQL, la mayoría de formatos de red y archivos de BD también lo hacen.
+  </text>
+
+</svg>
