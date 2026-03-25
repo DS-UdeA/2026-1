@@ -182,9 +182,8 @@ Treinta y tres minutos para encontrar un solo registro es inaceptable en cualqui
 
 Un DBMS se organiza en capas funcionales que van desde el almacenamiento físico hasta la planificación de consultas. Los índices viven en la capa de **Access Methods**, que es la responsable de leer y escribir datos eficientemente desde las páginas almacenadas por capas inferiores.
 
-<!-- 🖼️ PENDIENTE: diagrama de capas del DBMS con Access Methods resaltado -->
-<!-- Sugerencia: usar directamente la diapositiva 8 de clase6.pdf -->
-<!-- Ruta sugerida: ./images/diagram_dbms_layers.png -->
+![Capas del DBMS — Access Methods resaltado](./images/diagram_dbms_layers.png)
+> *Fuente: Clase 6 — Indexación, diapositiva 8*
 
 La indexación es el mecanismo fundamental de esta capa: permite acceder a los datos **sin recorrer el archivo completo**, respondiendo a la pregunta "¿en qué bloque de disco está el registro que busco?" antes de emitir una sola operación de I/O sobre el archivo de datos.
 
@@ -212,8 +211,8 @@ Los tres conceptos centrales son:
 - **Archivo de índice (Index file):** archivo auxiliar que contiene las entradas del índice, ordenadas por la clave de búsqueda.
 - **Entrada de índice (Index entry):** par `(search_key, data_reference)` donde la referencia apunta al bloque de disco que contiene los registros con ese valor de clave.
 
-<!-- 🖼️ PENDIENTE: diagrama value → index → blocks → matching records -->
-<!-- Sugerencia: usar directamente las diapositivas 11–13 de clase6.pdf -->
+![Concepto de índice — value → index → blocks → matching records](./images/diagram_index_concept.png)
+> *Fuente: Clase 6 — Indexación, diapositivas 11–13*
 <!-- Ruta sugerida: ./images/diagram_index_concept.png -->
 
 Un índice acelera las consultas pero agrega costo a las operaciones de escritura: toda inserción, eliminación o actualización sobre la tabla debe reflejarse también en todos sus índices. Este es el **trade-off** central que los diseñadores de bases de datos deben evaluar.
@@ -257,9 +256,8 @@ Cuando se construye un índice, una decisión fundamental es cuántas entradas t
 
 En un índice denso existe **una entrada por cada registro** del archivo de datos. Cada entrada contiene el valor de la clave y un puntero al bloque que contiene ese registro.
 
-<!-- 🖼️ PENDIENTE: diagrama índice denso — una flecha por registro -->
-<!-- Sugerencia: usar directamente la diapositiva 24 de clase6.pdf -->
-<!-- Ruta sugerida: ./images/diagram_dense_index.png -->
+![Índice denso — una entrada por registro](./images/diagram_dense_index.png)
+> *Fuente: Clase 6 — Indexación, diapositiva 24*
 
 Propiedades clave:
 - Permite localizar **directamente** cualquier registro con una búsqueda binaria sobre el índice.
@@ -270,9 +268,8 @@ Propiedades clave:
 
 En un índice disperso existe **una entrada por cada bloque** del archivo de datos, no por cada registro. La entrada almacena el valor de la clave mínima en ese bloque.
 
-<!-- 🖼️ PENDIENTE: diagrama índice disperso — una flecha por bloque -->
-<!-- Sugerencia: usar directamente la diapositiva 29 de clase6.pdf -->
-<!-- Ruta sugerida: ./images/diagram_sparse_index.png -->
+![Índice disperso — una entrada por bloque](./images/diagram_sparse_index.png)
+> *Fuente: Clase 6 — Indexación, diapositiva 29*
 
 El proceso de búsqueda tiene dos pasos: primero se localiza la entrada con la **clave más grande ≤ clave buscada** (floor lookup), y luego se lee ese bloque y se escanea linealmente hasta encontrar el registro.
 
@@ -304,9 +301,8 @@ La segunda dimensión fundamental de los índices ordenados es su relación con 
 
 En un índice de agrupamiento, el orden del índice **coincide con el orden físico** del archivo. También se llama índice primario (*primary index*).
 
-<!-- 🖼️ PENDIENTE: diagrama clustering index — registros físicamente contiguos -->
-<!-- Sugerencia: usar directamente la diapositiva 45 de clase6.pdf -->
-<!-- Ruta sugerida: ./images/diagram_clustering_index.png -->
+![Clustering index — registros físicamente contiguos](./images/diagram_clustering_index.png)
+> *Fuente: Clase 6 — Indexación, diapositiva 45*
 
 La ventaja principal aparece en las **consultas de rango**: como los registros con valores de clave contiguos están almacenados en bloques adyacentes, el motor puede leerlos en una única pasada secuencial — el patrón de acceso más eficiente posible en disco.
 
@@ -320,9 +316,8 @@ SELECT * FROM instructor WHERE ID BETWEEN 22222 AND 45565;
 
 En un índice secundario, el orden del índice es **diferente al orden físico** del archivo. También se llama índice no agrupado (*non-clustering index*).
 
-<!-- 🖼️ PENDIENTE: diagrama secondary index — registros dispersos -->
-<!-- Sugerencia: usar directamente la diapositiva 47 de clase6.pdf -->
-<!-- Ruta sugerida: ./images/diagram_secondary_index.png -->
+![Secondary index — registros dispersos en bloques no contiguos](./images/diagram_secondary_index.png)
+> *Fuente: Clase 6 — Indexación, diapositiva 47*
 
 Los índices secundarios deben ser **densos**: como el archivo no está ordenado por esta clave, no hay garantía de que registros con el mismo valor estén juntos — se necesita un puntero por cada registro individual.
 
@@ -349,9 +344,8 @@ Hasta ahora se ha asumido que el índice cabe completamente en memoria. Pero si 
 
 La solución es aplicar el mismo principio de indexación **sobre el propio índice**: construir un índice sobre el índice. A esta estructura se le denomina **índice multinivel**.
 
-<!-- 🖼️ PENDIENTE: diagrama outer index → inner index → data -->
-<!-- Sugerencia: usar directamente la diapositiva 63 de clase6.pdf -->
-<!-- Ruta sugerida: ./images/diagram_multilevel_index.png -->
+![Multilevel index — outer index → inner index → data](./images/diagram_multilevel_index.png)
+> *Fuente: Clase 6 — Indexación, diapositiva 63*
 
 Se organiza en dos capas:
 - **Índice interno (inner index):** el archivo de índice básico, almacenado en disco. Puede ser un índice denso completo.
