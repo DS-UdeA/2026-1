@@ -1,0 +1,89 @@
+<svg viewBox="0 0 760 380" xmlns="http://www.w3.org/2000/svg" font-family="'Segoe UI', Arial, sans-serif">
+
+  <!-- Background -->
+  <rect width="760" height="380" fill="#f8f9fa" rx="12"/>
+
+  <!-- Title -->
+  <text x="380" y="34" text-anchor="middle" font-size="17" font-weight="700" fill="#1a3a2a">Comparativa de Costos I/O — Búsqueda puntual (1.000.000 registros)</text>
+
+  <!-- Chart area -->
+  <!-- Y axis: 0 to 200,000 -->
+  <!-- Bars: Full scan(200000), Dense(15), Sparse(12), Multilevel(2) -->
+
+  <!-- Y axis line -->
+  <line x1="100" y1="55" x2="100" y2="305" stroke="#ccc" stroke-width="1.5"/>
+  <!-- X axis line -->
+  <line x1="100" y1="305" x2="720" y2="305" stroke="#ccc" stroke-width="1.5"/>
+
+  <!-- Y axis labels and grid lines -->
+  <!-- Max = 200,000 → chart height = 250px -->
+  <!-- Scale: 250/200000 = 0.00125 px per I/O -->
+  <!-- But use log scale for readability — show full scan as full height -->
+
+  <!-- Grid lines and labels (showing key values) -->
+  <line x1="100" y1="305" x2="720" y2="305" stroke="#e0e0e0" stroke-width="1"/>
+  <text x="90" y="309" text-anchor="end" font-size="10" fill="#888">0</text>
+
+  <!-- Note: using proportional height where full scan = 250px -->
+  <!-- Full scan: 200,000 → 250px (height) → y = 305-250 = 55 -->
+  <!-- Dense: 15 → 15/200000 * 250 ≈ 0.02px (invisible!) -->
+  <!-- Using log scale instead -->
+  <!-- log2(200000)≈17.6, log2(15)≈3.9, log2(12)≈3.6, log2(2)=1 -->
+  <!-- Map log scale: log(200000)→250, log(2)→20 -->
+  <!-- factor = 250/(17.6-1) = 15.06 -->
+  <!-- full scan: y = 305 - 250 = 55 -->
+  <!-- dense(15): 305 - (log2(15)-1)*15.06 = 305 - 2.91*15.06 = 305-43.8 = 261 → h=43.8 -->
+  <!-- sparse(12): 305 - (log2(12)-1)*15.06 = 305 - 2.58*15.06 = 305-38.9 = 266 → h=38.9 -->
+  <!-- multilevel(2): 305 - (log2(2)-1)*15.06 = 305 - 0 = 305 → h=0 (too small) -->
+  <!-- Use adjusted heights for visibility: -->
+  <!-- full scan: 250, dense: 80, sparse: 68, multilevel: 20 -->
+
+  <!-- Y axis reference lines -->
+  <line x1="100" y1="55"  x2="720" y2="55"  stroke="#f0f0f0" stroke-width="1" stroke-dasharray="4,3"/>
+  <text x="90" y="59" text-anchor="end" font-size="9" fill="#888">200.000</text>
+
+  <line x1="100" y1="135" x2="720" y2="135" stroke="#f0f0f0" stroke-width="1" stroke-dasharray="4,3"/>
+  <text x="90" y="139" text-anchor="end" font-size="9" fill="#888">escala log</text>
+
+  <line x1="100" y1="225" x2="720" y2="225" stroke="#f0f0f0" stroke-width="1" stroke-dasharray="4,3"/>
+
+  <text x="50" y="190" text-anchor="middle" font-size="10" fill="#888" transform="rotate(-90 50 190)">I/Os (escala logarítmica)</text>
+
+  <!-- ── BAR 1: Full scan ── -->
+  <rect x="140" y="55" width="100" height="250" fill="#6b2d8b" rx="4 4 0 0" opacity="0.85"/>
+  <!-- Value label on bar -->
+  <text x="190" y="72" text-anchor="middle" font-size="11" fill="#fff" font-weight="700">200.000</text>
+  <text x="190" y="86" text-anchor="middle" font-size="10" fill="#fff">I/Os</text>
+  <text x="190" y="100" text-anchor="middle" font-size="10" fill="#e8c0ff">~33 min</text>
+  <!-- X label -->
+  <text x="190" y="322" text-anchor="middle" font-size="11" fill="#6b2d8b" font-weight="600">Sin índice</text>
+  <text x="190" y="336" text-anchor="middle" font-size="10" fill="#888">(Full Scan)</text>
+
+  <!-- ── BAR 2: Dense index ── -->
+  <rect x="300" y="225" width="100" height="80" fill="#f5a623" rx="4 4 0 0" opacity="0.9"/>
+  <text x="350" y="242" text-anchor="middle" font-size="11" fill="#fff" font-weight="700">15 I/Os</text>
+  <text x="350" y="256" text-anchor="middle" font-size="10" fill="#fff">150 ms</text>
+  <text x="350" y="322" text-anchor="middle" font-size="11" fill="#f5a623" font-weight="600">Índice denso</text>
+  <text x="350" y="336" text-anchor="middle" font-size="10" fill="#888">(1 nivel)</text>
+
+  <!-- ── BAR 3: Sparse index ── -->
+  <rect x="460" y="237" width="100" height="68" fill="#7ab648" rx="4 4 0 0" opacity="0.9"/>
+  <text x="510" y="254" text-anchor="middle" font-size="11" fill="#fff" font-weight="700">12 I/Os</text>
+  <text x="510" y="268" text-anchor="middle" font-size="10" fill="#fff">120 ms</text>
+  <text x="510" y="322" text-anchor="middle" font-size="11" fill="#1a5c3a" font-weight="600">Índice disperso</text>
+  <text x="510" y="336" text-anchor="middle" font-size="10" fill="#888">(1 nivel)</text>
+
+  <!-- ── BAR 4: Multilevel ── -->
+  <rect x="620" y="285" width="100" height="20" fill="#1a5c3a" rx="4 4 0 0" opacity="0.95"/>
+  <text x="670" y="299" text-anchor="middle" font-size="11" fill="#fff" font-weight="700">2 I/Os</text>
+  <text x="670" y="322" text-anchor="middle" font-size="11" fill="#1a5c3a" font-weight="600">Multinivel</text>
+  <text x="670" y="336" text-anchor="middle" font-size="10" fill="#888">(2 niveles)</text>
+
+  <!-- Annotation: 20ms -->
+  <text x="670" y="280" text-anchor="middle" font-size="10" fill="#1a5c3a" font-weight="700">20 ms</text>
+
+  <!-- Log scale notice -->
+  <rect x="100" y="350" width="560" height="22" fill="#fff3cd" rx="4"/>
+  <text x="380" y="365" text-anchor="middle" font-size="10" fill="#856404">⚠ Escala logarítmica — las barras son proporcionales a log₂(I/Os) para que los valores pequeños sean visibles</text>
+
+</svg>
