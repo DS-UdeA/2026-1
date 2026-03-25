@@ -492,6 +492,8 @@ Todos los módulos importan de `index_utils.py`. El orden recomendado de ejecuci
 @enduml
 ```
 
+![class_diagrama](./images/class_diagram.png)
+
 ---
 
 ## 4. Guía de Ejecución y Validación

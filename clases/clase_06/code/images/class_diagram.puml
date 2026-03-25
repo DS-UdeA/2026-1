@@ -1,0 +1,184 @@
+@startuml class_diagram
+
+skinparam backgroundColor #f8f9fa
+skinparam classBackgroundColor #ffffff
+skinparam classBorderColor #1a5c3a
+skinparam classHeaderBackgroundColor #1a5c3a
+skinparam classFontColor #ffffff
+skinparam classFontSize 13
+skinparam classAttributeFontSize 11
+skinparam classAttributeIconSize 0
+skinparam arrowColor #1a5c3a
+skinparam arrowThickness 1.5
+skinparam noteBorderColor #f5a623
+skinparam noteBackgroundColor #fff8e1
+
+' ─────────────────────────────────────────
+' MODULE: index_utils (shared utilities)
+' ─────────────────────────────────────────
+package "index_utils" #e8f5e9 {
+
+    class InstructorTable <<constant>> {
+        + INSTRUCTOR_TABLE : list[tuple]
+        + N_RECORDS_DEMO   : int = 12
+        + N_RECORDS_SCALE  : int = 1_000_000
+        + RECORDS_PER_BLOCK        : int = 5
+        + INDEX_ENTRIES_PER_BLOCK  : int = 100
+        + MS_PER_BLOCK             : int = 10
+    }
+
+    class Utils <<functions>> {
+        + block_of(record_index: int) : int
+        + binary_search_ios(n_blocks: int) : int
+        + io_cost_ms(n_ios: int) : float
+        + full_scan_cost(n_blocks: int) : dict
+        + print_section(title: str)
+        + print_subsection(title: str)
+        + print_index_entries(entries, label)
+        + print_cost_table(rows: list[dict])
+        + print_data_file(records, ordered_by)
+    }
+}
+
+' ─────────────────────────────────────────
+' Phase 1: DenseIndex
+' ─────────────────────────────────────────
+class DenseIndex {
+    + key_field  : int
+    + entries    : list[tuple]
+    - _keys      : list
+    --
+    + __init__(records, key_field)
+    + lookup(key) : Optional[int]
+    + range_lookup(lo, hi) : list[int]
+    + io_cost(n_records) : dict
+    + __len__() : int
+    + __repr__() : str
+}
+
+note right of DenseIndex
+  Una entrada por registro.
+  Búsqueda binaria O(log n).
+  No requiere archivo ordenado.
+end note
+
+' ─────────────────────────────────────────
+' Phase 2: SparseIndex
+' ─────────────────────────────────────────
+class SparseIndex {
+    + key_field : int
+    + entries   : list[tuple]
+    - _keys     : list
+    --
+    + __init__(records, key_field)
+    + lookup(key) : Optional[int]
+    + io_cost(n_blocks) : dict
+    + __len__() : int
+    + __repr__() : str
+}
+
+note right of SparseIndex
+  Una entrada por bloque.
+  Floor lookup + scan lineal.
+  Requiere archivo ordenado.
+end note
+
+' ─────────────────────────────────────────
+' Phase 3: ClusteringIndex
+' ─────────────────────────────────────────
+class ClusteringIndex {
+    + key_field : int
+    + entries   : list[tuple]
+    - _keys     : list
+    --
+    + __init__(records, key_field)
+    + lookup(key) : Optional[int]
+    + range_lookup(lo, hi) : list[int]
+    + range_io_cost(lo, hi, n_records_per_key) : dict
+    + __len__() : int
+    + __repr__() : str
+}
+
+note right of ClusteringIndex
+  Una entrada por valor único de clave.
+  Archivo ordenado por search key.
+  Bloques contiguos en rango queries.
+end note
+
+' ─────────────────────────────────────────
+' Phase 4: SecondaryIndex
+' ─────────────────────────────────────────
+class SecondaryIndex {
+    + key_field : int
+    + entries   : list[tuple]
+    - _keys     : list
+    --
+    + __init__(records, key_field)
+    + lookup(key) : list[int]
+    + matching_count(key) : int
+    + io_cost(key, n_records, n_matching) : dict
+    + __len__() : int
+    + __repr__() : str
+}
+
+note right of SecondaryIndex
+  Índice denso sobre atributo no ordenado.
+  Registros dispersos → I/O por cada uno.
+  Costoso con baja selectividad.
+end note
+
+' ─────────────────────────────────────────
+' Phase 5: MultilevelIndex
+' ─────────────────────────────────────────
+class MultilevelIndex {
+    + key_field     : int
+    + outer_entries : list[tuple]
+    - _inner        : DenseIndex
+    - _outer_keys   : list
+    --
+    + __init__(records, key_field)
+    + lookup(key) : Optional[int]
+    + io_cost(n_records) : dict
+    + __repr__() : str
+}
+
+note right of MultilevelIndex
+  Outer index en memoria (0 I/Os).
+  Inner index en disco (1 I/O).
+  Total siempre = 2 I/Os.
+end note
+
+' ─────────────────────────────────────────
+' cost_comparison module
+' ─────────────────────────────────────────
+class CostComparison <<module>> {
+    + run_comparison()
+}
+
+' ─────────────────────────────────────────
+' RELATIONSHIPS
+' ─────────────────────────────────────────
+
+' Composición: MultilevelIndex contiene un DenseIndex como inner index
+MultilevelIndex *-- DenseIndex : inner index\n(composición)
+
+' Dependencias con index_utils
+DenseIndex       ..> Utils         : usa
+DenseIndex       ..> InstructorTable : importa
+SparseIndex      ..> Utils         : usa
+SparseIndex      ..> InstructorTable : importa
+ClusteringIndex  ..> Utils         : usa
+ClusteringIndex  ..> InstructorTable : importa
+SecondaryIndex   ..> Utils         : usa
+SecondaryIndex   ..> InstructorTable : importa
+MultilevelIndex  ..> Utils         : usa
+MultilevelIndex  ..> InstructorTable : importa
+
+' cost_comparison usa todos
+CostComparison ..> DenseIndex      : construye
+CostComparison ..> SparseIndex     : construye
+CostComparison ..> ClusteringIndex : construye
+CostComparison ..> SecondaryIndex  : construye
+CostComparison ..> MultilevelIndex : construye
+
+@enduml
