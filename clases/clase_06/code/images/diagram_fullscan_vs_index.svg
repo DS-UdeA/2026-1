@@ -1,0 +1,152 @@
+<svg viewBox="0 0 760 380" xmlns="http://www.w3.org/2000/svg" font-family="'Segoe UI', Arial, sans-serif">
+
+  <!-- Background -->
+  <rect width="760" height="380" fill="#f8f9fa" rx="12"/>
+
+  <!-- Title -->
+  <text x="380" y="36" text-anchor="middle" font-size="17" font-weight="700" fill="#1a3a2a">El problema del Full Scan — ¿Por qué necesitamos índices?</text>
+
+  <!-- ══════════════════════════════════════════════════════ -->
+  <!-- LEFT: Full Scan -->
+  <!-- ══════════════════════════════════════════════════════ -->
+  <rect x="20" y="54" width="340" height="300" fill="#fff" rx="10" stroke="#dde3e0" stroke-width="1.5"/>
+  <rect x="20" y="54" width="340" height="36" fill="#6b2d8b" rx="10"/>
+  <rect x="20" y="76" width="340" height="14" fill="#6b2d8b"/>
+  <text x="190" y="78" text-anchor="middle" font-size="13" font-weight="700" fill="#fff">Sin índice — Full Scan</text>
+
+  <!-- Disk blocks grid — all read -->
+  <g transform="translate(35, 105)">
+    <text x="155" y="0" text-anchor="middle" font-size="11" fill="#888">200.000 bloques en disco — todos se leen</text>
+
+    <!-- Grid of blocks, all colored (all read) -->
+    <!-- 10 cols x 5 rows = 50 blocks visible, representing all -->
+    <g opacity="0.85">
+      <!-- Row 1 -->
+      <rect x="0"   y="12" width="28" height="18" fill="#ede6f5" rx="2" stroke="#6b2d8b" stroke-width="0.8"/>
+      <rect x="30"  y="12" width="28" height="18" fill="#ede6f5" rx="2" stroke="#6b2d8b" stroke-width="0.8"/>
+      <rect x="60"  y="12" width="28" height="18" fill="#ede6f5" rx="2" stroke="#6b2d8b" stroke-width="0.8"/>
+      <rect x="90"  y="12" width="28" height="18" fill="#ede6f5" rx="2" stroke="#6b2d8b" stroke-width="0.8"/>
+      <rect x="120" y="12" width="28" height="18" fill="#ede6f5" rx="2" stroke="#6b2d8b" stroke-width="0.8"/>
+      <rect x="150" y="12" width="28" height="18" fill="#ede6f5" rx="2" stroke="#6b2d8b" stroke-width="0.8"/>
+      <rect x="180" y="12" width="28" height="18" fill="#ede6f5" rx="2" stroke="#6b2d8b" stroke-width="0.8"/>
+      <rect x="210" y="12" width="28" height="18" fill="#ede6f5" rx="2" stroke="#6b2d8b" stroke-width="0.8"/>
+      <rect x="240" y="12" width="28" height="18" fill="#ede6f5" rx="2" stroke="#6b2d8b" stroke-width="0.8"/>
+      <rect x="270" y="12" width="28" height="18" fill="#ede6f5" rx="2" stroke="#6b2d8b" stroke-width="0.8"/>
+      <!-- Row 2 -->
+      <rect x="0"   y="32" width="28" height="18" fill="#ede6f5" rx="2" stroke="#6b2d8b" stroke-width="0.8"/>
+      <rect x="30"  y="32" width="28" height="18" fill="#ede6f5" rx="2" stroke="#6b2d8b" stroke-width="0.8"/>
+      <rect x="60"  y="32" width="28" height="18" fill="#ede6f5" rx="2" stroke="#6b2d8b" stroke-width="0.8"/>
+      <rect x="90"  y="32" width="28" height="18" fill="#ede6f5" rx="2" stroke="#6b2d8b" stroke-width="0.8"/>
+      <rect x="120" y="32" width="28" height="18" fill="#ede6f5" rx="2" stroke="#6b2d8b" stroke-width="0.8"/>
+      <rect x="150" y="32" width="28" height="18" fill="#ede6f5" rx="2" stroke="#6b2d8b" stroke-width="0.8"/>
+      <rect x="180" y="32" width="28" height="18" fill="#ede6f5" rx="2" stroke="#6b2d8b" stroke-width="0.8"/>
+      <rect x="210" y="32" width="28" height="18" fill="#ede6f5" rx="2" stroke="#6b2d8b" stroke-width="0.8"/>
+      <rect x="240" y="32" width="28" height="18" fill="#ede6f5" rx="2" stroke="#6b2d8b" stroke-width="0.8"/>
+      <rect x="270" y="32" width="28" height="18" fill="#ede6f5" rx="2" stroke="#6b2d8b" stroke-width="0.8"/>
+      <!-- Row 3 -->
+      <rect x="0"   y="52" width="28" height="18" fill="#ede6f5" rx="2" stroke="#6b2d8b" stroke-width="0.8"/>
+      <rect x="30"  y="52" width="28" height="18" fill="#ede6f5" rx="2" stroke="#6b2d8b" stroke-width="0.8"/>
+      <rect x="60"  y="52" width="28" height="18" fill="#ede6f5" rx="2" stroke="#6b2d8b" stroke-width="0.8"/>
+      <text x="152" y="66" text-anchor="middle" font-size="18" fill="#6b2d8b" font-weight="700">· · ·</text>
+      <!-- Row 4 -->
+      <rect x="0"   y="72" width="28" height="18" fill="#ede6f5" rx="2" stroke="#6b2d8b" stroke-width="0.8"/>
+      <rect x="30"  y="72" width="28" height="18" fill="#ede6f5" rx="2" stroke="#6b2d8b" stroke-width="0.8"/>
+      <rect x="60"  y="72" width="28" height="18" fill="#ede6f5" rx="2" stroke="#6b2d8b" stroke-width="0.8"/>
+      <rect x="90"  y="72" width="28" height="18" fill="#ede6f5" rx="2" stroke="#6b2d8b" stroke-width="0.8"/>
+      <rect x="120" y="72" width="28" height="18" fill="#ede6f5" rx="2" stroke="#6b2d8b" stroke-width="0.8"/>
+      <rect x="150" y="72" width="28" height="18" fill="#ede6f5" rx="2" stroke="#6b2d8b" stroke-width="0.8"/>
+      <rect x="180" y="72" width="28" height="18" fill="#ede6f5" rx="2" stroke="#6b2d8b" stroke-width="0.8"/>
+      <rect x="210" y="72" width="28" height="18" fill="#ede6f5" rx="2" stroke="#6b2d8b" stroke-width="0.8"/>
+      <!-- Target found (last block highlighted) -->
+      <rect x="240" y="72" width="28" height="18" fill="#1a5c3a" rx="2" stroke="#1a5c3a" stroke-width="0.8"/>
+      <text x="254" y="85" text-anchor="middle" font-size="9" fill="#fff" font-weight="700">★</text>
+    </g>
+
+    <!-- Cost box -->
+    <rect x="0" y="108" width="305" height="52" fill="#fce4ec" rx="6" stroke="#c62828" stroke-width="1"/>
+    <text x="152" y="126" text-anchor="middle" font-size="12" fill="#c62828" font-weight="700">200.000 I/Os de disco</text>
+    <text x="152" y="144" text-anchor="middle" font-size="12" fill="#c62828">200.000 × 10 ms = 2.000.000 ms</text>
+    <text x="152" y="158" text-anchor="middle" font-size="13" fill="#c62828" font-weight="700">≈ 33 minutos</text>
+
+    <!-- Query label -->
+    <rect x="0" y="172" width="305" height="22" fill="#f3ecfa" rx="4"/>
+    <text x="152" y="187" text-anchor="middle" font-size="11" fill="#6b2d8b" font-weight="600">SELECT * FROM instructor WHERE ID = 45565</text>
+  </g>
+
+  <!-- ══════════════════════════════════════════════════════ -->
+  <!-- CENTER ARROW -->
+  <!-- ══════════════════════════════════════════════════════ -->
+  <text x="380" y="210" text-anchor="middle" font-size="28" fill="#1a5c3a" font-weight="700">→</text>
+  <text x="380" y="230" text-anchor="middle" font-size="10" fill="#1a5c3a" font-weight="600">índice</text>
+
+  <!-- ══════════════════════════════════════════════════════ -->
+  <!-- RIGHT: Index Lookup -->
+  <!-- ══════════════════════════════════════════════════════ -->
+  <rect x="400" y="54" width="340" height="300" fill="#fff" rx="10" stroke="#dde3e0" stroke-width="1.5"/>
+  <rect x="400" y="54" width="340" height="36" fill="#1a5c3a" rx="10"/>
+  <rect x="400" y="76" width="340" height="14" fill="#1a5c3a"/>
+  <text x="570" y="78" text-anchor="middle" font-size="13" font-weight="700" fill="#fff">Con índice — Index Lookup</text>
+
+  <g transform="translate(415, 105)">
+    <text x="155" y="0" text-anchor="middle" font-size="11" fill="#888">1. Búsqueda binaria en el índice</text>
+
+    <!-- Index blocks — only a few read -->
+    <!-- Show 10 index blocks, 3 highlighted -->
+    <g>
+      <!-- Index label -->
+      <rect x="0" y="10" width="60" height="16" fill="#e8f5e9" rx="3" stroke="#7ab648" stroke-width="1"/>
+      <text x="30" y="22" text-anchor="middle" font-size="9" fill="#1a5c3a" font-weight="600">IDX blk 0</text>
+
+      <rect x="64" y="10" width="60" height="16" fill="#c8e6c9" rx="3" stroke="#1a5c3a" stroke-width="1.5"/>
+      <text x="94" y="22" text-anchor="middle" font-size="9" fill="#1a5c3a" font-weight="700">IDX blk 1</text>
+
+      <rect x="128" y="10" width="60" height="16" fill="#e8f5e9" rx="3" stroke="#7ab648" stroke-width="1"/>
+      <text x="158" y="22" text-anchor="middle" font-size="9" fill="#1a5c3a" font-weight="600">IDX blk 2</text>
+
+      <text x="210" y="22" font-size="14" fill="#aaa">·  ·  ·</text>
+
+      <rect x="250" y="10" width="60" height="16" fill="#e8f5e9" rx="3" stroke="#7ab648" stroke-width="1"/>
+      <text x="280" y="22" text-anchor="middle" font-size="9" fill="#1a5c3a">IDX blk N</text>
+    </g>
+
+    <!-- Arrow from index to data -->
+    <line x1="94" y1="28" x2="94" y2="52" stroke="#1a5c3a" stroke-width="2" marker-end="url(#arrow)"/>
+    <text x="155" y="42" text-anchor="middle" font-size="10" fill="#888">2. Saltar directo al bloque de datos</text>
+
+    <!-- Data blocks — only 1 highlighted -->
+    <g transform="translate(0, 54)">
+      <rect x="0"   y="0" width="28" height="18" fill="#f5f5f5" rx="2" stroke="#ddd"/>
+      <rect x="30"  y="0" width="28" height="18" fill="#f5f5f5" rx="2" stroke="#ddd"/>
+      <rect x="60"  y="0" width="28" height="18" fill="#f5f5f5" rx="2" stroke="#ddd"/>
+      <!-- Target block -->
+      <rect x="90"  y="0" width="28" height="18" fill="#1a5c3a" rx="2"/>
+      <text x="104" y="13" text-anchor="middle" font-size="9" fill="#fff" font-weight="700">★</text>
+      <rect x="120" y="0" width="28" height="18" fill="#f5f5f5" rx="2" stroke="#ddd"/>
+      <rect x="150" y="0" width="28" height="18" fill="#f5f5f5" rx="2" stroke="#ddd"/>
+      <text x="210" y="13" font-size="14" fill="#ccc">·  ·  ·</text>
+    </g>
+
+    <!-- Cost box -->
+    <rect x="0" y="90" width="305" height="70" fill="#e8f5e9" rx="6" stroke="#1a5c3a" stroke-width="1"/>
+    <text x="152" y="110" text-anchor="middle" font-size="11" fill="#1a5c3a" font-weight="700">Desglose de I/Os (escala textbook)</text>
+    <text x="10"  y="128" font-size="11" fill="#555">Búsqueda en índice (log₂ 10.000):</text>
+    <text x="295" y="128" text-anchor="end" font-size="11" fill="#1a5c3a" font-weight="700">14 I/Os</text>
+    <text x="10"  y="145" font-size="11" fill="#555">Lectura del bloque de datos:</text>
+    <text x="295" y="145" text-anchor="end" font-size="11" fill="#1a5c3a" font-weight="700">1 I/O</text>
+    <line x1="10" y1="150" x2="295" y2="150" stroke="#7ab648" stroke-width="1"/>
+    <text x="10"  y="164" font-size="12" fill="#1a5c3a" font-weight="700">Total:</text>
+    <text x="295" y="164" text-anchor="end" font-size="13" fill="#1a5c3a" font-weight="700">15 I/Os → 150 ms</text>
+
+    <!-- Speedup -->
+    <rect x="0" y="172" width="305" height="28" fill="#1a5c3a" rx="5"/>
+    <text x="152" y="191" text-anchor="middle" font-size="13" fill="#fff" font-weight="700">13.333× más rápido que el full scan</text>
+  </g>
+
+  <!-- Arrow marker -->
+  <defs>
+    <marker id="arrow" markerWidth="8" markerHeight="8" refX="6" refY="3" orient="auto">
+      <path d="M0,0 L0,6 L8,3 z" fill="#1a5c3a"/>
+    </marker>
+  </defs>
+
+</svg>

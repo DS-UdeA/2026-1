@@ -81,8 +81,7 @@ Un índice ordenado es esencialmente una lista de pares `(search_key, block_numb
 - **Búsqueda lineal:** revisar entrada por entrada desde el inicio — O(n) pasos.
 - **Búsqueda binaria:** dividir repetidamente la lista por la mitad — O(log₂ n) pasos.
 
-<!-- 🖼️ PENDIENTE: diagrama comparativo búsqueda lineal vs binaria sobre una lista de 12 elementos -->
-<!-- Ruta sugerida: ./images/diagram_linear_vs_binary_search.svg -->
+![Búsqueda lineal vs binaria](./images/diagram_linear_vs_binary_search.svg)
 
 La diferencia es dramática a escala. Para un índice de 10.000 bloques (caso del índice denso con 1M de registros), la búsqueda lineal requeriría hasta 10.000 comparaciones; la búsqueda binaria necesita como máximo ⌈log₂(10.000)⌉ = **14**. Eso se traduce directamente en 14 I/Os de disco vs. 10.000 — la búsqueda binaria es la razón por la que los índices funcionan.
 
@@ -170,8 +169,7 @@ T_full_scan = 200.000 bloques × 10 ms/bloque = 2.000.000 ms ≈ 33 minutos
 
 Treinta y tres minutos para encontrar un solo registro es inaceptable en cualquier sistema real. Los **índices ordenados** son la solución: estructuras auxiliares que mapean un valor de clave de búsqueda directamente al bloque de disco donde se encuentran los registros con ese valor, reduciendo el costo de una búsqueda puntual a decenas de milisegundos.
 
-<!-- 🖼️ PENDIENTE: diagrama motivacional — full scan vs index lookup -->
-<!-- Ruta sugerida: ./images/diagram_fullscan_vs_index.svg -->
+![Full scan vs index lookup](./images/diagram_fullscan_vs_index.svg)
 
 > [!note]
 > Este módulo es **completamente independiente** de las entregas v5–v7. La capa de datos es una lista Python simple (`INSTRUCTOR_TABLE` en `index_utils.py`) para que el foco sea 100% en las estructuras de índice. En un DBMS real, el índice se construiría sobre un heap file con slotted pages como los implementados en v6–v7 — pero mezclar ambas capas en un solo script haría más difícil entender cualquiera de las dos.
@@ -487,12 +485,12 @@ Todos los módulos importan de `index_utils.py`. El orden recomendado de ejecuci
 
 ### 3.4 Diagrama de clases
 
-<!-- 📐 PENDIENTE: diagrama PlantUML de clases -->
-<!-- Ruta sugerida: ./images/class_diagram.puml -->
+<!-- 📐 Diagrama PlantUML generado en: ./images/class_diagram.puml -->
+<!-- Para renderizarlo: usar el plugin PlantUML en VS Code o https://www.plantuml.com/plantuml -->
 
 ```plantuml
 @startuml
-' Placeholder — completar con diagrama real
+' Ver archivo completo en ./images/class_diagram.puml
 ' Clases: DenseIndex, SparseIndex, ClusteringIndex,
 '         SecondaryIndex, MultilevelIndex
 ' Relaciones: MultilevelIndex *-- DenseIndex (composición)
@@ -879,8 +877,7 @@ El módulo también incluye:
 - Tabla de espacio ocupado por tipo de índice
 - Guía de decisión: cuándo usar cada tipo
 
-<!-- 🖼️ PENDIENTE: gráfico de barras comparativo de I/Os por estrategia -->
-<!-- Ruta sugerida: ./images/chart_io_comparison.svg -->
+![Comparativa de costos I/O](./images/chart_io_comparison.svg)
 
 ---
 
