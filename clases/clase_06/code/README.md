@@ -4,12 +4,12 @@
 
 * **Laboratorio de Estructuras de Datos · Universidad de Antioquia**
 * **Módulos:** `index_utils.py` · `dense_index.py` · `sparse_index.py` · `clustering_index.py` · `secondary_index.py` · `multilevel_index.py` · `cost_comparison.py`
-* **Prerrequisito recomendado:** Haber revisado las entregas de Heap Files (v5–v7) para tener contexto sobre cómo se almacenan los registros en disco.
+* **Prerrequisito recomendado:** Haber revisado la documentación ([link](../../clase_05/ejemplos/VLR/)) los codigos asociados de los Heap Files ([v5](../../clase_05/ejemplos/VLR/heap_file_v5_vlr_formats.py), [v6](../../clase_05/ejemplos/VLR/heap_file_v6_slotted_page.py) - [v7](../../clase_05/ejemplos/VLR/heap_file_v7_compaction.py)) para tener contexto sobre cómo se almacenan los registros en disco.
 
 ---
 
 > [!warning]
-> Este material es un **apoyo al contenido de las diapositivas**, no un reemplazo. Se recomienda revisar primero las láminas de la Clase 6 (Indexación) antes de ejecutar los scripts, ya que el código implementa directamente los conceptos allí presentados.
+> Este material es un **apoyo al contenido de las diapositivas**, no un reemplazo. Se recomienda revisar primero las presentaciones de la Clase 6 (Indexación) antes de ejecutar los scripts, ya que el código implementa los conceptos allí presentados.
 
 ---
 
@@ -22,6 +22,7 @@
     - [0.2 El módulo `bisect` de Python](#02-el-módulo-bisect-de-python)
     - [0.3 Comparación con Java (`Collections.binarySearch`)](#03-comparación-con-java-collectionsbinarysearch)
     - [0.4 Ejemplo práctico sobre `bisect`](#04-ejemplo-práctico-sobre-bisect)
+      - [Actividad opcional](#actividad-opcional)
     - [0.5 Recursos para profundizar](#05-recursos-para-profundizar)
   - [1. Punto de Partida: ¿Por qué esta entrega existe?](#1-punto-de-partida-por-qué-esta-entrega-existe)
   - [2. Repaso Teórico](#2-repaso-teórico)
@@ -70,7 +71,7 @@
 
 ## 0. Conceptos Previos: Búsqueda Binaria y el módulo `bisect`
 
-A diferencia de las entregas anteriores (v5–v7), estos scripts no manipulan bytes binarios con `struct`. El concepto técnico clave aquí es más simple pero igual de fundamental: la **búsqueda binaria** como mecanismo central para localizar claves en un índice ordenado de forma eficiente.
+A diferencia de las entregas anteriores ([v5](../../clase_05/ejemplos/VLR/heap_file_v5_vlr_formats.py), [v6](../../clase_05/ejemplos/VLR/heap_file_v6_slotted_page.py) - [v7](../../clase_05/ejemplos/VLR/heap_file_v7_compaction.py)), estos scripts no manipulan bytes binarios con `struct`. El concepto técnico clave aquí es más simple pero igual de fundamental: la **búsqueda binaria** como mecanismo central para localizar claves en un índice ordenado de forma eficiente.
 
 ---
 
@@ -83,21 +84,32 @@ Un índice ordenado es esencialmente una lista de pares `(search_key, block_numb
 
 ![Búsqueda lineal vs binaria](./images/diagram_linear_vs_binary_search.svg)
 
-La diferencia es dramática a escala. Para un índice de 10.000 bloques (caso del índice denso con 1M de registros), la búsqueda lineal requeriría hasta 10.000 comparaciones; la búsqueda binaria necesita como máximo ⌈log₂(10.000)⌉ = **14**. Eso se traduce directamente en 14 I/Os de disco vs. 10.000 — la búsqueda binaria es la razón por la que los índices funcionan.
+La diferencia es dramática a escala. Para un índice de 10000 bloques,
+con 100 entradas de índice por bloque (caso del índice denso con 1M de
+registros), la búsqueda lineal requeriría hasta 10000 comparaciones
+mientras que la búsqueda binaria necesita como máximo ⌈log₂(10000)⌉ =
+**14**. Eso se traduce directamente en *14 I/Os* de disco vs. *10000
+I/Os* — la búsqueda binaria es la razón por la que los índices funcionan.
 
 > [!note]
-> La fórmula que usan las diapositivas para calcular el costo de búsqueda en un índice es exactamente esta: **I/O_search = ⌈log₂(B_índice)⌉**, donde B_índice es el número de bloques del índice. Todos los ejemplos numéricos de la Clase 6 usan esta fórmula.
+> La fórmula que usan las diapositivas para calcular el costo de búsqueda en un índice es exactamente esta: **$I/O_{search} = ⌈log₂(B_i)⌉$**, donde **$B_i$** es el número de bloques del índice ($B_i = 10000$ en este caso). Todos los ejemplos numéricos de la clase 6 usan esta fórmula.
 
 ---
 
 ### 0.2 El módulo `bisect` de Python
 
-`bisect` es el módulo de la biblioteca estándar de Python que implementa búsqueda binaria sobre listas ordenadas. Sus dos funciones principales son:
+[`bisect`](https://docs.python.org/3/library/bisect.html) es el módulo de la biblioteca estándar de Python que implementa búsqueda binaria sobre listas ordenadas. Sus dos funciones principales son:
 
 | Función | Comportamiento | Uso en este laboratorio |
 |---|---|---|
 | `bisect.bisect_left(a, x)` | Retorna la posición más a la izquierda donde insertar `x` manteniendo el orden. Si `x` ya existe, retorna su posición. | Búsqueda exacta (`DenseIndex.lookup`) |
 | `bisect.bisect_right(a, x)` | Retorna la posición más a la derecha donde insertar `x`. Si `x` ya existe, retorna la posición *después* de él. | Límite superior en búsquedas de rango |
+
+> [!tip]
+> Para profundizar en el módulo `bisect`:
+> - **Documentación oficial:** [docs.python.org/3/library/bisect](https://docs.python.org/3/library/bisect.html)
+> - **Todo lo que puedes hacer con `bisect`** (Martin Heinz): [martinheinz.dev/blog/106](https://martinheinz.dev/blog/106) — cubre `bisect_left`, `bisect_right` y tipos complejos como tuplas.
+> - **Guía práctica con ejemplos paso a paso** (John Lekberg): [johnlekberg.com/blog/2020-11-21-stdlib-bisect](https://johnlekberg.com/blog/2020-11-21-stdlib-bisect.html) — explica data binning y casos de uso reales.
 
 La combinación de ambas permite implementar todos los patrones de acceso que aparecen en las diapositivas:
 
@@ -123,9 +135,17 @@ Si ha usado `java.util.Collections.binarySearch()` en Java, `bisect` de Python e
 > [!note]
 > `Collections.binarySearch` en Java retorna un índice negativo si el elemento no existe. `bisect_left` siempre retorna una posición válida (dónde estaría el elemento), lo que resulta más natural para construir índices de base de datos.
 
+> [!tip]
+> Para profundizar en `Collections.binarySearch` de Java:
+> - **Documentación oficial:** [docs.oracle.com — Collections.binarySearch](https://docs.oracle.com/en/java/docs/api/java.base/java/util/Collections.html#binarySearch(java.util.List,T))
+> - **Tutorial completo con ejemplos** (Baeldung): [baeldung.com/java-binary-search](https://www.baeldung.com/java-binary-search) — cubre `Arrays.binarySearch`, `Collections.binarySearch`, duplicados y comparadores.
+> - **Ejemplos con objetos personalizados** (GeeksforGeeks): [geeksforgeeks.org — Collections.binarySearch](https://www.geeksforgeeks.org/java/collections-binarysearch-java-examples/) — incluye casos con `Comparator` y listas de objetos complejos.
+
 ---
 
 ### 0.4 Ejemplo práctico sobre `bisect`
+
+A continuación se muestra un ejemplo básico del módulo `bisect` aplicado a un índice disperso. Analice y comprenda cómo funciona antes de ejecutarlo ([simulación online](https://pythontutor.com/visualize.html#code=import%20bisect%0A%0A%23%20Imagine%20this%20is%20our%20sparse%20index%3A%20%5B%28min_key_in_block,%20block_number%29%5D%0Aindex%20%3D%20%5B%2810101,%200%29,%20%2833456,%201%29,%20%2883821,%202%29%5D%0Akeys%20%20%3D%20%5Bentry%5B0%5D%20for%20entry%20in%20index%5D%20%20%20%23%20%5B10101,%2033456,%2083821%5D%0A%0A%23%20Floor%20lookup%3A%20find%20the%20block%20that%20MAY%20contain%20ID%20%3D%2045565%0A%23%20bisect_right%20returns%20the%20insertion%20point%20AFTER%20any%20existing%2045565%0A%23%20subtract%201%20%E2%86%92%20the%20last%20entry%20with%20key%20%E2%89%A4%2045565%0Apos%20%20%20%3D%20bisect.bisect_right%28keys,%2045565%29%20-%201%20%20%20%23%20pos%20%3D%201%0Ablock%20%3D%20index%5Bpos%5D%5B1%5D%20%20%20%20%20%20%20%20%20%20%20%20%20%20%20%20%20%20%20%20%20%20%20%20%20%20%20%23%20block%20%3D%201%0Aprint%28f%22ID%3D45565%20%E2%86%92%20scan%20Block%20%7Bblock%7D%22%29%20%20%20%20%20%20%20%20%20%23%20Block%201%20%E2%9C%93%0A%0A%23%20Range%20lookup%3A%20all%20entries%20with%20key%20in%20%5B22222,%2076766%5D%0Alo%20%3D%20bisect.bisect_left%28keys,%2022222%29%20%20%20%20%23%20lo%20%3D%201%20%28first%20key%20%E2%89%A5%2022222%29%0Ahi%20%3D%20bisect.bisect_right%28keys,%2076766%29%20%20%20%23%20hi%20%3D%202%20%28first%20key%20%3E%2076766%29%0Amatching%20%3D%20index%5Blo%3Ahi%5D%20%20%20%20%20%20%20%20%20%20%20%20%20%20%20%23%20%5B%2833456,%201%29%5D&curInstr=0&mode=display&origin=opt-frontend.js&py=311)):
 
 ```python
 import bisect
@@ -147,13 +167,29 @@ hi = bisect.bisect_right(keys, 76766)   # hi = 2 (first key > 76766)
 matching = index[lo:hi]                 # [(33456, 1)]
 ```
 
+#### Actividad opcional
+
+Modifique el valor buscado en el código original y observe el resultado. 
+Use la tabla como guía antes de ejecutar:
+
+| Acción | ¿Qué se espera? | ¿Por qué? |
+|---|---|---|
+| Buscar `ID = 10101` (primer registro) | El bloque retornado es el 0 | Es la clave mínima del índice; el floor lookup apunta directo al primer bloque |
+| Buscar `ID = 99999` (mayor que todas las claves) | El bloque retornado es el 2 | No hay entrada mayor, el floor lookup queda en la última entrada del índice |
+| Buscar `ID = 10100` (menor que todas las claves) | `lookup` retorna `None` | `bisect_right` retorna 0, y al restar 1 el resultado es negativo — fuera del índice |
+| Ampliar el rango a `[10101, 83821]` | El resultado cubre todas las entradas | Los límites coinciden exactamente con las claves mínima y máxima del índice |
+| Buscar un rango donde `lo > hi`, por ejemplo `[83821, 10101]` | La lista de resultados está vacía | `bisect_left` queda a la derecha de `bisect_right` → el slice retorna `[]` |
+
+> [!tip]
+> Antes de ejecutar, razone cada resultado a mano usando la tabla del índice. La simulación online le permite avanzar línea por línea y ver el estado de cada variable en tiempo real.
+
+
 ---
 
 ### 0.5 Recursos para profundizar
 
-- **Python docs — `bisect`:** [https://docs.python.org/3/library/bisect.html](https://docs.python.org/3/library/bisect.html)
-- **Visualización interactiva de búsqueda binaria:** [https://visualgo.net/en/bst](https://visualgo.net/en/bst)
-- **CS186 Berkeley — Storage & Indexes:** [https://cs186berkeley.net/notes/note17/](https://cs186berkeley.net/notes/note17/)
+- **Visualización interactiva de búsqueda binaria:** [visualgo.net/en/bst](https://visualgo.net/en/bst)
+- **CS186 Berkeley — Storage & Indexes:** [cs186berkeley.net/notes/note17/](https://cs186berkeley.net/notes/note17/)
 
 ---
 
