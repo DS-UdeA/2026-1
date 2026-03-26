@@ -19,8 +19,16 @@ A continuación se describe el cronograma del curso por clases.
 |        | 9     |Teoria| 27/02/2026   | Clase 3 - Almacenamiento de datos (Parte 2) | Recursos clase 3 [[link]](clase_03/) |  |
 | 4      | 10    |Laboratorio| 02/03/2026   | Lab 2 - Introducción a SQL y Documentación en GitHub | Recursos laboratorio 2 [[link]](../labs/lab2/) | Introducción a lenguaje SQL, lenguaje markdown |
 |        | 11    |Teoria| 04/03/2026   | --- | --- | No hubo clase |
-|        | 12   |Teoria| 06/03/2026   | Clase 4 - Archivos | Recursos clase 4 [[link]](clase_04/) |  |
-
+|        | 12   |Teoria| 06/03/2026   | Clase 4 - Archivos (Parte 1) | Recursos clase 4 [[link]](clase_04/) |  |
+| 5      | 13    |Laboratorio| 09/03/2026   | --- | --- | No hubo clase |
+|        | 14    |Teoria| 11/03/2026   | Clase 5 - Archivos (Parte 2) | Recursos clase 5 [[link]](clase_05/)  |  |
+|        | 15    |Teoria| 13/03/2026   | Clase 5 - Archivos (Parte 2) | Recursos clase 5 [[link]](clase_05/) |  |
+| 6      | 16    |Laboratorio| 16/03/2026   | Lab 3 - Acceso a Disco y Costo de I/O | Recursos Laboratorio 3 [[link]](../labs/lab3/) | Medición de desempeño |
+|        | 17    |Teoria| 18/03/2026   | --- | --- | No hubo clase |
+|        | 18    |Teoria| 20/03/2026   | --- | ---  | No hubo clase | 
+| 7      | 19    |Laboratorio| 23/03/2026   | --- | --- | No hubo clase (Festivo) |
+|        | 20    |Teoria| 25/03/2026   | Clase 6 - Indices | Recursos clase 6 [[link]](clase_06/) | No hubo clase |
+|        | 21    |Teoria| 27/03/2026   | Clase 6 - Indices | Recursos clase 6 [[link]](clase_06/) | |
 
 ## Lecturas complementarias
 
