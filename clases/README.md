@@ -1,4 +1,4 @@
-# Estructuras de dato - Ude@
+# Estructuras de datos - Ude@
 
 * **Grupo**: 
 * **Horario**: LWV 8-10
