@@ -4,7 +4,7 @@
 
 * **Laboratorio de Estructuras de Datos · Universidad de Antioquia**
 * **Módulos:** `index_utils.py` · `dense_index.py` · `sparse_index.py` · `clustering_index.py` · `secondary_index.py` · `multilevel_index.py` · `cost_comparison.py`
-* **Prerrequisito recomendado:** Haber revisado la documentación ([link](../../clase_05/ejemplos/VLR/)) los codigos asociados de los Heap Files ([v5](../../clase_05/ejemplos/VLR/heap_file_v5_vlr_formats.py), [v6](../../clase_05/ejemplos/VLR/heap_file_v6_slotted_page.py) - [v7](../../clase_05/ejemplos/VLR/heap_file_v7_compaction.py)) para tener contexto sobre cómo se almacenan los registros en disco.
+* **Prerrequisito recomendado:** Haber revisado la documentación ([link](../../clase_05/ejemplos/VLR/)) los codigos asociados de los Heap Files ([v5](../../clase_05/ejemplos/VLR/heap_file_v5_vlr_formats.py), [v6](../../clase_05/ejemplos/VLR/heap_file_v6_slotted_page.py), [v7](../../clase_05/ejemplos/VLR/heap_file_v7_compaction.py)) para tener contexto sobre cómo se almacenan los registros en disco.
 
 ---
 
@@ -29,7 +29,7 @@
     - [2.1 Jerarquía de almacenamiento y capas del DBMS](#21-jerarquía-de-almacenamiento-y-capas-del-dbms)
     - [2.2 Organización de archivos: Heap, Sorted, Hash](#22-organización-de-archivos-heap-sorted-hash)
     - [2.3 Conceptos básicos de indexación](#23-conceptos-básicos-de-indexación)
-    - [2.4 La tabla `instructor` de Silberschatz](#24-la-tabla-instructor-de-silberschatz)
+    - [2.4 La tabla `instructor`](#24-la-tabla-instructor)
     - [2.5 Densidad del índice](#25-densidad-del-índice)
       - [Índice denso (Dense index)](#índice-denso-dense-index)
       - [Índice disperso (Sparse index)](#índice-disperso-sparse-index)
@@ -71,7 +71,7 @@
 
 ## 0. Conceptos Previos: Búsqueda Binaria y el módulo `bisect`
 
-A diferencia de las entregas anteriores ([v5](../../clase_05/ejemplos/VLR/heap_file_v5_vlr_formats.py), [v6](../../clase_05/ejemplos/VLR/heap_file_v6_slotted_page.py) - [v7](../../clase_05/ejemplos/VLR/heap_file_v7_compaction.py)), estos scripts no manipulan bytes binarios con `struct`. El concepto técnico clave aquí es más simple pero igual de fundamental: la **búsqueda binaria** como mecanismo central para localizar claves en un índice ordenado de forma eficiente.
+A diferencia de las entregas anteriores ([v5](../../clase_05/ejemplos/VLR/heap_file_v5_vlr_formats.py), [v6](../../clase_05/ejemplos/VLR/heap_file_v6_slotted_page.py), [v7](../../clase_05/ejemplos/VLR/heap_file_v7_compaction.py)), estos scripts no manipulan bytes binarios con `struct`. El concepto técnico clave aquí es más simple pero igual de fundamental: la **búsqueda binaria** como mecanismo central para localizar claves en un índice ordenado de forma eficiente.
 
 ---
 
@@ -183,7 +183,6 @@ Use la tabla como guía antes de ejecutar:
 > [!tip]
 > Antes de ejecutar, razone cada resultado a mano usando la tabla del índice. La simulación online le permite avanzar línea por línea y ver el estado de cada variable en tiempo real.
 
-
 ---
 
 ### 0.5 Recursos para profundizar
@@ -195,15 +194,26 @@ Use la tabla como guía antes de ejecutar:
 
 ## 1. Punto de Partida: ¿Por qué esta entrega existe?
 
-Las entregas anteriores (v5–v7) resolvieron el problema de **cómo almacenar registros** en disco: formatos de longitud variable, slotted pages, compactación. Pero resolver el almacenamiento deja abierta una pregunta igual de importante: ¿cómo encontrar un registro específico una vez que está almacenado?
+Las entregas anteriores ([v5](../../clase_05/ejemplos/VLR/heap_file_v5_vlr_formats.py), [v6](../../clase_05/ejemplos/VLR/heap_file_v6_slotted_page.py), [v7](../../clase_05/ejemplos/VLR/heap_file_v7_compaction.py)) resolvieron el problema de **cómo almacenar registros** en disco: formatos de longitud variable, slotted pages, compactación. Pero resolver el almacenamiento deja abierta una pregunta igual de importante: **¿cómo encontrar un registro específico una vez que está almacenado?**
 
-La respuesta más simple — recorrer el archivo completo desde el primer bloque hasta el último — se llama **full scan** o escaneo completo. Funciona, pero su costo es proporcional al tamaño del archivo. Las diapositivas de la Clase 6 plantean el caso de una tabla con 1.000.000 de registros almacenados en 200.000 bloques de disco:
+La respuesta más simple — recorrer el archivo completo desde el primer bloque hasta el último — se llama **full scan** o escaneo completo. Funciona, pero su costo es proporcional al tamaño del archivo.
 
-```
-T_full_scan = 200.000 bloques × 10 ms/bloque = 2.000.000 ms ≈ 33 minutos
-```
+Para hacer concreto este costo, todos los ejemplos de este módulo usan el siguiente modelo de disco, que coincide con los parámetros de las diapositivas de la Clase 6:
 
-Treinta y tres minutos para encontrar un solo registro es inaceptable en cualquier sistema real. Los **índices ordenados** son la solución: estructuras auxiliares que mapean un valor de clave de búsqueda directamente al bloque de disco donde se encuentran los registros con ese valor, reduciendo el costo de una búsqueda puntual a decenas de milisegundos.
+| Parámetro | Valor |
+|---|---|
+| Total de registros | 1000000 |
+| Registros por bloque | 5 |
+| Total de bloques | 200000 |
+| Tiempo por lectura de disco | 10 ms/bloque |
+
+Con estos valores, el costo de un full scan es:
+
+$$
+T_{FS} = 200000\ \text{bloques} \times 10\ \text{ms/bloque} = 2000000\ \text{ms} \approx 33.33\ \text{min}
+$$
+
+Treinta y tres minutos para encontrar un único registro es inaceptable en cualquier sistema real. Los **índices ordenados** son la solución: estructuras auxiliares que mapean un valor de clave de búsqueda directamente al bloque de disco donde se encuentran los registros con ese valor, reduciendo el costo de una búsqueda puntual a decenas de milisegundos.
 
 ![Full scan vs index lookup](./images/diagram_fullscan_vs_index.svg)
 
@@ -219,9 +229,8 @@ Treinta y tres minutos para encontrar un solo registro es inaceptable en cualqui
 Un DBMS se organiza en capas funcionales que van desde el almacenamiento físico hasta la planificación de consultas. Los índices viven en la capa de **Access Methods**, que es la responsable de leer y escribir datos eficientemente desde las páginas almacenadas por capas inferiores.
 
 ![Capas del DBMS — Access Methods resaltado](./images/diagram_dbms_layers.png)
-> *Fuente: Clase 6 — Indexación, diapositiva 8*
 
-La indexación es el mecanismo fundamental de esta capa: permite acceder a los datos **sin recorrer el archivo completo**, respondiendo a la pregunta "¿en qué bloque de disco está el registro que busco?" antes de emitir una sola operación de I/O sobre el archivo de datos.
+La indexación es el mecanismo fundamental de esta capa: permite acceder a los datos **sin recorrer el archivo completo**, respondiendo a la pregunta **¿en qué bloque de disco está el registro que busco?** antes de emitir una sola operación de I/O sobre el archivo de datos.
 
 ---
 
@@ -231,9 +240,13 @@ Antes de hablar de índices, es útil recordar que los archivos de datos pueden 
 
 **Archivos heap (Heap files):** los registros se insertan en cualquier posición con espacio disponible, sin orden garantizado. Son ideales cuando el acceso típico es un escaneo completo del archivo. Son los que implementamos en v5–v7.
 
+![Organización heap — lista enlazada y lista de directorios](./images/heap_file_organization.png)
+
 **Archivos ordenados (Sorted files):** los registros están físicamente ordenados por una clave de búsqueda. Permiten búsquedas eficientes por esa clave y consultas de rango, pero las inserciones son costosas porque pueden requerir reorganización.
 
 **Índices (Indexes):** estructuras de datos auxiliares — basadas en árboles o hashing — que aceleran las búsquedas sin modificar el orden físico del archivo de datos. Las actualizaciones son mucho más rápidas que en archivos ordenados.
+
+![Organización secuencial vs hash sobre la tabla instructor](./images/sequential_vs_hash_organization.png)
 
 ---
 
@@ -248,39 +261,36 @@ Los tres conceptos centrales son:
 - **Entrada de índice (Index entry):** par `(search_key, data_reference)` donde la referencia apunta al bloque de disco que contiene los registros con ese valor de clave.
 
 ![Concepto de índice — value → index → blocks → matching records](./images/diagram_index_concept.png)
-> *Fuente: Clase 6 — Indexación, diapositivas 11–13*
-<!-- Ruta sugerida: ./images/diagram_index_concept.png -->
 
 Un índice acelera las consultas pero agrega costo a las operaciones de escritura: toda inserción, eliminación o actualización sobre la tabla debe reflejarse también en todos sus índices. Este es el **trade-off** central que los diseñadores de bases de datos deben evaluar.
 
 ---
 
-### 2.4 La tabla `instructor` de Silberschatz
+---
 
-Todos los ejemplos de código de este módulo usan la relación `instructor` que aparece en el libro de texto estándar del curso:
+### 2.4 La tabla `instructor`
 
-> Silberschatz, A., Korth, H. F., & Sudarshan, S. *Database System Concepts*, 7th ed. McGraw-Hill.
-
-El esquema es `instructor(ID, name, dept_name, salary)`:
+Todos los ejemplos de este módulo usan la relación `instructor(ID, name, dept_name, salary)`:
 
 | ID | Name | Dept Name | Salary |
 |---:|---|---|---:|
-| 10101 | Srinivasan | Comp. Sci. | 65,000 |
-| 12121 | Wu | Finance | 90,000 |
-| 15151 | Mozart | Music | 40,000 |
-| 22222 | Einstein | Physics | 95,000 |
-| 32343 | El Said | History | 60,000 |
-| 33456 | Gold | Physics | 87,000 |
-| 45565 | Katz | Comp. Sci. | 75,000 |
-| 58583 | Califieri | History | 62,000 |
-| 76543 | Singh | Finance | 80,000 |
-| 76766 | Crick | Biology | 72,000 |
-| 83821 | Brandt | Comp. Sci. | 92,000 |
-| 98345 | Kim | Elec. Eng. | 80,000 |
+| 10101 | Srinivasan | Comp. Sci. | 65000 |
+| 12121 | Wu | Finance | 90000 |
+| 15151 | Mozart | Music | 40000 |
+| 22222 | Einstein | Physics | 95000 |
+| 32343 | El Said | History | 60000 |
+| 33456 | Gold | Physics | 87000 |
+| 45565 | Katz | Comp. Sci. | 75000 |
+| 58583 | Califieri | History | 62000 |
+| 76543 | Singh | Finance | 80000 |
+| 76766 | Crick | Biology | 72000 |
+| 83821 | Brandt | Comp. Sci. | 92000 |
+| 98345 | Kim | Elec. Eng. | 80000 |
 
-Esta es la misma tabla que se usa en las diapositivas de la Clase 6 para todos los ejemplos de índices ordenados (denso, disperso, clustering, secondary, multinivel). Usarla aquí permite que el estudiante reconozca los mismos datos en el código, en el README y en las slides.
+La tabla proviene de Silberschatz et al., *Database System Concepts*, 7th ed., y se almacena como una lista de tuplas en [`index_utils.py`](indexes/index_utils.py), desde donde la importan todos los demás módulos.
 
-En el código, la tabla se almacena como una lista de tuplas en `index_utils.py` y se importa en todos los demás módulos.
+> [!tip]
+> Para verificar que la tabla cargó correctamente, ejecute `python index_utils.py` — la salida esperada se describe en la [sección 4.1](#41-preparación-del-entorno).
 
 ---
 
@@ -292,27 +302,27 @@ Cuando se construye un índice, una decisión fundamental es cuántas entradas t
 
 En un índice denso existe **una entrada por cada registro** del archivo de datos. Cada entrada contiene el valor de la clave y un puntero al bloque que contiene ese registro.
 
-![Índice denso — una entrada por registro](./images/diagram_dense_index.png)
-> *Fuente: Clase 6 — Indexación, diapositiva 24*
-
 Propiedades clave:
 - Permite localizar **directamente** cualquier registro con una búsqueda binaria sobre el índice.
 - Si la clave de búsqueda **no es única**, el índice mantiene una entrada por cada registro con ese valor — el acceso a los demás ocurre secuencialmente siguiendo los punteros del archivo.
 - Ocupa **más espacio** que el disperso: tantas entradas como registros tenga la tabla.
 
+![Índice denso — una entrada por registro](./images/diagram_dense_index.png)
+
 #### Índice disperso (Sparse index)
 
-En un índice disperso existe **una entrada por cada bloque** del archivo de datos, no por cada registro. La entrada almacena el valor de la clave mínima en ese bloque.
+En un índice disperso existe **una entrada por cada bloque** del archivo de datos, no por cada registro. La entrada almacena el valor de la clave mínima en ese bloque. **Este tipo de índice solo es aplicable cuando el archivo está físicamente ordenado por la clave de búsqueda** — sin ese orden, la lógica de búsqueda que se describe a continuación no funciona.
+
+El proceso de búsqueda tiene dos pasos. Primero, se recorre el índice para encontrar la entrada cuya clave sea la más grande que no supere la clave buscada — esto se conoce como **floor lookup**. Esa entrada apunta al bloque donde el registro *podría* estar. Segundo, se lee ese bloque del disco y se escanea registro a registro hasta encontrar el que coincide.
+
+La razón por la que no se puede ir directo al registro es que el índice disperso no sabe en qué posición exacta dentro del bloque está — solo sabe en qué bloque empezar a buscar.
 
 ![Índice disperso — una entrada por bloque](./images/diagram_sparse_index.png)
-> *Fuente: Clase 6 — Indexación, diapositiva 29*
-
-El proceso de búsqueda tiene dos pasos: primero se localiza la entrada con la **clave más grande ≤ clave buscada** (floor lookup), y luego se lee ese bloque y se escanea linealmente hasta encontrar el registro.
 
 Propiedades clave:
-- **Solo es aplicable** cuando el archivo está físicamente ordenado por la clave de búsqueda.
 - Ocupa mucho **menos espacio**: tantas entradas como bloques tenga el archivo.
 - Es ligeramente **más lento** por requerir el scan intra-bloque final.
+- Requiere que el archivo esté **físicamente ordenado** por la clave de búsqueda.
 
 #### Trade-off: ¿cuándo usar cada uno?
 
@@ -325,7 +335,7 @@ Propiedades clave:
 | **Requisito** | Ninguno | Archivo ordenado |
 | **Uso típico** | Índices secundarios | Índices de agrupamiento |
 
-La regla práctica del libro (Silberschatz): para un índice de agrupamiento (*clustered*) usar disperso con una entrada por bloque; para un índice no agrupado (*unclustered*) usar disperso sobre índice denso (multinivel).
+La regla práctica de Silberschatz: para un índice de agrupamiento (*clustered*) usar disperso con una entrada por bloque; para un índice no agrupado (*unclustered*) usar disperso sobre índice denso — una estructura de dos niveles que se desarrolla en la [sección 2.7](#27-índice-multinivel-multilevel-index).
 
 ---
 
@@ -335,29 +345,26 @@ La segunda dimensión fundamental de los índices ordenados es su relación con 
 
 #### Índice de agrupamiento (Clustering index)
 
-En un índice de agrupamiento, el orden del índice **coincide con el orden físico** del archivo. También se llama índice primario (*primary index*).
-
-![Clustering index — registros físicamente contiguos](./images/diagram_clustering_index.png)
-> *Fuente: Clase 6 — Indexación, diapositiva 45*
+En un índice de agrupamiento, el orden del índice **coincide con el orden físico** del archivo. También se llama índice primario (*primary index*). Una tabla solo puede tener **un índice de agrupamiento**, ya que los registros solo pueden estar físicamente ordenados de una manera.
 
 La ventaja principal aparece en las **consultas de rango**: como los registros con valores de clave contiguos están almacenados en bloques adyacentes, el motor puede leerlos en una única pasada secuencial — el patrón de acceso más eficiente posible en disco.
-
 ```sql
 -- BETWEEN aprovecha el orden físico: el DBMS entra por 22222 y lee
 -- bloques consecutivos hasta llegar al último registro ≤ 45565
 SELECT * FROM instructor WHERE ID BETWEEN 22222 AND 45565;
 ```
 
+![Clustering index — registros físicamente contiguos](./images/diagram_clustering_index.png)
+
 #### Índice secundario (Secondary index)
 
-En un índice secundario, el orden del índice es **diferente al orden físico** del archivo. También se llama índice no agrupado (*non-clustering index*).
+En un índice secundario, el orden del índice es **diferente al orden físico** del archivo. También se llama índice no agrupado (*non-clustering index*). A diferencia del clustering index, una tabla puede tener **múltiples índices secundarios**, uno por cada atributo de interés.
+
+Los índices secundarios deben ser **densos** porque el archivo no está ordenado por esta clave — no hay garantía de que registros con el mismo valor estén en bloques contiguos, por lo que se necesita un puntero por cada registro individual.
+
+Cada puntero puede apuntar a un bloque diferente, lo que significa que cada acceso puede requerir una operación de disco independiente. Esto hace que los índices secundarios sean costosos cuando **muchos registros coinciden** con la consulta — situación conocida como baja selectividad. Cuando pocos registros coinciden (alta selectividad), el índice secundario sigue siendo eficiente.
 
 ![Secondary index — registros dispersos en bloques no contiguos](./images/diagram_secondary_index.png)
-> *Fuente: Clase 6 — Indexación, diapositiva 47*
-
-Los índices secundarios deben ser **densos**: como el archivo no está ordenado por esta clave, no hay garantía de que registros con el mismo valor estén juntos — se necesita un puntero por cada registro individual.
-
-Cada puntero puede apuntar a un bloque diferente → cada acceso puede requerir una operación de disco independiente. Esto hace que los índices secundarios sean costosos cuando **muchos registros coinciden** con la consulta.
 
 #### Comparación: clustering vs. secondary
 
@@ -366,44 +373,94 @@ Cada puntero puede apuntar a un bloque diferente → cada acceso puede requerir 
 | **Orden** | Coincide con el archivo físico | Diferente al archivo físico |
 | **Densidad** | Puede ser disperso | Debe ser denso |
 | **Acceso a rangos** | Muy eficiente | Costoso |
-| **Acceso por igualdad** | Eficiente | Eficiente (alta selectividad) |
+| **Acceso por igualdad** | Eficiente | Eficiente solo con alta selectividad |
 | **Cantidad por tabla** | Solo uno | Puede haber varios |
 | **Operaciones de disco** | Mínimas (registros contiguos) | Puede ser una por registro |
-
-Una tabla solo puede tener **un índice de agrupamiento**, ya que los registros solo pueden estar físicamente ordenados de una manera. Sin embargo, puede tener **múltiples índices secundarios**.
 
 ---
 
 ### 2.7 Índice multinivel (Multilevel index)
 
-Hasta ahora se ha asumido que el índice cabe completamente en memoria. Pero si el índice crece demasiado, la búsqueda binaria sobre él mismo requiere múltiples I/Os de disco.
+En las secciones anteriores, tanto el índice denso como el disperso se buscaban mediante búsqueda binaria, lo que requería varios I/Os para recorrer los bloques del índice en disco. Esto asume implícitamente que el índice es lo suficientemente pequeño para caber en memoria. Cuando el índice crece demasiado y ya no cabe, esos I/Os de búsqueda se vuelven un problema en sí mismos.
 
-La solución es aplicar el mismo principio de indexación **sobre el propio índice**: construir un índice sobre el índice. A esta estructura se le denomina **índice multinivel**.
+La solución es aplicar el mismo principio de indexación **sobre el propio índice**: construir un índice sobre el índice. A esta estructura se le denomina **índice multinivel** y se organiza en dos capas:
+
+- **Índice interno (inner index):** el archivo de índice básico, almacenado en disco. Puede ser un índice denso completo sobre todos los registros.
+- **Índice externo (outer index):** un índice disperso construido sobre los **bloques** del índice interno. Al tener muchas menos entradas que el inner index, es suficientemente pequeño para mantenerse en memoria principal de forma permanente.
 
 ![Multilevel index — outer index → inner index → data](./images/diagram_multilevel_index.png)
-> *Fuente: Clase 6 — Indexación, diapositiva 63*
 
-Se organiza en dos capas:
-- **Índice interno (inner index):** el archivo de índice básico, almacenado en disco. Puede ser un índice denso completo.
-- **Índice externo (outer index):** un índice disperso construido sobre los **bloques** del índice interno. Suficientemente pequeño para mantenerse en memoria principal.
+El beneficio de mantener el outer index en memoria es directo: buscarlo cuesta **0 I/Os de disco**. A partir de ahí, solo se necesita un I/O para leer el bloque relevante del inner index, y otro para leer el bloque de datos. El costo total es siempre **2 I/Os**, independientemente del tamaño del dataset.
 
-Cuando el outer index cabe en memoria, buscarlo cuesta **0 I/Os de disco**. Solo se necesita un I/O para leer el bloque del inner index relevante, y otro para leer el bloque de datos: total **2 I/Os** independientemente del tamaño del dataset.
-
-Este principio de construir índices sobre índices es exactamente la idea detrás de los **árboles B⁺**, que lo generalizan de forma dinámica y balanceada.
+Este principio de construir índices sobre índices es exactamente la idea detrás de los **árboles B⁺**, que lo generalizan de forma dinámica y balanceada — tema posterior del curso.
 
 ---
 
 ### 2.8 Actualización de índices
 
-Sin importar el tipo de índice, los índices deben actualizarse siempre que se inserte, modifique o elimine un registro. Una actualización de datos se modela como: eliminación del registro antiguo + inserción del nuevo valor, lo que significa que solo es necesario definir las operaciones de inserción y eliminación sobre el índice.
+Sin importar el tipo de índice, todo índice debe actualizarse siempre que se inserte, modifique o elimine un registro en el archivo de datos. Una modificación se modela internamente como dos operaciones: eliminación del valor antiguo seguida de inserción del nuevo. Esto permite que el DBMS solo necesite definir dos operaciones sobre el índice — eliminación e inserción — en lugar de tres.
 
-**Eliminación en índice denso:** si el registro eliminado era el único con ese valor de clave, se elimina la entrada del índice. Si existían más registros con esa clave, se elimina el puntero al registro borrado de la entrada existente.
+---
 
-**Eliminación en índice disperso:** si el índice no contiene una entrada para la clave del registro eliminado, no hay nada que hacer. Si sí la contiene, se actualiza la entrada para apuntar al siguiente registro válido en el bloque.
+**Eliminación en índice denso:**
 
-**Inserción en índice denso:** si la clave no existe en el índice, se inserta una nueva entrada en la posición correcta. Si ya existe, se agrega un puntero al nuevo registro.
+En un índice denso cada registro tiene su propia entrada, por lo que eliminar un registro siempre afecta al índice. La pregunta clave es si esa entrada desaparece completamente o solo pierde un puntero — y eso depende de si había otros registros con la misma clave.
 
-**Inserción en índice disperso:** solo se emite una nueva entrada si se crea un nuevo bloque (el nuevo registro es el primero de ese bloque) o si el nuevo registro tiene el menor valor de clave en su bloque.
+```mermaid
+flowchart LR
+    A[Eliminar K] --> B{¿Único con K?}
+    B -- Sí --> C[Borrar entrada]
+    B -- No --> D{¿Todos los punteros?}
+    D -- Sí --> E[Borrar puntero]
+    D -- No --> F[Actualizar puntero]
+```
+
+---
+
+**Eliminación en índice disperso:**
+
+En un índice disperso no todos los registros tienen entrada propia — solo los primeros de cada bloque. Por eso, eliminar un registro puede no requerir ningún cambio. Solo hay intervención cuando el registro eliminado era precisamente el que la entrada del índice apuntaba.
+
+```mermaid
+flowchart LR
+    A[Eliminar K] --> B{¿Entrada para K?}
+    B -- No --> C[Sin cambios]
+    B -- Sí --> D{¿Único en bloque?}
+    D -- Sí --> E{¿Siguiente tiene entrada?}
+    E -- Sí --> F[Borrar entrada]
+    E -- No --> G[Reemplazar entrada]
+    D -- No --> H[Actualizar puntero]
+```
+
+---
+
+**Inserción en índice denso:**
+
+Al insertar un registro nuevo, el índice denso siempre debe reflejarlo. Si la clave ya existía, no hace falta una nueva entrada — basta con registrar el nuevo puntero. Si la clave es nueva, se abre espacio en la posición correcta para mantener el orden del índice.
+
+```mermaid
+flowchart LR
+    A[Insertar K] --> B{¿Existe entrada para K?}
+    B -- No --> C[Insertar nueva entrada]
+    B -- Sí --> D{¿Todos los punteros?}
+    D -- Sí --> E[Agregar puntero]
+    D -- No --> F[Ubicar tras los demás]
+```
+
+---
+
+**Inserción en índice disperso:**
+
+El índice disperso solo registra la clave mínima de cada bloque. Por eso, insertar un registro nuevo solo modifica el índice en dos situaciones: cuando se crea un bloque nuevo que antes no existía, o cuando el nuevo registro pasa a ser el menor del bloque y desplaza al que el índice apuntaba. En cualquier otro caso, el índice no necesita cambiar porque la entrada del bloque sigue siendo válida.
+
+```mermaid
+flowchart LR
+    A[Insertar K] --> B{¿Nuevo bloque?}
+    B -- Sí --> C[Insertar entrada con clave mínima]
+    B -- No --> D{¿K es clave mínima?}
+    D -- Sí --> E[Actualizar entrada]
+    D -- No --> F[Sin cambios]
+```
 
 ---
 
