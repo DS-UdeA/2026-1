@@ -40,6 +40,7 @@
       - [Comparación: clustering vs. secondary](#comparación-clustering-vs-secondary)
     - [2.7 Índice multinivel (Multilevel index)](#27-índice-multinivel-multilevel-index)
     - [2.8 Actualización de índices](#28-actualización-de-índices)
+    - [2.9 Las tres dimensiones de los índices ordenados](#29-las-tres-dimensiones-de-los-índices-ordenados)
   - [3. Descripción del Módulo](#3-descripción-del-módulo)
     - [3.1 Qué simula este código y qué no](#31-qué-simula-este-código-y-qué-no)
     - [3.2 Organización de archivos](#32-organización-de-archivos)
@@ -461,6 +462,35 @@ flowchart LR
     D -- Sí --> E[Actualizar entrada]
     D -- No --> F[Sin cambios]
 ```
+
+---
+
+### 2.9 Las tres dimensiones de los índices ordenados
+
+Antes de pasar a la implementación, es útil tener una imagen mental de cómo se relacionan todos los tipos de índice vistos en esta sección. Los índices ordenados se pueden caracterizar a lo largo de tres dimensiones independientes:
+```mermaid
+flowchart TD
+    A[Índices ordenados] --> B[Por densidad]
+    A --> C[Por agrupamiento]
+    A --> D[Por niveles]
+    B --> E[Denso]
+    B --> F[Disperso]
+    C --> G[Clustering index]
+    C --> H[Secondary index]
+    D --> I[Un nivel]
+    D --> J[Multinivel]
+    J --> K[Outer index]
+    J --> L[Inner index]
+```
+
+Estas tres dimensiones no son independientes en la práctica — la elección en una condiciona las opciones en las otras:
+
+- Un índice secundario **debe ser denso**, porque el archivo no está ordenado por esa clave.
+- Un índice disperso **requiere** que el archivo esté ordenado.
+- Un índice multinivel **surge** cuando el índice de un solo nivel no cabe en memoria.
+
+La sección 3 describe cómo cada uno de estos tipos está implementado en el código de este módulo.
+
 
 ---
 
