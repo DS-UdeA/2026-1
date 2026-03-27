@@ -491,20 +491,19 @@ Estas tres dimensiones no son independientes en la práctica — la elección en
 
 La sección 3 describe cómo cada uno de estos tipos está implementado en el código de este módulo.
 
-
 ---
-
 ## 3. Descripción del Módulo
 
 ### 3.1 Qué simula este código y qué no
 
-Este módulo simula la **capa de índice** de un DBMS ordenado, con foco total en las estructuras de acceso y su costo I/O.
+Este módulo simula la **capa de índice** de un DBMS ordenado, con foco total en las 
+estructuras de acceso y su costo I/O.
 
 **Lo que sí simula:**
 - Construcción de índices densos, dispersos, clustering, secondary y multinivel.
 - Operaciones de lookup puntual y de rango.
-- Modelo de costo I/O a dos escalas: demo (12 registros) y textbook (1M registros).
-- Los números de I/O y tiempo coinciden exactamente con los ejemplos 1–5 de las diapositivas.
+- Modelo de costo I/O a dos escalas: demo (12 registros) y escala textbook (1000000 registros).
+- Los números de I/O y tiempo coinciden con los ejemplos numéricos de la sección 2.
 
 **Lo que NO simula:**
 - Escritura/lectura de bytes binarios a disco (eso lo hacen v6–v7).
@@ -512,44 +511,52 @@ Este módulo simula la **capa de índice** de un DBMS ordenado, con foco total e
 - Operaciones de actualización del índice ante inserciones/eliminaciones.
 
 > [!note]
-> En un DBMS real, la capa de índice se construye sobre un heap file con slotted pages como las implementadas en v6–v7. Aquí la capa de datos es una lista Python simple para que el estudiante pueda concentrarse 100% en entender las estructuras de índice sin distracciones de bajo nivel.
+> En un DBMS real, la capa de índice se construye sobre un heap file con slotted pages 
+> como las implementadas en v6–v7. Aquí la capa de datos es una lista Python simple para 
+> que el estudiante pueda concentrarse 100% en entender las estructuras de índice sin 
+> distracciones de bajo nivel.
 
 ---
 
 ### 3.2 Organización de archivos
-
 ```
 indexes/
 ├── index_utils.py          # tabla instructor + constantes + helpers compartidos
-├── dense_index.py          # Phase 1: DenseIndex
-├── sparse_index.py         # Phase 2: SparseIndex
-├── clustering_index.py     # Phase 3: ClusteringIndex
-├── secondary_index.py      # Phase 4: SecondaryIndex
-├── multilevel_index.py     # Phase 5: MultilevelIndex
+├── dense_index.py          # Fase 1: DenseIndex
+├── sparse_index.py         # Fase 2: SparseIndex
+├── clustering_index.py     # Fase 3: ClusteringIndex
+├── secondary_index.py      # Fase 4: SecondaryIndex
+├── multilevel_index.py     # Fase 5: MultilevelIndex
 └── cost_comparison.py      # tabla resumen final — importa todos los módulos
 ```
 
-Todos los módulos importan de `index_utils.py`. El orden recomendado de ejecución es `index_utils` → `dense` → `sparse` → `clustering` → `secondary` → `multilevel` → `cost_comparison`.
+Todos los módulos importan de `index_utils.py`. El orden recomendado de ejecución es `index_utils` → `dense` → `sparse` → `clustering` → `secondary` → `multilevel` → `cost_comparison`. Seguir este orden no es obligatorio, pero cada módulo introduce conceptos que los siguientes dan por conocidos — ejecutarlos fuera de orden puede dificultar la interpretación de los resultados.
 
 ---
-
 ### 3.3 Clases y funciones principales
 
-**`index_utils.py` — Utilidades compartidas**
+**[`index_utils.py`](indexes/index_utils.py) — Utilidades compartidas**
+
+Centraliza la tabla `instructor`, las constantes del modelo de disco y todas las funciones auxiliares que los demás módulos importan. Es el único archivo que no implementa un índice.
 
 | Función / Constante | Descripción |
 |---|---|
-| `INSTRUCTOR_TABLE` | Lista de 12 tuplas con la tabla `instructor` de Silberschatz |
+| `INSTRUCTOR_TABLE` | Lista de 12 tuplas con la tabla `instructor` |
 | `block_of(record_index)` | Retorna el número de bloque que contiene el registro en la posición dada |
 | `binary_search_ios(n_blocks)` | Retorna ⌈log₂(n_blocks)⌉ — I/Os para búsqueda binaria |
 | `io_cost_ms(n_ios)` | Convierte número de I/Os a milisegundos |
 | `full_scan_cost(n_blocks)` | Retorna costo de un escaneo completo como dict |
 | `print_section(title)` | Imprime separador de sección con título |
+| `print_subsection(title)` | Imprime separador de subsección con título |
 | `print_index_entries(entries, label)` | Imprime tabla de entradas del índice |
 | `print_cost_table(rows)` | Imprime tabla comparativa de costos I/O |
 | `print_data_file(records, ordered_by)` | Imprime layout del archivo de datos por bloques |
 
-**`dense_index.py` — `DenseIndex`**
+---
+
+**[`dense_index.py`](indexes/dense_index.py) — `DenseIndex`**
+
+Implementa el índice denso sobre la tabla `instructor` ordenada por ID. Demuestra que una entrada por registro permite búsqueda binaria directa al bloque exacto.
 
 | Método | Descripción |
 |---|---|
@@ -558,7 +565,11 @@ Todos los módulos importan de `index_utils.py`. El orden recomendado de ejecuci
 | `range_lookup(lo, hi)` | Retorna lista de bloques con registros en el rango `[lo, hi]` |
 | `io_cost(n_records)` | Retorna dict con desglose de I/Os para una búsqueda puntual |
 
-**`sparse_index.py` — `SparseIndex`**
+---
+
+**[`sparse_index.py`](indexes/sparse_index.py) — `SparseIndex`**
+
+Implementa el índice disperso con una entrada por bloque. Demuestra el floor lookup y contrasta el espacio ocupado frente al índice denso.
 
 | Método | Descripción |
 |---|---|
@@ -566,7 +577,11 @@ Todos los módulos importan de `index_utils.py`. El orden recomendado de ejecuci
 | `lookup(key)` | Floor lookup — retorna bloque a escanear linealmente |
 | `io_cost(n_blocks)` | Retorna dict con desglose de I/Os para una búsqueda puntual |
 
-**`clustering_index.py` — `ClusteringIndex`**
+---
+
+**[`clustering_index.py`](indexes/clustering_index.py) — `ClusteringIndex`**
+
+Implementa el índice de agrupamiento sobre `dept_name`. Demuestra la ventaja de los bloques contiguos en consultas de rango frente al índice secundario.
 
 | Método | Descripción |
 |---|---|
@@ -575,16 +590,24 @@ Todos los módulos importan de `index_utils.py`. El orden recomendado de ejecuci
 | `range_lookup(lo, hi)` | Retorna lista de bloques contiguos para el rango `[lo, hi]` |
 | `range_io_cost(lo, hi, n_records_per_key)` | Retorna dict con costo I/O de una consulta de rango |
 
-**`secondary_index.py` — `SecondaryIndex`**
+---
+
+**[`secondary_index.py`](indexes/secondary_index.py) — `SecondaryIndex`**
+
+Implementa el índice secundario sobre `salary`. Demuestra el caso contraintuitivo donde un índice puede ser más lento que un full scan cuando la selectividad es baja.
 
 | Método | Descripción |
 |---|---|
-| `__init__(records, key_field)` | Construye índice denso ordenado por `key_field` (salario) |
+| `__init__(records, key_field)` | Construye índice denso ordenado por `key_field` |
 | `lookup(key)` | Retorna lista de bloques distintos con registros que coinciden |
 | `matching_count(key)` | Retorna número de registros que coinciden con la clave |
-| `io_cost(key, n_records, n_matching)` | Retorna dict con costo I/O, incluyendo peor caso para datos dispersos |
+| `io_cost(key, n_records, n_matching)` | Retorna dict con costo I/O incluyendo peor caso para datos dispersos |
 
-**`multilevel_index.py` — `MultilevelIndex`**
+---
+
+**[`multilevel_index.py`](indexes/multilevel_index.py) — `MultilevelIndex`**
+
+Implementa el índice multinivel con outer index en memoria e inner index en disco. Demuestra cómo reducir el costo de búsqueda a exactamente 2 I/Os independientemente del tamaño del dataset.
 
 | Método | Descripción |
 |---|---|
@@ -592,7 +615,11 @@ Todos los módulos importan de `index_utils.py`. El orden recomendado de ejecuci
 | `lookup(key)` | Búsqueda en dos niveles: outer en memoria (0 I/Os) + inner en disco (1 I/O) |
 | `io_cost(n_records)` | Retorna dict con desglose por nivel: outer_ios=0, inner_ios=1, data_ios=1 |
 
-**`cost_comparison.py`**
+---
+
+**[`cost_comparison.py`](indexes/cost_comparison.py)**
+
+Importa todos los módulos anteriores y genera un reporte consolidado de costos I/O a escala textbook, comparando todas las estrategias en una sola tabla.
 
 | Función | Descripción |
 |---|---|
@@ -602,20 +629,74 @@ Todos los módulos importan de `index_utils.py`. El orden recomendado de ejecuci
 
 ### 3.4 Diagrama de clases
 
-<!-- 📐 Diagrama PlantUML generado en: ./images/class_diagram.puml -->
-<!-- Para renderizarlo: usar el plugin PlantUML en VS Code o https://www.plantuml.com/plantuml -->
+**Relaciones entre módulos**
 
-```plantuml
-@startuml
-' Ver archivo completo en ./images/class_diagram.puml
-' Clases: DenseIndex, SparseIndex, ClusteringIndex,
-'         SecondaryIndex, MultilevelIndex
-' Relaciones: MultilevelIndex *-- DenseIndex (composición)
-' Dependencias: todos dependen de index_utils
-@enduml
+Muestra cómo se conectan los archivos entre sí — dependencias e composición.
+
+```mermaid
+flowchart TD
+    utils[index_utils]
+    dense[DenseIndex]
+    sparse[SparseIndex]
+    clustering[ClusteringIndex]
+    secondary[SecondaryIndex]
+    multilevel[MultilevelIndex]
+    comparison[CostComparison]
+
+    dense --> utils
+    sparse --> utils
+    clustering --> utils
+    secondary --> utils
+    multilevel --> utils
+    multilevel -->|inner index| dense
+    comparison --> dense
+    comparison --> sparse
+    comparison --> clustering
+    comparison --> secondary
+    comparison --> multilevel
 ```
 
-![class_diagrama](./images/class_diagram.png)
+**Estructura de cada clase**
+
+Muestra atributos y métodos principales de cada clase.
+
+```mermaid
+classDiagram
+    class DenseIndex {
+        +key_field int
+        +entries list
+        +lookup(key) int
+        +range_lookup(lo, hi) list
+        +io_cost(n_records) dict
+    }
+    class SparseIndex {
+        +key_field int
+        +entries list
+        +lookup(key) int
+        +io_cost(n_blocks) dict
+    }
+    class ClusteringIndex {
+        +key_field int
+        +entries list
+        +lookup(key) int
+        +range_lookup(lo, hi) list
+        +range_io_cost(lo, hi, n) dict
+    }
+    class SecondaryIndex {
+        +key_field int
+        +entries list
+        +lookup(key) list
+        +matching_count(key) int
+        +io_cost(key, n, m) dict
+    }
+    class MultilevelIndex {
+        +key_field int
+        +outer_entries list
+        +lookup(key) int
+        +io_cost(n_records) dict
+    }
+    MultilevelIndex *-- DenseIndex
+```
 
 ---
 
