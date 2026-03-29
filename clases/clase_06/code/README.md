@@ -732,15 +732,29 @@ python index_utils.py
 
    Blk      ID  Name          Dept            Salary
   ────  ──────  ────────────  ────────────  ────────
-     0   10101  Srinivasan    Comp. Sci.      65,000
-     ...
-     2   98345  Kim           Elec. Eng.      80,000
+     0   10101  Srinivasan    Comp. Sci.       65000
+     0   12121  Wu            Finance          90000
+     0   15151  Mozart        Music            40000
+     0   22222  Einstein      Physics          95000
+     0   32343  El Said       History          60000
+     1   33456  Gold          Physics          87000  ← new block
+     1   45565  Katz          Comp. Sci.       75000
+     1   58583  Califieri     History          62000
+     1   76543  Singh         Finance          80000
+     1   76766  Crick         Biology          72000
+     2   83821  Brandt        Comp. Sci.       92000  ← new block
+     2   98345  Kim           Elec. Eng.       80000
+
+  block_of(0)  = 0   (records 0–4  → block 0)
+  block_of(5)  = 1   (records 5–9  → block 1)
+  block_of(10) = 2   (records 10–11 → block 2)
 
   binary_search_ios(10000) = 14   (dense index, 1M records)
   binary_search_ios(2000)  = 11   (sparse index, 1M records)
+  binary_search_ios(100)   = 7   (outer multilevel, 1M records)
 
-  Full scan (200,000 blocks):
-    200,000 I/Os → 33.33 min
+  Full scan (200000 blocks):
+    200000 I/Os → 33.33 min
 ```
 
 **Lista de verificación — Preparación:**
@@ -749,6 +763,8 @@ python index_utils.py
 - [ ] `python index_utils.py` termina sin errores
 - [ ] La tabla impresa tiene 12 registros distribuidos en 3 bloques
 - [ ] `binary_search_ios(10000)` retorna 14
+- [ ] `binary_search_ios(2000)` retorna 11
+- [ ] `binary_search_ios(100)` retorna 7
 
 ---
 
@@ -792,12 +808,13 @@ Al buscar `ID = 45565`, el script reporta el bloque encontrado y el número de p
   Binary search steps: ceil(log2(12)) = 4 index reads + 1 data read
 ```
 
-A escala textbook (1M registros → 10.000 bloques de índice):
+A escala textbook (1M registros → 10000 bloques de índice):
 
 ```
   Textbook scale (   1,000,000 records):
-    Index blocks  : 10,000
-    Index I/Os    : 14  (ceil(log2(10,000)))
+    Index entries : 1000000
+    Index blocks  : 10000
+    Index I/Os    : 14  (ceil(log2(10000)))
     Data  I/Os    : 1
     Total         : 15 I/Os → 150 ms
 ```
@@ -805,8 +822,8 @@ A escala textbook (1M registros → 10.000 bloques de índice):
 **Lista de verificación — Punto 2:**
 
 - [ ] `lookup(45565)` retorna Block 1
-- [ ] A escala textbook, `index_blocks = 10,000`
-- [ ] `index_ios = 14` = ⌈log₂(10.000)⌉
+- [ ] A escala textbook, `index_blocks = 10000`
+- [ ] `index_ios = 14` = ⌈log₂(10000)⌉
 - [ ] `total_ios = 15`, `total_ms = 150`
 
 ---
@@ -818,17 +835,17 @@ La tabla comparativa al final de la salida muestra el contraste:
 ```
   Strategy                             I/Os          Time
   ──────────────────────────────── ────────  ────────────
-  No index (full scan)              200,000     33.33 min
+  No index (full scan)               200000     33.33 min
   Dense index                            15        150 ms
 
-  Speedup: 13,333× fewer I/Os with a dense index.
+  Speedup: 13333× fewer I/Os with a dense index.
 ```
 
 **Lista de verificación — Punto 3:**
 
-- [ ] Full scan: 200,000 I/Os → ~33 min
+- [ ] Full scan: 200000 I/Os → ~33 min
 - [ ] Dense index: 15 I/Os → 150 ms
-- [ ] El speedup reportado es ~13,333×
+- [ ] El speedup reportado es ~13333×
 
 ---
 
