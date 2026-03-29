@@ -560,7 +560,7 @@ Implementa el índice denso sobre la tabla `instructor` ordenada por ID. Demuest
 
 | Método | Descripción |
 |---|---|
-| `__init__(records, key_field)` | Construye el índice: una entrada `(key, block)` por registro |
+| `__init__(records, key_field, records_per_block, index_entries_per_block)` | Construye el índice: una entrada `(key, block)` por registro; acepta tamaños de bloque configurables |
 | `lookup(key)` | Búsqueda exacta — retorna número de bloque o `None` |
 | `range_lookup(lo, hi)` | Retorna lista de bloques con registros en el rango `[lo, hi]` |
 | `io_cost(n_records)` | Retorna dict con desglose de I/Os para una búsqueda puntual |
@@ -664,6 +664,8 @@ Muestra atributos y métodos principales de cada clase.
 classDiagram
     class DenseIndex {
         +key_field int
+        +records_per_block int
+        +index_entries_per_block int
         +entries list
         +lookup(key) int
         +range_lookup(lo, hi) list
