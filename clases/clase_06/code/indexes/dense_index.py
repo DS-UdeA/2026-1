@@ -25,7 +25,7 @@ from typing import Optional
 from index_utils import (
     INSTRUCTOR_TABLE,
     N_RECORDS_DEMO, N_RECORDS_SCALE,
-    INDEX_ENTRIES_PER_BLOCK,
+    RECORDS_PER_BLOCK, INDEX_ENTRIES_PER_BLOCK,
     F_ID,
     block_of, binary_search_ios, io_cost_ms, full_scan_cost,
     print_section, print_subsection,
@@ -54,7 +54,9 @@ class DenseIndex:
         1
     """
 
-    def __init__(self, records: list[tuple], key_field: int = F_ID):
+    def __init__(self, records: list[tuple], key_field: int = F_ID,
+                 records_per_block: int = RECORDS_PER_BLOCK,
+                 index_entries_per_block: int = INDEX_ENTRIES_PER_BLOCK):
         """
         Builds the dense index from a list of records.
 
@@ -62,14 +64,18 @@ class DenseIndex:
         will be in the same order.
 
         Args:
-            records   : instructor tuples sorted by key_field.
-            key_field : field index to use as search key (default: ID).
+            records                : instructor tuples sorted by key_field.
+            key_field              : field index to use as search key (default: ID).
+            records_per_block      : number of data records per disk block (default: RECORDS_PER_BLOCK).
+            index_entries_per_block: number of index entries per index block (default: INDEX_ENTRIES_PER_BLOCK).
         """
-        self.key_field = key_field
+        self.key_field               = key_field
+        self.records_per_block       = records_per_block
+        self.index_entries_per_block = index_entries_per_block
 
         # One (search_key, block_number) entry per record
         self.entries: list[tuple] = [
-            (rec[key_field], block_of(i))
+            (rec[key_field], i // records_per_block)
             for i, rec in enumerate(records)
         ]
 
@@ -135,7 +141,7 @@ class DenseIndex:
             data_ios, total_ios, total_ms.
         """
         n  = n_records if n_records else len(self.entries)
-        nb = math.ceil(n / INDEX_ENTRIES_PER_BLOCK)
+        nb = math.ceil(n / self.index_entries_per_block)
         ii = binary_search_ios(nb)
         return {
             "index_entries" : n,
