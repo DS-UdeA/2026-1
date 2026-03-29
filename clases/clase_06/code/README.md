@@ -1002,6 +1002,95 @@ Y el disperso es también ligeramente más rápido: 12 I/Os vs 15, porque su ín
 
 ---
 
+#### Fase 2b — Modelo realista de I/O por bloques (`sparse_index_v2.py`)
+
+```bash
+python sparse_index_v2.py
+```
+
+`SparseIndexV2` extiende `SparseIndex` con dos mejoras: búsqueda binaria a nivel de bloque (igual que `DenseIndexV2`) y constructor genérico que acepta `records_per_block` como parámetro. La diferencia clave respecto a la versión densa es que el resultado del floor lookup no es un puntero exacto al registro — es el bloque que *puede contenerlo*, y el motor debe escanearlo linealmente para confirmar.
+
+##### Diagrama UML
+
+```mermaid
+classDiagram
+    direction TB
+    class SparseIndex {
+        +key_field int
+        +entries list
+        +lookup(key) int
+        +io_cost(n_blocks) dict
+    }
+    class SparseIndexV2 {
+        +records_per_block int
+        +index_entries_per_block int
+        +_read_index_block(block_num) list
+        +lookup_v2(key) dict
+    }
+    SparseIndex <|-- SparseIndexV2
+```
+
+##### Métodos y funciones
+
+**[`sparse_index_v2.py`](indexes/sparse_index_v2.py) — `SparseIndexV2`**
+
+Hereda la lógica de construcción de `SparseIndex`. Reemplaza el constructor para aceptar tamaños de bloque configurables y añade el floor lookup a nivel de bloque.
+
+| Método / Función | Descripción |
+|---|---|
+| `__init__(records, key_field, records_per_block, index_entries_per_block)` | Constructor genérico: construye el índice usando `records_per_block` en lugar de la constante global |
+| `_read_index_block(block_num)` | Simula un `ReadBlock()` al disco: retorna las entradas del bloque de índice indicado |
+| `lookup_v2(key)` | Floor lookup bloque a bloque; retorna dict con `data_block`, `floor_key`, `requires_scan=True`, desglose de I/Os y `trace` |
+| `print_trace(result)` | Imprime la traza paso a paso indicando el floor encontrado y que se requiere scan lineal en el bloque de datos |
+
+---
+
+##### Ejemplo numérico — parámetros reducidos
+
+Se usa `records_per_block=2` e `index_entries_per_block=4` sobre los 12 registros de `INSTRUCTOR_TABLE`.
+
+**Archivo de datos — 6 bloques (2 registros por bloque)**
+
+| Bloque | IDs contenidos | Min key (→ entrada índice) |
+|---|---|---|
+| 0 | 10101, 12121 | 10101 |
+| 1 | 15151, 22222 | 15151 |
+| 2 | 32343, 33456 | 32343 |
+| 3 | 45565, 58583 | 45565 |
+| 4 | 76543, 76766 | 76543 |
+| 5 | 83821, 98345 | 83821 |
+
+**Índice disperso — 2 bloques de índice (4 entradas por bloque)**
+
+| Bloque índice | Entradas `(min_key, data_block)` | Rango de claves |
+|---|---|---|
+| 0 | (10101,0) (15151,1) (32343,2) (45565,3) | 10101 – 45565 |
+| 1 | (76543,4) (83821,5) | 76543 – 83821 |
+
+**Traza `lookup_v2(45565)`**
+
+```
+   I/O  Block read     First key      Last key  Decision
+  ────  ──────────  ────────────  ────────────  ────────────────────────────────────────────────
+     1           0         10101         45565  floor found: key 45565 ≤ 45565 → scan data block 3 linearly
+
+  → data block 3 found (floor key = 45565)
+  → 1 additional I/O + linear scan within block required
+
+  Total: 1 index I/O(s) + 1 data I/O = 2 I/O(s)  (20 ms)
+```
+
+El algoritmo lee el bloque de índice 0 (1 I/O), encuentra que 45565 ≤ 45565 y que la primera clave del bloque siguiente es 76543 > 45565 — el floor está en este bloque. El scan lineal interno determina que la entrada `(45565, 3)` es el floor. A diferencia del índice denso, el motor no sabe si el registro existe hasta leer y escanear el bloque de datos 3.
+
+**Lista de verificación — Fase 2b:**
+
+- [ ] `SparseIndexV2(INSTRUCTOR_TABLE, records_per_block=2, index_entries_per_block=4)` construye 6 entradas en 2 bloques de índice
+- [ ] `lookup_v2(45565)` retorna `data_block=3`, `floor_key=45565`, `requires_scan=True` en 1 I/O de índice + 1 I/O de datos
+- [ ] `lookup_v2(50000)` retorna `data_block=3` (floor key 45565 ≤ 50000) — el registro no existe pero el bloque correcto se identifica
+- [ ] `lookup_v2(5000)` retorna `data_block=None` — clave por debajo de todas las entradas del índice
+
+---
+
 ### 4.4 Fase 3 — Clustering index sobre dept\_name (`clustering_index.py`)
 
 ```bash
