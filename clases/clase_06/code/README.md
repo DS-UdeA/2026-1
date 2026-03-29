@@ -851,6 +851,95 @@ La tabla comparativa al final de la salida muestra el contraste:
 
 ---
 
+#### Fase 1b — Modelo realista de I/O por bloques (`dense_index_v2.py`)
+
+```bash
+python dense_index_v2.py
+```
+
+`DenseIndexV2` extiende `DenseIndex` para simular lo que ocurre en un motor real: la búsqueda binaria no opera sobre todas las entradas en RAM, sino que lee el índice **un bloque a la vez desde disco**, igual que describe Silberschatz §14.2.
+
+##### Diagrama UML
+
+```mermaid
+classDiagram
+    direction TB
+    class DenseIndex {
+        +key_field int
+        +records_per_block int
+        +index_entries_per_block int
+        +entries list
+        +lookup(key) int
+        +range_lookup(lo, hi) list
+        +io_cost(n_records) dict
+    }
+    class DenseIndexV2 {
+        +_read_index_block(block_num) list
+        +lookup_v2(key) dict
+    }
+    DenseIndex <|-- DenseIndexV2
+```
+
+##### Métodos y funciones
+
+**[`dense_index_v2.py`](indexes/dense_index_v2.py) — `DenseIndexV2`**
+
+Hereda la construcción del índice de `DenseIndex`. Añade la búsqueda binaria a nivel de bloque con registro explícito de cada I/O.
+
+| Método / Función | Descripción |
+|---|---|
+| `_read_index_block(block_num)` | Simula un `ReadBlock()` al disco: retorna las entradas del bloque de índice indicado |
+| `lookup_v2(key)` | Búsqueda binaria bloque a bloque; retorna dict con `data_block`, `index_ios`, `data_ios`, `total_ios`, `total_ms` y `trace` |
+| `print_trace(result)` | Imprime la traza paso a paso: qué bloque se leyó en cada I/O y qué decisión se tomó |
+
+---
+
+##### Ejemplo numérico — parámetros reducidos
+
+Para hacer visible cada paso del algoritmo se usa `records_per_block=2` e `index_entries_per_block=4` sobre los 12 registros de `INSTRUCTOR_TABLE`.
+
+**Archivo de datos — 6 bloques (2 registros por bloque)**
+
+| Bloque | IDs contenidos |
+|---|---|
+| 0 | 10101, 12121 |
+| 1 | 15151, 22222 |
+| 2 | 32343, 33456 |
+| 3 | 45565, 58583 |
+| 4 | 76543, 76766 |
+| 5 | 83821, 98345 |
+
+**Índice denso — 3 bloques de índice (4 entradas por bloque)**
+
+| Bloque índice | Entradas `(key, data_block)` | Rango de claves |
+|---|---|---|
+| 0 | (10101,0) (12121,0) (15151,1) (22222,1) | 10101 – 22222 |
+| 1 | (32343,2) (33456,2) (45565,3) (58583,3) | 32343 – 58583 |
+| 2 | (76543,4) (76766,4) (83821,5) (98345,5) | 76543 – 98345 |
+
+**Traza `lookup_v2(45565)`**
+
+```
+   I/O  Block read     First key      Last key  Decision
+  ────  ──────────  ────────────  ────────────  ──────────────────────────────────────────
+     1           1         32343         58583  key 45565 in [32343, 58583] → found, data block = 3
+
+  → 1 additional I/O to fetch data block 3
+
+  Total: 1 index I/O(s) + 1 data I/O = 2 I/O(s)  (20 ms)
+```
+
+El algoritmo calcula `mid = (0+2)//2 = 1`, lee el bloque de índice 1 (1 I/O), comprueba que 45565 está entre 32343 y 58583, hace scan lineal interno sin costo adicional, y retorna el bloque de datos 3. En el peor caso con 3 bloques de índice serían `⌈log₂(3)⌉ = 2` I/Os de índice.
+
+**Lista de verificación — Fase 1b:**
+
+- [ ] `DenseIndexV2(INSTRUCTOR_TABLE, records_per_block=2, index_entries_per_block=4)` construye 3 bloques de índice
+- [ ] `lookup_v2(45565)` retorna `data_block=3` en 1 I/O de índice + 1 I/O de datos
+- [ ] La traza muestra exactamente 1 fila (1 bloque leído)
+- [ ] `lookup_v2(99999)` retorna `data_block=None` y la traza muestra la decisión `key > last_key`
+
+---
+
 ### 4.3 Fase 2 — Índice disperso sobre ID (`sparse_index.py`)
 
 ```bash
