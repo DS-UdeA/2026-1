@@ -92,9 +92,9 @@ def run_comparison():
          "ios": cost_sec_range_ios,        "ms": cost_sec_range_ms},
     ])
 
-    print(f"\n  Clustering index: reads {cost_cl_range['data_blocks']:,}"
+    print(f"\n  Clustering index: reads {cost_cl_range['data_blocks']:}"
           f" CONSECUTIVE blocks — sequential I/O.")
-    print(f"  Secondary index : up to {cost_sec_range_ios:,} SCATTERED blocks"
+    print(f"  Secondary index : up to {cost_sec_range_ios:} SCATTERED blocks"
           f" — random I/O per record.")
 
     # ----------------------------------------------------------------
@@ -115,8 +115,8 @@ def run_comparison():
          "ios": fs["total_ios"],        "ms": fs["total_ms"]},
     ])
     print(f"\n  ⚠  Secondary index is SLOWER than full scan here.")
-    print(f"  Reason: {n_matching:,} matching records × 1 random I/O each"
-          f" > {N_BLOCKS_SCALE:,} sequential I/Os.")
+    print(f"  Reason: {n_matching:} matching records × 1 random I/O each"
+          f" > {N_BLOCKS_SCALE:} sequential I/Os.")
 
     # ----------------------------------------------------------------
     # 4. Space overhead

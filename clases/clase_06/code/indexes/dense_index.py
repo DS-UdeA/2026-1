@@ -191,8 +191,8 @@ if __name__ == "__main__":
     # ----------------------------------------------------------------
     cost_demo = dense.io_cost()
     print(f"\n  Demo scale  ({N_RECORDS_DEMO:>12,} records):")
-    print(f"    Index entries : {cost_demo['index_entries']:,}")
-    print(f"    Index blocks  : {cost_demo['index_blocks']:,}")
+    print(f"    Index entries : {cost_demo['index_entries']:}")
+    print(f"    Index blocks  : {cost_demo['index_blocks']:}")
     print(f"    Index I/Os    : {cost_demo['index_ios']}  (binary search)")
     print(f"    Data  I/Os    : {cost_demo['data_ios']}")
     print(f"    Total         : {cost_demo['total_ios']} I/Os"
@@ -205,10 +205,10 @@ if __name__ == "__main__":
     fs          = full_scan_cost(200_000)
 
     print(f"\n  Textbook scale ({N_RECORDS_SCALE:>12,} records):")
-    print(f"    Index entries : {cost_scale['index_entries']:,}")
-    print(f"    Index blocks  : {cost_scale['index_blocks']:,}")
+    print(f"    Index entries : {cost_scale['index_entries']:}")
+    print(f"    Index blocks  : {cost_scale['index_blocks']:}")
     print(f"    Index I/Os    : {cost_scale['index_ios']}"
-          f"  (ceil(log2({cost_scale['index_blocks']:,})))")
+          f"  (ceil(log2({cost_scale['index_blocks']:})))")
     print(f"    Data  I/Os    : {cost_scale['data_ios']}")
     print(f"    Total         : {cost_scale['total_ios']} I/Os"
           f" → {cost_scale['total_ms']:.0f} ms")
@@ -224,6 +224,6 @@ if __name__ == "__main__":
          "ios": cost_scale["total_ios"], "ms": cost_scale["total_ms"]},
     ])
     speedup = fs["total_ios"] / cost_scale["total_ios"]
-    print(f"\n  Speedup: {speedup:,.0f}× fewer I/Os with a dense index.")
-    print(f"  Trade-off: requires {cost_scale['index_blocks']:,} extra"
+    print(f"\n  Speedup: {speedup:.0f}× fewer I/Os with a dense index.")
+    print(f"  Trade-off: requires {cost_scale['index_blocks']:} extra"
           f" blocks of storage for the index.\n")

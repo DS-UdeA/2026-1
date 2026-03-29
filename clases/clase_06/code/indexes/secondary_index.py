@@ -210,7 +210,7 @@ if __name__ == "__main__":
     n_matching_demo  = secondary.matching_count(target_salary)
 
     print_subsection(
-        f"Lookup: SELECT * FROM instructor WHERE salary = {target_salary:,}"
+        f"Lookup: SELECT * FROM instructor WHERE salary = {target_salary:}"
     )
     print(f"\n  Matching records (demo): {n_matching_demo}")
     print(f"  Block numbers accessed : {scattered_blocks}")
@@ -236,16 +236,16 @@ if __name__ == "__main__":
     )
     fs = full_scan_cost(N_BLOCKS_SCALE)
 
-    print(f"\n  Textbook scale ({N_RECORDS_SCALE:,} records) — low selectivity:")
-    print(f"    Matching records   : {n_matching_scale:,}"
-          f"  (25% of {N_RECORDS_SCALE:,})")
-    print(f"    Index entries      : {cost_scale['index_entries']:,}")
-    print(f"    Index blocks       : {cost_scale['index_blocks']:,}")
+    print(f"\n  Textbook scale ({N_RECORDS_SCALE:} records) — low selectivity:")
+    print(f"    Matching records   : {n_matching_scale:}"
+          f"  (25% of {N_RECORDS_SCALE:})")
+    print(f"    Index entries      : {cost_scale['index_entries']:}")
+    print(f"    Index blocks       : {cost_scale['index_blocks']:}")
     print(f"    Index I/Os         : {cost_scale['index_ios']}"
           f"  (binary search)")
-    print(f"    Data  I/Os (worst) : {cost_scale['data_ios']:,}"
+    print(f"    Data  I/Os (worst) : {cost_scale['data_ios']:}"
           f"  (one per matching record)")
-    print(f"    Total              : {cost_scale['total_ios']:,} I/Os"
+    print(f"    Total              : {cost_scale['total_ios']:} I/Os"
           f" → {cost_scale['total_ms']/60_000:.1f} min")
 
     # ----------------------------------------------------------------
@@ -260,9 +260,9 @@ if __name__ == "__main__":
     ])
 
     print(f"\n  ⚠  Secondary index is SLOWER than full scan in this scenario.")
-    print(f"  Root cause: {n_matching_scale:,} matching records are scattered"
-          f" across up to {n_matching_scale:,} blocks.")
-    print(f"  Full scan reads only {N_BLOCKS_SCALE:,} blocks sequentially.")
+    print(f"  Root cause: {n_matching_scale:} matching records are scattered"
+          f" across up to {n_matching_scale:} blocks.")
+    print(f"  Full scan reads only {N_BLOCKS_SCALE:} blocks sequentially.")
 
     # ----------------------------------------------------------------
     # High-selectivity contrast

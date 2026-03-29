@@ -242,22 +242,22 @@ if __name__ == "__main__":
     )
     fs = full_scan_cost(N_BLOCKS_SCALE)
 
-    print(f"\n  Textbook scale — same range query ({N_RECORDS_SCALE:,} records):")
+    print(f"\n  Textbook scale — same range query ({N_RECORDS_SCALE:} records):")
     print(f"    Index I/Os : {cost_scale_range['index_ios']}")
-    print(f"    Data  I/Os : {cost_scale_range['data_ios']:,}"
-          f"  ({cost_scale_range['data_blocks']:,} consecutive blocks)")
-    print(f"    Total      : {cost_scale_range['total_ios']:,} I/Os"
+    print(f"    Data  I/Os : {cost_scale_range['data_ios']:}"
+          f"  ({cost_scale_range['data_blocks']:} consecutive blocks)")
+    print(f"    Total      : {cost_scale_range['total_ios']:} I/Os"
           f" → {io_cost_ms(cost_scale_range['total_ios'])/60000:.1f} min")
 
     # ----------------------------------------------------------------
     # Why clustering matters for range queries
     # ----------------------------------------------------------------
     print_subsection("Key insight: Clustering vs Secondary for range queries")
-    print(f"\n  Clustering index → {cost_scale_range['total_ios']:,} I/Os"
+    print(f"\n  Clustering index → {cost_scale_range['total_ios']:} I/Os"
           f"  (contiguous blocks, sequential read)")
-    print(f"  Secondary index  → up to {N_RECORDS_SCALE//4:,} I/Os"
+    print(f"  Secondary index  → up to {N_RECORDS_SCALE//4:} I/Os"
           f"  (scattered blocks, random reads)")
-    print(f"  Full scan        → {fs['total_ios']:,} I/Os"
+    print(f"  Full scan        → {fs['total_ios']:} I/Os"
           f"  ({fs['total_min']:.1f} min)")
     print(f"\n  A clustering index is always preferred for range queries")
     print(f"  because it eliminates random I/O completely.\n")

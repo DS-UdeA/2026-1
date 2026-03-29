@@ -204,11 +204,11 @@ if __name__ == "__main__":
     fs          = full_scan_cost(N_BLOCKS_SCALE)
 
     print(f"\n  Textbook scale ({N_RECORDS_SCALE:>12,} records):")
-    print(f"    Index entries : {cost_scale['index_entries']:,}"
-          f"  (one per block, {N_BLOCKS_SCALE:,} blocks)")
-    print(f"    Index blocks  : {cost_scale['index_blocks']:,}")
+    print(f"    Index entries : {cost_scale['index_entries']:}"
+          f"  (one per block, {N_BLOCKS_SCALE:} blocks)")
+    print(f"    Index blocks  : {cost_scale['index_blocks']:}")
     print(f"    Index I/Os    : {cost_scale['index_ios']}"
-          f"  (ceil(log2({cost_scale['index_blocks']:,})))")
+          f"  (ceil(log2({cost_scale['index_blocks']:})))")
     print(f"    Data  I/Os    : {cost_scale['data_ios']}")
     print(f"    Total         : {cost_scale['total_ios']} I/Os"
           f" → {cost_scale['total_ms']:.0f} ms")

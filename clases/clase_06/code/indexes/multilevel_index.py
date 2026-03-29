@@ -238,11 +238,11 @@ if __name__ == "__main__":
     cost_scale = multilevel.io_cost(n_records=N_RECORDS_SCALE)
     fs          = full_scan_cost(N_BLOCKS_SCALE)
 
-    print(f"\n  Textbook scale ({N_RECORDS_SCALE:,} records):")
-    print(f"    Inner entries : {cost_scale['inner_entries']:,}")
-    print(f"    Inner blocks  : {cost_scale['inner_blocks']:,}  (on disk)")
-    print(f"    Outer entries : {cost_scale['outer_entries']:,}")
-    print(f"    Outer blocks  : {cost_scale['outer_blocks']:,}  (in memory → 0 I/Os)")
+    print(f"\n  Textbook scale ({N_RECORDS_SCALE:} records):")
+    print(f"    Inner entries : {cost_scale['inner_entries']:}")
+    print(f"    Inner blocks  : {cost_scale['inner_blocks']:}  (on disk)")
+    print(f"    Outer entries : {cost_scale['outer_entries']:}")
+    print(f"    Outer blocks  : {cost_scale['outer_blocks']:}  (in memory → 0 I/Os)")
     print(f"    Total         : {cost_scale['total_ios']} I/Os"
           f" → {cost_scale['total_ms']:.0f} ms")
 

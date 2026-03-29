@@ -211,7 +211,7 @@ def print_cost_table(rows: list[dict]):
             time_str = f"{ms/1000:.1f} s"
         else:
             time_str = f"{ms/60_000:.2f} min"
-        print(f"  {r['label']:<32} {r['ios']:>8,}  {time_str:>12}")
+        print(f"  {r['label']:<32} {r['ios']:>8}  {time_str:>12}")
 
 
 def print_data_file(records: list[tuple], ordered_by: str = "ID"):
@@ -232,7 +232,7 @@ def print_data_file(records: list[tuple], ordered_by: str = "ID"):
         new_block = block_of(i) != block_of(i - 1) and i > 0
         marker = "← new block" if new_block else ""
         print(f"  {block_of(i):>4}  {rec[F_ID]:>6}  {rec[F_NAME]:<12}  "
-              f"{rec[F_DEPT]:<12}  {rec[F_SALARY]:>8,}  {marker}")
+              f"{rec[F_DEPT]:<12}  {rec[F_SALARY]:>8}  {marker}")
 
 
 # ============================================================================
@@ -257,5 +257,5 @@ if __name__ == "__main__":
           f"   (outer multilevel, 1M records)")
 
     fs = full_scan_cost(N_BLOCKS_SCALE)
-    print(f"\n  Full scan ({N_BLOCKS_SCALE:,} blocks):")
-    print(f"    {fs['total_ios']:,} I/Os → {fs['total_min']:.2f} min")
+    print(f"\n  Full scan ({N_BLOCKS_SCALE:} blocks):")
+    print(f"    {fs['total_ios']:} I/Os → {fs['total_min']:.2f} min")
