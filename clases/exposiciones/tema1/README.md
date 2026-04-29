@@ -4,11 +4,11 @@
 
 Este tema cubre los conceptos fundamentales de hashing en sistemas de bases de datos, incluyendo el hashing estático y sus aplicaciones en el almacenamiento y recuperación de datos.
 
-## 👥 Integrantes
+## Integrantes
 
 | Nombre | Correo |
 |--------|--------|
-| María Alejandra Otálvaro | - |
+| María Alejandra Otálvaro |  |
 | Isabella Sánchez Mejía | - |
 | Nicole Mariana Adarve | - |
 
