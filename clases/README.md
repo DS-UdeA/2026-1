@@ -1,7 +1,13 @@
 # Estructuras de datos - Ude@
 
+## Información del curso
+
 * **Grupo**: 
 * **Horario**: LWV 8-10
+* **Microcurriculo tentativo**: Microcurriculo curso de Estructuras de Datos y Laboratorio [[link]](Estructura_de_Datos_y_Laboratorio_Curso1.pdf)
+
+
+## Cronograma
 
 A continuación se describe el cronograma del curso por clases.
 
