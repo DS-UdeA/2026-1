@@ -28,12 +28,12 @@ A continuación se describe el cronograma del curso por clases.
 | **7** | 19 | Laboratorio | 23/03/2026 | --- | --- | No hubo clase (Festivo) |
 | | 20 | Teoria | 25/03/2026 | Clase 6 - Indices (Parte 1) | Recursos clase 8 [[link]](clase_08/) | |
 | | 21 | Teoria | 27/03/2026 | Clase 6 - Indices (Parte 2) | Recursos clase 9 [[link]](clase_09/) | |
-| **8** | 22 | Laboratorio | 30/03/2026 | --- | --- | |
-| | 23 | Teoria | 01/04/2026 | --- | --- | |
-| | 24 | Teoria | 03/04/2026 | --- | --- | |
-| | --- | Receso | 06/04/2026 | Semana Santa | --- | No hay clase (Receso institucional) |
-| | --- | Receso | 08/04/2026 | Semana Santa | --- | No hay clase (Receso institucional) |
-| | --- | Receso | 10/04/2026 | Semana Santa | --- | No hay clase (Viernes Santo) |
+| | --- | Receso | 30/03/2026 | Semana Santa | --- | No hay clase (Receso institucional) |
+| | --- | Receso | 01/04/2026 | Semana Santa | --- | No hay clase (Receso institucional) |
+| | --- | Receso | 03/04/2026 | Semana Santa | --- | No hay clase (Viernes Santo) |
+| **8** | 22 | Laboratorio | 06/04/2026 | --- | --- | |
+| | 23 | Teoria | 08/04/2026 | --- | --- | |
+| | 24 | Teoria | 10/04/2026 | --- | --- | |
 | **9** | 25 | Laboratorio | 13/04/2026 | Discusión grupal | --- | |
 | | 26 | Teoria | 15/04/2026 | Discusión grupal | --- | |
 | | 27 | Teoria | 17/04/2026 | --- | --- | |
